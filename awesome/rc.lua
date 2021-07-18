@@ -60,6 +60,7 @@ editor = os.getenv("EDITOR") or "emacs"
 editor_cmd = terminal .. " -e " .. editor
 browser = "microsoft-edge-dev"
 file_manager = "nemo"
+launcher = "~/.config/rofi/launchers/misc/launcher.sh"
 -- Default modkey.
 modkey = "Mod4"
 altkey = "Mod1"
@@ -88,12 +89,12 @@ awful.layout.layouts = {
 -- Create a launcher widget and a main menu
 mylogoutmenu = awful.menu({
 	  items = {
-		 { "Logout",  	function() awesome.quit() end },
-		 { "Restart", 	awesome.restart },
-		 { "Sleep",		function() awful.spawn.with_shell("systemctl suspend") end },
-		 { "Power off", function() awful.spawn.with_shell("shutdown now") end },
-	  }
-})
+         { "Log out",   function() awesome.quit() end, beautiful.logout_icon},
+         { "Reboot",    function() awful.spawn.with_shell("systemctl reboot")end , beautiful.reboot_icon },
+         { "Sleep",     function() awful.spawn.with_shell("systemctl suspend") end, beautiful.sleep_icon },
+         { "Power off", function() awful.spawn.with_shell("systemctl poweroff") end, beautiful.poweroff_icon },}})
+
+mylogoutmenu.wibox.shape = function (cr, w, h) gears.shape.rounded_rect(cr, w, h, 8) end
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mylogoutmenu })
@@ -255,7 +256,7 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
+    awful.button({ }, 3, function () mylogoutmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -284,7 +285,7 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
+    awful.key({ modkey,           }, "w", function () mylogoutmenu:show() end,
               {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
@@ -367,7 +368,7 @@ globalkeys = gears.table.join(
     --   {description = "show the menubar", group = "launcher"}),
 
 	--Show launcher
-	awful.key({modkey }, "p", function () os.execute("~/.config/rofi/launchers/misc/launcher.sh") end,
+	awful.key({modkey }, "p", function () os.execute(launcher) end,
 	   {description = "Show applicattion launcher", group = "launcher"}),
 
 	-- Show/hide wibox
@@ -574,17 +575,14 @@ awful.rules.rules = {
 
 -- {{{ Signals
 -- Spawn client at center while using floating layout
-client.connect_signal("property::floating", function(c)
-						 awful.placement.centered(c)
-end)
+client.connect_signal("property::floating", function(c) awful.placement.centered(c) end)
+-- Remove rounded corners when maximized
+--client.connect_signal("property::maximized", function(c))
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
-	c.shape = function(cr,w,h)
-        gears.shape.rounded_rect(cr,w,h,8)
-    end                     
     if awesome.startup
       and not c.size_hints.user_position
       and not c.size_hints.program_position then
