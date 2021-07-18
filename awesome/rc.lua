@@ -576,8 +576,16 @@ awful.rules.rules = {
 -- {{{ Signals
 -- Spawn client at center while using floating layout
 client.connect_signal("property::floating", function(c) awful.placement.centered(c) end)
+
 -- Remove rounded corners when maximized
 --client.connect_signal("property::maximized", function(c))
+
+-- Jump to urgent tag automatically
+client.connect_signal("property::urgent", function(c)
+    c.minimized = false
+    c:jump_to()
+end)
+
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
