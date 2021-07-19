@@ -58,7 +58,7 @@ terminal = "termite"
 editor = os.getenv("EDITOR") or "emacs"
 editor_cmd = terminal .. " -e " .. editor
 browser = "microsoft-edge-dev"
-file_manager = "nemo"
+file_manager = "thunar"
 launcher = "~/.config/rofi/launchers/misc/launcher.sh"
 -- Default modkey.
 modkey = "Mod4"
@@ -217,7 +217,8 @@ awful.screen.connect_for_each_screen(function(s)
           s.mytaglist,
           s.mypromptbox,
        },
-       s.mytasklist,
+       --s.mytasklist,
+	   nil,
        { -- Right widgets
           layout = wibox.layout.fixed.horizontal,
           spacing = 7,
@@ -235,10 +236,9 @@ awful.screen.connect_for_each_screen(function(s)
              tooltip = true,
           },
           mytextclock,
-          s.mylayoutbox,
+          --s.mylayoutbox,
        },
-    }
-    --[[
+    }   
 	s.mybottomwibox = awful.wibar({ position = "bottom", screen = s })
 	s.mybottomwibox:setup{
 	   layout = wibox.layout.align.horizontal,
@@ -248,7 +248,6 @@ awful.screen.connect_for_each_screen(function(s)
 	   s.mytasklist,
 	   s.mylayoutbox
 	}
-    ]]--
 end)
 -- }}}
 
