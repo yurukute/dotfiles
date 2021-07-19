@@ -11,7 +11,6 @@ local wibox = require("wibox")
 local cpu_widget = require("widgets.cpu-widget.cpu-widget")
 local volume_widget = require('widgets.volume-widget.volume')
 local brightness_widget = require("widgets.brightness-widget.brightness")
-local logout_menu_widget = require("widgets.logout-menu-widget.logout-menu")
 local calendar_widget = require("widgets.calendar-widget.calendar")
 
 -- Theme handling library
@@ -211,36 +210,35 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Add widgets to the wibox
     s.mywibox:setup {
-        layout = wibox.layout.align.horizontal,
-        { -- Left widgets
-            layout = wibox.layout.fixed.horizontal,
-            mylauncher,
-            s.mytaglist,
-            s.mypromptbox,
-        },
-        --s.mytasklist, -- Middle widget
-        nil,
-        { -- Right widgets
-		   layout = wibox.layout.fixed.horizontal,
-		   spacing = 7,
-            wibox.widget.systray(),           
-			cpu_widget{
-               enable_kill_button = true,
-            },
-            volume_widget{
-			   size = 20,
-			   tooltip = true,
-			},
-            brightness_widget{
-               step = 10,
-			   size = 20,
-               tooltip = true,
-            },
-            mytextclock,
-            logout_menu_widget(),			
-            --s.mylayoutbox,
-        },
+       layout = wibox.layout.align.horizontal,
+       { -- Left widgets
+          layout = wibox.layout.fixed.horizontal,
+          mylauncher,
+          s.mytaglist,
+          s.mypromptbox,
+       },
+       s.mytasklist,
+       { -- Right widgets
+          layout = wibox.layout.fixed.horizontal,
+          spacing = 7,
+          wibox.widget.systray(),           
+          cpu_widget{
+             enable_kill_button = true,
+          },
+          volume_widget{
+             size = 20,
+             tooltip = true,
+          },
+          brightness_widget{
+             step = 10,
+             size = 20,
+             tooltip = true,
+          },
+          mytextclock,
+          s.mylayoutbox,
+       },
     }
+    --[[
 	s.mybottomwibox = awful.wibar({ position = "bottom", screen = s })
 	s.mybottomwibox:setup{
 	   layout = wibox.layout.align.horizontal,
@@ -250,7 +248,7 @@ awful.screen.connect_for_each_screen(function(s)
 	   s.mytasklist,
 	   s.mylayoutbox
 	}
-
+    ]]--
 end)
 -- }}}
 
