@@ -531,7 +531,6 @@ awful.rules.rules = {
           "DTA",  -- Firefox addon DownThemAll.
           "copyq",  -- Includes session name in class.
           "pinentry",
-		  terminal,
 		  "pavucontrol",
         },
         class = {
@@ -565,8 +564,13 @@ awful.rules.rules = {
 	
     -- Set Discord to always map on the tag named "E" on screen 1.
     { rule = { class = "discord" },
-      properties = { screen = 1, tag = "E" } },
-
+      properties = { screen = 1, tag = "E" }
+	},
+	
+	-- Set terminal always float and ontop
+	{ rule = {instance = terminal},
+	  properties = { floating = true, ontop = true}
+	}
 }
 -- }}}
 
