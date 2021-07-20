@@ -54,7 +54,7 @@ beautiful.init("~/.config/awesome/theme.lua")
 naughty.config.defaults.margin = 10
 
 -- This is used later as the default terminal and editor to run.
-terminal = "termite"
+terminal = "kitty"
 editor = os.getenv("EDITOR") or "emacs"
 editor_cmd = terminal .. " -e " .. editor
 browser = "microsoft-edge-dev"
@@ -531,7 +531,7 @@ awful.rules.rules = {
           "DTA",  -- Firefox addon DownThemAll.
           "copyq",  -- Includes session name in class.
           "pinentry",
-		  "termite",
+		  terminal,
 		  "pavucontrol",
         },
         class = {
