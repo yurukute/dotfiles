@@ -57,9 +57,8 @@ theme.menu_submenu_icon = theme_path.."/submenu.png"
 theme.menu_height = dpi(24)
 theme.menu_width  = dpi(100)
 theme.menu_font = "sans 10"
-theme.menu_bg_normal = "#00000090"
+theme.menu_bg_normal = "#000000"
 theme.menu_border_width	= 5
-theme.menu_border_color = "#000000CA"
 
 theme.titlebar_bg_normal = "#222222"
 theme.titlebar_bg        = "#000000"

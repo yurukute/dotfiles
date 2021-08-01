@@ -17,7 +17,6 @@ local calendar_widget = require("widgets.calendar-widget.calendar")
 local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
-local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
@@ -59,7 +58,7 @@ editor = os.getenv("EDITOR") or "emacs"
 editor_cmd = terminal .. " -e " .. editor
 browser = "microsoft-edge-dev"
 file_manager = "thunar"
-launcher = "~/.config/rofi/launchers/misc/launcher.sh"
+launcher = "~/.config/rofi/launcher.sh"
 -- Default modkey.
 modkey = "Mod4"
 altkey = "Mod1"
@@ -100,10 +99,6 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 
 -- Close menu when mouse leave it
 mylogoutmenu.wibox:connect_signal("mouse::leave", function() mylogoutmenu:hide() end)
-
--- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
--- }}}
 
 -- Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
@@ -270,20 +265,20 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
-    awful.key({ modkey, altkey    }, "Right",
+    awful.key({ altkey 			  }, "Right",
         function ()
             awful.client.focus.byidx( 1)
         end,
         {description = "focus next by index", group = "client"}
     ),
-    awful.key({ modkey, altkey    }, "Left",
+    awful.key({ altkey			  }, "Left",
         function ()
             awful.client.focus.byidx(-1)
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mylogoutmenu:show() end,
-              {description = "show main menu", group = "awesome"}),
+    awful.key({ modkey,           }, "w", function () os.execute(launcher) end,
+              {description = "show applications launcher", group = "awesome"}),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "Left", function () awful.client.swap.byidx(  1)    end,
@@ -360,14 +355,6 @@ globalkeys = gears.table.join(
                   }
               end,
               {description = "lua execute prompt", group = "awesome"}),
-    -- Menubar
-    --awful.key({ modkey }, "p", function() menubar.show() end,
-    --   {description = "show the menubar", group = "launcher"}),
-
-	--Show launcher
-	awful.key({modkey }, "p", function () os.execute(launcher) end,
-	   {description = "Show applicattion launcher", group = "launcher"}),
-
 	-- Show/hide wibox
     awful.key({ modkey }, "b", function ()
           for s in screen do
@@ -521,7 +508,7 @@ awful.rules.rules = {
                      keys = clientkeys,
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
-                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
+                     placement = awful.placement.no_offscreen
      }
     },
 
@@ -562,11 +549,13 @@ awful.rules.rules = {
       }, properties = { titlebars_enabled = true }
     },
 	
-    -- Set Discord to always map on the tag named "E" on screen 1.
+    -- Set programs to always map on specified tag.
     { rule = { class = "discord" },
       properties = { screen = 1, tag = "E" }
 	},
-	
+	{ rule = { class = "Code" },
+      properties = { screen = 1, tag = "O" }
+	},
 	-- Set terminal always float and ontop
 	{ rule = {instance = terminal},
 	  properties = { floating = true, ontop = true}
@@ -578,9 +567,11 @@ awful.rules.rules = {
 -- Spawn client at center while using floating layout
 client.connect_signal("property::floating", function(c) awful.placement.centered(c) end)
 
--- Remove rounded corners when maximized
---client.connect_signal("property::maximized", function(c))
-
+--[[ Remove rounded corners when maximized
+client.connect_signal('property::fullscreen', function(c)
+    if c.maximized then c.shape = gears.shape.rectangle
+    else c.shape = function(cr,w,h) gears.shape.rounded_rect(cr,w,h,8) end end
+end)]]
 -- Jump to urgent tag automatically
 client.connect_signal("property::urgent", function(c)
     c.minimized = false
