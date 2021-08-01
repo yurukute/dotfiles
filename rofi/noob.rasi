@@ -1,12 +1,3 @@
-/*
- *
- * Author  : Aditya Shakya
- * Mail    : adi1090x@gmail.com
- * Github  : @adi1090x
- * Twitter : @adi1090x
- *
- */
-
 configuration {
 	font:							"Noto Sans Bold 10";
     show-icons:                     true;
@@ -20,7 +11,7 @@ configuration {
 }
 
 * {
-    background:                     #00000000;
+    background:                     #00000090;
     background-alt:              	#00000000;
     background-bar:                 #f2f2f215;
     foreground:                     #f2f2f2EE;
@@ -33,7 +24,7 @@ window {
     text-color:                     @foreground;
 	border:							0px;
 	border-color:					@border;
-    border-radius:                  0px;
+    border-radius:                  12px;
 	width:							40%;
     location:                       center;
     x-offset:                       0;
