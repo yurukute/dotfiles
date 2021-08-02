@@ -304,6 +304,10 @@ globalkeys = gears.table.join(
 	   {description = "open default browser", group = "launcher"}),
 	awful.key({ modkey            }, "e", function () awful.spawn(file_manager) end,
 	   {description = "open file manager", group = "launcher"}),
+	awful.key({"Shift"			  }, "Print", function () os.execute("flameshot gui") end,
+	   {description = "take region screenshot", group = "launcher"}),
+	awful.key({					  }, "Print", function () os.execute("flameshot full -c -p ~/Pictures/Screenshots") end,
+	   {description = "take full screenshot", group = "launcher"}),
     -- Standard program
     awful.key({ modkey  		  }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
@@ -344,7 +348,7 @@ globalkeys = gears.table.join(
     -- Prompt
     awful.key({ modkey },       "r",     function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
-
+	--[[
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run {
@@ -355,6 +359,7 @@ globalkeys = gears.table.join(
                   }
               end,
               {description = "lua execute prompt", group = "awesome"}),
+	--]]
 	-- Show/hide wibox
     awful.key({ modkey }, "b", function ()
           for s in screen do
