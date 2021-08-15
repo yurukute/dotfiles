@@ -55,7 +55,7 @@ theme.taglist_font = "awesomewm-font 13"
 
 theme.menu_submenu_icon = theme_path.."/submenu.png"
 theme.menu_height = dpi(24)
-theme.menu_width  = dpi(100)
+theme.menu_width  = dpi(90)
 theme.menu_font = "sans 10"
 theme.menu_bg_normal = "#000000"
 theme.menu_border_width	= 5
@@ -117,7 +117,6 @@ theme.logout_icon = theme_path.."launcher/logout.svg"
 theme.reboot_icon = theme_path.."launcher/reboot.svg"
 theme.sleep_icon = theme_path.."launcher/sleep.svg"
 theme.poweroff_icon = theme_path.."launcher/poweroff.svg"
-
 -- Define the icon theme for application titlebar. If not set then the titlebar
 -- from /usr/share/titlebar and /usr/share/titlebar/hicolor will be used.
 theme.icon_theme = nil

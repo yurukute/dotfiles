@@ -1,3 +1,4 @@
+
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
@@ -87,8 +88,8 @@ awful.layout.layouts = {
 -- Create a launcher widget and a main menu
 mylogoutmenu = awful.menu({
 	  items = {
-         { "Log out",   function() awesome.quit() end, beautiful.logout_icon},
-         { "Reboot",    function() awful.spawn.with_shell("systemctl reboot")end , beautiful.reboot_icon },
+         { "Log out",	function() awesome.quit() end, beautiful.logout_icon},
+         { "Reboot", 	function() awful.spawn.with_shell("systemctl reboot")end , beautiful.reboot_icon },
          { "Sleep",     function() awful.spawn.with_shell("systemctl suspend") end, beautiful.sleep_icon },
          { "Power off", function() awful.spawn.with_shell("systemctl poweroff") end, beautiful.poweroff_icon },}})
 
@@ -248,7 +249,6 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mylogoutmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -277,7 +277,7 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () os.execute(launcher) end,
+    awful.key({ modkey,           }, "w", function () awful.spawn.with_shell(launcher) end,
               {description = "show applications launcher", group = "awesome"}),
 
     -- Layout manipulation
@@ -303,11 +303,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey            }, "q", function () awful.spawn(browser) end,
 	   {description = "open default browser", group = "launcher"}),
 	awful.key({ modkey            }, "e", function () awful.spawn(file_manager) end,
-	   {description = "open file manager", group = "launcher"}),
-	awful.key({"Shift"			  }, "Print", function () os.execute("flameshot gui") end,
-	   {description = "take region screenshot", group = "launcher"}),
-	awful.key({					  }, "Print", function () os.execute("flameshot full -c -p ~/Pictures/Screenshots") end,
-	   {description = "take full screenshot", group = "launcher"}),
+	   {description = "open file manager", group = "launcher"}),	
     -- Standard program
     awful.key({ modkey  		  }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
@@ -370,13 +366,6 @@ globalkeys = gears.table.join(
           end
     end,
        {description = "toggle wibox", group = "awesome"}),
-    -- On-the-fly useless gaps change
-	--[[
-    awful.key({ altkey, "Control" }, "=", function () lain.util.useless_gaps_resize(1) end,
-       {description = "increment useless gaps", group = "tag"}),
-    awful.key({ altkey, "Control" }, "-", function () lain.util.useless_gaps_resize(-1) end,
-       {description = "decrement useless gaps", group = "tag"}),
-	]]
     -- Volume
     awful.key({ }, "XF86AudioRaiseVolume", function() volume_widget:inc() end,
        {description = "Volume up", group = "hotkeys"}),
@@ -388,9 +377,14 @@ globalkeys = gears.table.join(
     awful.key({ }, "XF86MonBrightnessUp", function () brightness_widget:inc() end,
               {description = "Increase brightness", group = "hotkeys"}),
     awful.key({ }, "XF86MonBrightnessDown", function () brightness_widget:dec() end,
-              {description = "Decrease brightness", group = "hotkeys"})
+              {description = "Decrease brightness", group = "hotkeys"}),
+	--Screenshot
+	awful.key({"Shift"			  }, "Print", function () awful.spawn("flameshot gui") end,
+	   {description = "take region screenshot", group = "hotkeys"}),
+	awful.key({					  }, "Print", function () awful.spawn.with_shell("flameshot full -c -p ~/Pictures/Screenshots") end,
+	   {description = "take full screenshot", group = "hotkeys"})
 )
-
+	
 clientkeys = gears.table.join(
     awful.key({ modkey,           }, "f",
         function (c)
@@ -535,8 +529,8 @@ awful.rules.rules = {
           "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
           "Wpa_gui",
           "veromix",
-          "xtightvncviewer"},
-
+          "xtightvncviewer"
+		},
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
         name = {
@@ -555,11 +549,8 @@ awful.rules.rules = {
     },
 	
     -- Set programs to always map on specified tag.
-    { rule = { class = "discord" },
-      properties = { screen = 1, tag = "E" }
-	},
-	{ rule = { class = "Code" },
-      properties = { screen = 1, tag = "O" }
+	{ rule = { class = "discord" },
+      properties = { screen = 1, tag = awful.screen.focused().tags[2] }
 	},
 	-- Set terminal always float and ontop
 	{ rule = {instance = terminal},
