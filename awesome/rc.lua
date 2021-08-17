@@ -88,10 +88,10 @@ awful.layout.layouts = {
 -- Create a launcher widget and a main menu
 mylogoutmenu = awful.menu({
 	  items = {
-         { "Log out",	function() awesome.quit() end, beautiful.logout_icon},
-         { "Reboot", 	function() awful.spawn.with_shell("systemctl reboot")end , beautiful.reboot_icon },
-         { "Sleep",     function() awful.spawn.with_shell("systemctl suspend") end, beautiful.sleep_icon },
-         { "Power off", function() awful.spawn.with_shell("systemctl poweroff") end, beautiful.poweroff_icon },}})
+         { "Log out",		function() awesome.quit() end, beautiful.logout_icon},
+         { "Reboot", 		function() awful.spawn.with_shell("systemctl reboot")end , beautiful.reboot_icon },
+         { "Sleep",     	function() awful.spawn.with_shell("systemctl suspend") end, beautiful.sleep_icon },
+         { "Power off", 	function() awful.spawn.with_shell("systemctl poweroff") end, beautiful.poweroff_icon },}})
 
 mylogoutmenu.wibox.shape = function (cr, w, h) gears.shape.rounded_rect(cr, w, h, 8) end
 
@@ -601,7 +601,7 @@ client.connect_signal("request::titlebars", function(c)
         end)
     )
 
-    awful.titlebar(c, {size = 30}) : setup {
+    awful.titlebar(c, {size = 25}) : setup {
        {-- Left
 		  {
 			 awful.titlebar.widget.closebutton    (c),
@@ -621,16 +621,7 @@ client.connect_signal("request::titlebars", function(c)
           buttons = buttons,
           layout  = wibox.layout.flex.horizontal
        },
-       {-- Right
-		  {
-			 awful.titlebar.widget.ontopbutton     (c),
-			 awful.titlebar.widget.floatingbutton  (c),
-			 spacing = 7,
-			 layout  = wibox.layout.flex.horizontal
-		  },
-		  margins = 6,
-		  widget = wibox.container.margin
-       },
+       nil, --Right
 	   layout = wibox.layout.align.horizontal
     }
 end)
