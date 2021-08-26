@@ -213,8 +213,8 @@ awful.screen.connect_for_each_screen(function(s)
           s.mytaglist,
           s.mypromptbox,
        },
-       --s.mytasklist,
 	   nil,
+       --s.mytasklist,
        { -- Right widgets
           layout = wibox.layout.fixed.horizontal,
           spacing = 7,
@@ -243,12 +243,13 @@ awful.screen.connect_for_each_screen(function(s)
 	   },
 	   s.mytasklist,
 	   s.mylayoutbox
-	}
+	   }
 end)
 -- }}}
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
+				awful.button({ }, 3, function () awful.spawn.with_shell(launcher) end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -518,6 +519,7 @@ awful.rules.rules = {
           "copyq",  -- Includes session name in class.
           "pinentry",
 		  "pavucontrol",
+		  "anki",
         },
         class = {
           "Arandr",
@@ -621,7 +623,16 @@ client.connect_signal("request::titlebars", function(c)
           buttons = buttons,
           layout  = wibox.layout.flex.horizontal
        },
-       nil, --Right
+	   {-- Left
+		  {
+			 awful.titlebar.widget.ontopbutton    (c),
+			 awful.titlebar.widget.floatingbutton (c),
+			 spacing = 7,
+			 layout  = wibox.layout.flex.horizontal
+		  },		 
+		  margins = 6,
+		  widget = wibox.container.margin
+       },
 	   layout = wibox.layout.align.horizontal
     }
 end)
