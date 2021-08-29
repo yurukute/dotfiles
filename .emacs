@@ -32,6 +32,9 @@
   (require 'dap-cpptools)
   (yas-global-mode))
 
+(require 'lsp-java)
+(add-hook 'java-mode-hook #'lsp)
+
 (global-company-mode t)
 (global-flycheck-mode t)
 
@@ -65,8 +68,7 @@
 (global-set-key (kbd "C-k") 'shell)
 
 ;; set tab to 4 spaces
-(defvaralias 'c-basic-offset 'tab-width)
-(defvaralias 'cperl-indent-level 'tab-width)
+(setq-default c-basic-offset 4)
 
 ;; monokai theme
 (load-theme 'monokai t)
