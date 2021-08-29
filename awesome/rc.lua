@@ -514,12 +514,12 @@ awful.rules.rules = {
 
     -- Floating clients.
     { rule_any = {
-        instance = {
+		 instance = {
+		  terminal,
           "DTA",  -- Firefox addon DownThemAll.
           "copyq",  -- Includes session name in class.
           "pinentry",
 		  "pavucontrol",
-		  "anki",
         },
         class = {
           "Arandr",
@@ -543,7 +543,7 @@ awful.rules.rules = {
           "ConfigManager",  -- Thunderbird's about:config.
           "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         }
-      }, properties = { floating = true }},
+      }, properties = { floating = true, ontop = true }},
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
@@ -553,10 +553,6 @@ awful.rules.rules = {
     -- Set programs to always map on specified tag.
 	{ rule = { class = "discord" },
       properties = { screen = 1, tag = awful.screen.focused().tags[2] }
-	},
-	-- Set terminal always float and ontop
-	{ rule = {instance = terminal},
-	  properties = { floating = true, ontop = true}
 	}
 }
 -- }}}
