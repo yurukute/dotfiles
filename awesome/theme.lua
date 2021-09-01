@@ -89,8 +89,8 @@ theme.titlebar_maximized_button_focus_inactive  = theme_path.."titlebar/maximize
 theme.titlebar_maximized_button_normal_active = theme_path.."titlebar/maximized_normal_active.svg"
 theme.titlebar_maximized_button_focus_active  = theme_path.."titlebar/maximized_focus_active.svg"
 
---theme.wallpaper = theme_path.."wall.jpeg"
-theme.wallpaper = "~/Pictures/91605019_p0.png"
+theme.wallpaper = theme_path.."wall.jpeg"
+
 -- You can use your own layout titlebar like this:
 theme.layout_fairh = theme_path.."layouts/fairhw.png"
 theme.layout_fairv = theme_path.."layouts/fairvw.png"
