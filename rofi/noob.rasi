@@ -5,13 +5,11 @@ configuration {
     display-drun: 					"";
     drun-display-format:            "{name}";
     disable-history:                false;
-    fullscreen:                     false;
-	hide-scrollbar: 				true;
 	sidebar-mode: 					false;
 }
 
 * {
-    background:                     #00000090;
+    background:                     #00000000;
     background-alt:              	#00000000;
     background-bar:                 #f2f2f215;
     foreground:                     #f2f2f2EE;
@@ -24,7 +22,7 @@ window {
     text-color:                     @foreground;
 	border:							0px;
 	border-color:					@border;
-    border-radius:                  12px;
+    border-radius:                  0px;
 	width:							40%;
     location:                       center;
     x-offset:                       0;
@@ -91,11 +89,17 @@ element {
 }
 
 element-icon {
+    background-color: 				@background;
+    text-color:       				inherit;
+    horizontal-align:               0.5;
+    vertical-align:                 0.5;
     size:                           64px;
     border:                         0px;
 }
 
 element-text {
+    background-color: 				@background;
+    text-color:       				inherit;
     expand:                         true;
     horizontal-align:               0.5;
     vertical-align:                 0.5;
