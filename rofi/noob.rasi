@@ -9,7 +9,7 @@ configuration {
 }
 
 * {
-    background:                     #00000000;
+    background:                     #00000090;
     background-alt:              	#00000000;
     background-bar:                 #f2f2f215;
     foreground:                     #f2f2f2EE;
@@ -22,7 +22,7 @@ window {
     text-color:                     @foreground;
 	border:							0px;
 	border-color:					@border;
-    border-radius:                  0px;
+    border-radius:                  12px;
 	width:							40%;
     location:                       center;
     x-offset:                       0;
@@ -89,7 +89,7 @@ element {
 }
 
 element-icon {
-    background-color: 				@background;
+    background-color: 				@background-alt;
     text-color:       				inherit;
     horizontal-align:               0.5;
     vertical-align:                 0.5;
@@ -98,7 +98,7 @@ element-icon {
 }
 
 element-text {
-    background-color: 				@background;
+    background-color: 				@background-alt;
     text-color:       				inherit;
     expand:                         true;
     horizontal-align:               0.5;
@@ -111,5 +111,5 @@ element selected {
     text-color:                     @foreground;
 	border:							0% 0% 0% 0%;
     border-radius:                  12px;
-    border-color:                  	@accent;
+    border-color:                  	@background;
 }
