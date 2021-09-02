@@ -9,7 +9,7 @@ configuration {
 }
 
 * {
-    background:                     #00000090;
+    background:                     #000000BB;
     background-alt:              	#00000000;
     background-bar:                 #f2f2f215;
     foreground:                     #f2f2f2EE;
