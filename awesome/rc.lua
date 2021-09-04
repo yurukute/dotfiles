@@ -1,4 +1,3 @@
-
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
@@ -60,20 +59,20 @@ editor_cmd = terminal .. " -e " .. editor
 browser = "microsoft-edge-dev"
 file_manager = "thunar"
 launcher = "~/.config/rofi/launcher.sh"
+wallpaper_dir = "~/DATA/Pictures/Wallpapers/"
 -- Default modkey.
 modkey = "Mod4"
 altkey = "Mod1"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
     awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
+	--awful.layout.suit.tile.left,
+	awful.layout.suit.fair,
     awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
+    --awful.layout.suit.tile.top,
     awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.floating,
+    --awful.layout.suit.spiral,
+    --awful.layout.suit.spiral.dwindle,
     --awful.layout.suit.max,
     --awful.layout.suit.max.fullscreen,
     --awful.layout.suit.magnifier,
@@ -81,6 +80,7 @@ awful.layout.layouts = {
     -- awful.layout.suit.corner.ne,
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
+	awful.layout.suit.floating,
 }
 -- }}}
 
@@ -155,9 +155,20 @@ local tasklist_buttons = gears.table.join(
                      awful.button({ }, 5, function ()
                                               awful.client.focus.byidx(-1)
                                           end))
-local function set_wallpaper(s)
-    -- Wallpaper
-    if beautiful.wallpaper then
+local function set_wallpaper(s, pic_dir)
+   -- Wallpaper
+   if pic_dir ~= nil then
+	  awful.spawn(string.format([=[bash -c '
+        [[ -f /tmp/bg_pid ]] && kill `cat /tmp/bg_pid`
+        echo $$ > /tmp/bg_pid
+        while true; do
+            for img in `eval find "%s" | shuf`; do
+                sudo feh --no-fehbg --bg-fill $img
+                echo $img > /tmp/cur_bg
+                sleep 60
+            done
+        done']=], pic_dir), false)
+    elseif beautiful.wallpaper then
         local wallpaper = beautiful.wallpaper
         -- If wallpaper is a function, call it with the screen
         if type(wallpaper) == "function" then
@@ -172,7 +183,7 @@ screen.connect_signal("property::geometry", set_wallpaper)
 
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
-    set_wallpaper(s)
+    set_wallpaper(s, wallpaper_dir)
 
     -- Each screen has its own tag table.
     awful.tag({ "W", "E", "S", "O", "M", "E", "W", "M" }, s, awful.layout.layouts[1])
@@ -382,7 +393,7 @@ globalkeys = gears.table.join(
 	--Screenshot
 	awful.key({"Shift"			  }, "Print", function () awful.spawn("flameshot gui") end,
 	   {description = "take region screenshot", group = "hotkeys"}),
-	awful.key({					  }, "Print", function () awful.spawn.with_shell("flameshot full -c -p ~/Pictures/Screenshots") end,
+	awful.key({					  }, "Print", function () awful.spawn.with_shell("flameshot full -c -p ~/DATA/Pictures/Screenshots") end,
 	   {description = "take full screenshot", group = "hotkeys"})
 )
 	
@@ -520,6 +531,7 @@ awful.rules.rules = {
           "copyq",  -- Includes session name in class.
           "pinentry",
 		  "pavucontrol",
+		  "kazam",
         },
         class = {
           "Arandr",
@@ -531,7 +543,7 @@ awful.rules.rules = {
           "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
           "Wpa_gui",
           "veromix",
-          "xtightvncviewer"
+          "xtightvncviewer",
 		},
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
