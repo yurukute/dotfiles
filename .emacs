@@ -1,103 +1,163 @@
+;; Load package manager
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
-(setq package-selected-packages '(lsp-mode lsp-ui lsp-treemacs lsp-java helm-lsp helm-xref flycheck company org-bullets monokai-theme))
-
-(when (cl-find-if-not #'package-installed-p package-selected-packages)
+;; Load use-package
+(unless (package-installed-p 'use-package)
   (package-refresh-contents)
-  (mapc #'package-install package-selected-packages))
+  (package-install 'use-package))
+(eval-when-compile
+  (require 'use-package))
+;;(require 'diminish)
+;;(require 'bind-key)
 
-(load-theme 'monokai t)
-(set-frame-parameter (selected-frame) 'alpha ' 85)
-(setq make-backup-files nil)
+(setq use-package-always-ensure t)
+
+;; Startup
 (cua-mode t)
+(setq make-backup-files nil
+      inhibit-startup-screen t
+      tab-always-indent nil
+      tab-width 4)
+(setq-default c-basic-offset tab-width)
+
+;; User interface
+(electric-pair-mode 1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(show-paren-mode 1)
+(tool-bar-mode -1)
+
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-
-;; helm
-(helm-mode)
-(require 'helm-xref)
-(define-key global-map [remap find-file] #'helm-find-files)
-(define-key global-map [remap execute-extended-command] #'helm-M-x)
-(define-key global-map [remap switch-to-buffer] #'helm-mini)
-
-;; lsp-mode
-(add-hook 'c-mode-hook #'lsp)
-(add-hook 'c++-mode-hook #'lsp)
-(setq-default c-basic-offset 4)
-
-(require 'lsp-java)
-(add-hook 'java-mode-hook #'lsp)
-
-;; Autocomplete and error checking
-(global-company-mode t)
-(global-flycheck-mode t)
-(require 'company-c-headers)
-(add-to-list 'company-backends 'company-c-headers)
-(add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0")
-
-;; org-mode
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-(add-hook 'org-mode-hook 'visual-line-mode)
-(setq org-ellipsis " ≫")
-(setq org-hide-emphasis-markers t)
-(setq org-startup-indented t)
-(setq org-support-shift-select 'always)
-(setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
-						  (sequence "⚑ WAITING(w)" "|")
-						  (sequence "|" "✘ CANCELED(c)")))
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-(when (display-graphic-p)
-   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-(font-lock-add-keywords 'org-mode
-                        '(("^ *\\([-]\\) "
-                           (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-
-;; user keybindings
-(global-set-key [f5] 'gdb)
-(global-set-key [f8] 'treemacs)
-(global-set-key (kbd "C-M-n") 	'quickrun)
-(global-set-key (kbd "C-x k") 	'kill-current-buffer)
-(global-set-key (kbd "C-k") 	'shell)
-(global-set-key (kbd "C-c f") 	'helm-recentf)
-
+(global-visual-line-mode t)
 (set-fontset-font t 'symbol "Noto Color Emoji")
+(set-frame-parameter (selected-frame) 'alpha ' 85)
+
+;; User keybindings
+(global-set-key [mouse-8] 'previous-buffer)
+(global-set-key [mouse-9] 'next-buffer)
+(global-set-key (kbd "C-x k") 'kill-current-buffer)
+(global-set-key (kbd "C-k") 'shell)
+
+;; Monokai theme
+(use-package monokai-theme
+  :config (load-theme 'monokai t))
+
+;; Nyancat the cutest
+(use-package nyan-mode
+  :custom
+  (nyan-animation-frame-interval 0.07)
+  (nyan-wavy-trail t)
+  (nyan-animate-nyancat t)
+  :config
+  (nyan-mode))
+
+;; Helm
+(use-package helm
+  :bind (([remap find-file] . helm-find-files)
+	 ([remap execute-extended-command] . helm-M-x)
+	 ([remap switch-to-buffer] . helm-mini)
+	 ("C-c C-f" . helm-recentf))
+  :config (helm-mode))
+(use-package helm-xref)
+
+;; LSP
+(use-package lsp-mode
+  :hook ((c-mode . lsp)
+	 (c++-mode . lsp)
+	 (java-mode . lsp)
+	 (text-mode . lsp))
+  :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+  :commands lsp)
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode))
+
+(use-package lsp-java
+  :custom
+  (lsp-java-format-enabled nil)
+  (lsp-java-format-on-type-enabled nil))
+
+(use-package lsp-treemacs
+  :custom (treemacs-width 25)
+  :bind ([f8] . treemacs))
+
+(use-package lsp-grammarly
+  :ensure t
+  :hook (text-mode . (lambda ()
+                       (require 'lsp-grammarly)
+                       (lsp))))
+;; DAP
+(use-package dap-mode
+  :custom (dap-auto-show-output nil)
+  :bind (([f5] . dap-debug)
+	 ([S-f5] . dap-disconnect)
+	 ([f9] . dap-breakpoints-toggle)
+	 ([f10] . dap-next)
+	 ([f11] . dap-step-in)
+	 ([S-f11] . dap-step-out))
+  :commands dap-debug
+  :config
+  (require 'dap-cpptools)
+  (dap-cpptools-setup)
+  (require 'dap-java)
+)
+
+;; Autocomplete
+(use-package company
+  :config (global-company-mode t))
+(use-package company-c-headers
+  :config
+  (add-to-list 'company-backends 'company-c-headers)
+  (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0"))
+
+;; Realtime error checking
+(use-package flycheck
+  :config
+  (global-flycheck-mode)
+  :custom
+  (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+
+;; Beautifying org-mode
+(use-package org-bullets
+  :hook ((org-mode . org-bullets-mode)
+	 (org-mode . visual-line-mode))
+  :custom
+  (org-ellipsis " ≫")
+  (org-hide-emphasis-markers t)
+  (org-startup-indented t)
+  (org-support-shift-select 'always)
+  (org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
+		      (sequence "⚑ WAITING(w)" "|")
+		      (sequence "|" "✘ CANCELED(c)")))
+  :config
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•")))))))
+
+;; Markdown
+(use-package markdown-mode
+  :custom
+  (markdown-enable-math t)
+  (markdown-fontify-code-blocks-natively t))
+
+;; Run command instantly
+(use-package quickrun
+  :bind ("C-M-n" . quickrun))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(electric-pair-mode t)
- '(global-visual-line-mode t)
- '(helm-ff-file-name-history-use-recentf t)
- '(inhibit-startup-screen t)
- '(markdown-enable-math t)
- '(markdown-fontify-code-blocks-natively t)
- '(menu-bar-mode nil)
- '(nyan-animate-nyancat t)
- '(nyan-animation-frame-interval 0.1)
- '(nyan-mode t)
- '(nyan-wavy-trail t)
- '(package-selected-packages
-   '(lsp-java quickrun company-c-headers company-lua flymake-lua lua-mode rainbow-mode nyan-mode lsp-mode lsp-ui lsp-treemacs helm-lsp helm-xref flycheck company dap-mode hydra monokai-theme org-bullets))
- '(recentf-auto-cleanup 'never)
- '(recentf-mode t)
- '(scroll-bar-mode nil)
- '(show-paren-mode t)
- '(tab-always-indent nil)
- '(tab-width 4)
- '(tool-bar-mode nil)
- '(treemacs-width 25)
- '(word-wrap t))
+ '(package-selected-packages '(flymake-lua company-lua lua-mode keytar)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(when (cl-find-if-not #'package-installed-p package-selected-packages)
+  (package-refresh-contents)
+  (mapc #'package-install package-selected-packages))
