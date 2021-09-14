@@ -93,7 +93,7 @@
   :custom (dap-auto-show-output nil)
   :bind (([f5] . dap-debug)
 	 ([S-f5] . dap-disconnect)
-	 ([f9] . dap-breakpoints-toggle)
+	 ([f9] . dap-breakpoint-toggle)
 	 ([f10] . dap-next)
 	 ([f11] . dap-step-in)
 	 ([S-f11] . dap-step-out))
@@ -110,7 +110,8 @@
 (use-package company-c-headers
   :config
   (add-to-list 'company-backends 'company-c-headers)
-  (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0"))
+  (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
+  (add-to-list 'company-c-headers-path-user "/home/dung/C++/"))
 
 ;; Realtime error checking
 (use-package flycheck
@@ -143,7 +144,7 @@
 
 ;; Run command instantly
 (use-package quickrun
-  :bind ("C-M-n" . quickrun))
+  :bind ("C-M-n" . quickrun-shell))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
