@@ -90,7 +90,10 @@
                        (lsp))))
 ;; DAP
 (use-package dap-mode
-  :custom (dap-auto-show-output nil)
+  :custom
+  ;;(dap-auto-configure-features '(sessions locals expressions controls tooltip))
+  (dap-auto-show-output nil)
+  (dap-debug-compilation-keep t)
   :bind (([f5] . dap-debug)
 	 ([S-f5] . dap-disconnect)
 	 ([f9] . dap-breakpoint-toggle)
