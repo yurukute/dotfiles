@@ -3,20 +3,20 @@
 pcall(require, "luarocks.loader")
 
 -- Standard awesome library
-local gears = require("gears")
-local awful = require("awful")
+local gears		= require("gears")
+local awful		= require("awful")
 require("awful.autofocus")
 -- Widget and layout library
-local wibox = require("wibox")
-local cpu_widget = require("widgets.cpu-widget.cpu-widget")
-local volume_widget = require('widgets.volume-widget.volume')
+local wibox		= require("wibox")
+local cpu_widget	= require("widgets.cpu-widget.cpu-widget")
+local volume_widget	= require('widgets.volume-widget.volume')
 local brightness_widget = require("widgets.brightness-widget.brightness")
-local calendar_widget = require("widgets.calendar-widget.calendar")
+local calendar_widget	= require("widgets.calendar-widget.calendar")
 -- Theme handling library
-local beautiful = require("beautiful")
+local beautiful		= require("beautiful")
 -- Notification library
-local naughty = require("naughty")
-local hotkeys_popup = require("awful.hotkeys_popup")
+local naughty		= require("naughty")
+local hotkeys_popup	= require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
@@ -25,9 +25,9 @@ require("awful.hotkeys_popup.keys")
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
-   naughty.notify({ preset	= naughty.config.presets.critical,
-		    title	= "Oops, there were errors during startup!",
-		    text	= awesome.startup_errors })
+   naughty.notify({ preset = naughty.config.presets.critical,
+		    title  = "Oops, there were errors during startup!",
+		    text   = awesome.startup_errors })
 end
 
 -- Handle runtime errors after startup
@@ -39,8 +39,8 @@ do
 	 in_error = true
 	 
 	 naughty.notify({ preset = naughty.config.presets.critical,
-			  title = "Oops, an error happened!",
-			  text = tostring(err) })
+			  title  = "Oops, an error happened!",
+			  text   = tostring(err) })
 	 in_error = false
    end)
 end
@@ -52,16 +52,16 @@ beautiful.init("~/.config/awesome/theme.lua")
 naughty.config.defaults.margin = 10
 
 -- This is used later as the default terminal and editor to run.
-terminal = "kitty"
-editor = os.getenv("EDITOR") or "emacs"
-editor_cmd = terminal .. " -e " .. editor
-browser = "microsoft-edge-dev"
-file_manager = "thunar"
-launcher = "~/.config/rofi/launcher.sh"
-picture_dir = "~/DATA/Pictures/"
+terminal	= "kitty"
+editor		= os.getenv("EDITOR") or "emacs"
+editor_cmd	= terminal .. " -e " .. editor
+browser		= "microsoft-edge-dev"
+file_manager	= "thunar"
+launcher	= "~/.config/rofi/launcher.sh"
+picture_dir	= "~/DATA/Pictures/"
 -- Default modkey.
-modkey = "Mod4"
-altkey = "Mod1"
+modkey		= "Mod4"
+altkey		= "Mod1"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
    awful.layout.suit.tile,
@@ -108,7 +108,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 mytextclock = wibox.widget.textclock('%a %b %d, %I:%M %p')
 local cw = calendar_widget({
       placement = "top_right",
-      theme = 'nord'
+      theme 	= 'nord'
 })
 mytextclock:connect_signal("button::press", 
 			   function(_, _, _, button)
@@ -270,7 +270,7 @@ root.buttons(
 -- {{{ Key bindings
 globalkeys = gears.table.join(
    awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
-      {description="show help", group="awesome"}),
+      {description ="show help", group = "awesome"}),
    awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
       {description = "view previous", group = "tag"}),
    awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
@@ -318,7 +318,7 @@ globalkeys = gears.table.join(
    awful.key({ modkey            }, "e", function () awful.spawn(file_manager) end,
       {description = "open file manager", group = "launcher"}),	
    -- Standard program
-   awful.key({ modkey  		  }, "Return", function () awful.spawn(terminal) end,
+   awful.key({ modkey,		 }, "Return", function () awful.spawn(terminal) end,
       {description = "open a terminal", group = "launcher"}),
    awful.key({ modkey, "Control" }, "r", awesome.restart,
       {description = "reload awesome", group = "awesome"}),
@@ -523,7 +523,7 @@ awful.rules.rules = {
 		    keys = clientkeys,
 		    buttons = clientbuttons,
 		    screen = awful.screen.preferred,
-		    placement = awful.placement.no_overlap+awful.placement.no_offscreen
+		    placement = awful.placement.no_offscreen
      }
    },
 
@@ -536,6 +536,7 @@ awful.rules.rules = {
 	   "pinentry",
 	   "pavucontrol",
 	   "gtk-recordMyDesktop",
+	   "feh"
         },
         class = {
 	   "Arandr",
@@ -617,16 +618,16 @@ client.connect_signal("request::titlebars", function(c)
 	 end)
       )
 
-      awful.titlebar(c, {size = 25}) : setup {
+      awful.titlebar(c, {size = 20}) : setup {
 	 {-- Left
 	    {
 	       awful.titlebar.widget.closebutton	(c),
 	       awful.titlebar.widget.minimizebutton	(c),
 	       awful.titlebar.widget.maximizedbutton	(c),	
-	       spacing = 7,
+	       spacing = 5,
 	       layout  = wibox.layout.flex.horizontal
 	    },
-	    margins = 6,
+	    margins = 4,
 	    widget = wibox.container.margin
 	 },
 	 { -- Middle		  
@@ -641,10 +642,10 @@ client.connect_signal("request::titlebars", function(c)
 	    {
 	       awful.titlebar.widget.stickybutton	(c),
 	       awful.titlebar.widget.floatingbutton	(c),
-	       spacing = 7,
+	       spacing = 5,
 	       layout  = wibox.layout.flex.horizontal
 	    },		 
-	    margins = 6,
+	    margins = 4,
 	    widget = wibox.container.margin
 	 },
 	 layout = wibox.layout.align.horizontal

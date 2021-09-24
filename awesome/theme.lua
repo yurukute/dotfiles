@@ -1,53 +1,54 @@
-local theme_assets = require("beautiful.theme_assets")
-local xresources = require("beautiful.xresources")
-local dpi = xresources.apply_dpi
+local theme_assets		= require("beautiful.theme_assets")
+local xresources		= require("beautiful.xresources")
+local dpi			= xresources.apply_dpi
 
-local gfs = require("gears.filesystem")
-local theme_path = "~/.config/awesome/theme/"
-local gears = require("gears")
+local gfs			= require("gears.filesystem")
+local theme_path		= "~/.config/awesome/theme/"
+local gears			= require("gears")
 
-local theme = {}
+local theme			= {}
 
-theme.font          = "sans 8"
+theme.font			= "sans 8"
 
-theme.bg_normal     = "#222222"
-theme.bg_focus      = "#000000"
-theme.bg_urgent     = "#ff0000"
-theme.bg_minimize   = "#444444"
-theme.bg_systray    = theme.bg_normal
+theme.bg_normal			= "#222222"
+theme.bg_focus			= "#535d6c"
+theme.bg_urgent			= "#ff0000"
+theme.bg_minimize		= "#444444"
+theme.bg_systray		= theme.bg_normal
 
-theme.fg_normal     = "#00b8ff"
-theme.fg_focus      = "#ffffff"
-theme.fg_urgent     = theme.fg_focus
-theme.fg_minimize   = theme.fg_focus
+theme.fg_normal			= "#00b8ff"
+theme.fg_focus			= "#ffffff"
+theme.fg_urgent			= "#ffffff"
+theme.fg_minimize		= "#ffffff"
 
-theme.useless_gap   = dpi(5)
-theme.border_width  = dpi(0)
-theme.border_normal = theme.bg_focus
-theme.border_focus  = "#535d6c"
-theme.border_marked = "#91231c"
+theme.useless_gap		= dpi(5)
+theme.border_width		= dpi(0)
+theme.border_normal		= "#000000"
+theme.border_focus		= "#535d6c"
+theme.border_marked		= "#91231c"
 
-theme.notification_icon_size  = 64
-theme.notification_fg         = theme.fg_focus
-theme.notification_bg         = theme.bg_focus
-theme.notification_opacity    = 0.9
-theme.notification_shape      = function(cr,w,h)
+theme.notification_icon_size	= 64
+theme.notification_fg		= "#ffffff"
+theme.notification_bg		= "#000000"
+theme.notification_opacity	= 0.9
+theme.notification_shape	= function(cr,w,h)
    gears.shape.rounded_rect(cr,w,h,8)
 end
 
-theme.wibar_height = 20
-theme.wibar_opacity = 0.8
+theme.wibar_height		= 20
+theme.wibar_opacity		= 0.85
 
-theme.systray_icon_spacing = 3
+theme.systray_icon_spacing	= 3
    
    -- Generate taglist squares:
-local taglist_square_size = dpi(4)
-theme.taglist_squares_sel = theme_assets.taglist_squares_sel(
-    taglist_square_size, theme.fg_normal
+local taglist_square_size	= dpi(4)
+theme.taglist_squares_sel	= theme_assets.taglist_squares_sel(
+   taglist_square_size, theme.fg_normal
 )
-theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
-    taglist_square_size, theme.fg_normal
+theme.taglist_squares_unsel	= theme_assets.taglist_squares_unsel(
+   taglist_square_size, theme.fg_normal
 )
+
 theme.taglist_fg_empty		= "#828282"
 theme.taglist_fg_focus		= "#3992af"
 theme.taglist_fg_occupied	= "#164b5d"
@@ -55,18 +56,21 @@ theme.taglist_fg_urgent		= "#ED7572"
 theme.taglist_font		= "awesomewm-font 13"
 theme.taglist_spacing		= 2
 
-theme.menu_bg_normal	= theme.bg_focus
-theme.menu_border_width	= 5
-theme.menu_font		= "sans 10"
-theme.menu_height	= dpi(24)
-theme.menu_submenu_icon = theme_path.."/submenu.png"
-theme.menu_width	= dpi(90)
+theme.menu_bg_normal		= "#000000"
+theme.menu_border_width		= 5
+theme.menu_font			= "sans 10"
+theme.menu_height		= dpi(24)
+theme.menu_submenu_icon		= theme_path.."/submenu.png"
+theme.menu_width		= dpi(90)
 
-theme.titlebar_close_button_normal = theme_path.."titlebar/close_normal.svg"
-theme.titlebar_close_button_focus  = theme_path.."titlebar/close_focus.svg"
+theme.titlebar_bg_normal	= "#222222"
+theme.titlebar_bg		= "#000000"
 
-theme.titlebar_minimize_button_normal = theme_path.."titlebar/minimize_normal.svg"
-theme.titlebar_minimize_button_focus  = theme_path.."titlebar/minimize_focus.svg"
+theme.titlebar_close_button_normal		= theme_path.."titlebar/close_normal.svg"
+theme.titlebar_close_button_focus		= theme_path.."titlebar/close_focus.svg"
+
+theme.titlebar_minimize_button_normal		= theme_path.."titlebar/minimize_normal.svg"
+theme.titlebar_minimize_button_focus		= theme_path.."titlebar/minimize_focus.svg"
 
 theme.titlebar_ontop_button_normal_inactive	= theme_path.."titlebar/ontop_normal_inactive.svg"
 theme.titlebar_ontop_button_focus_inactive	= theme_path.."titlebar/ontop_focus_inactive.svg"
@@ -109,7 +113,7 @@ theme.layout_cornersw	= theme_path.."layouts/cornersww.png"
 theme.layout_cornerse	= theme_path.."layouts/cornersew.png"
 
 -- Generate Awesome icon:
-theme.awesome_icon = theme_assets.awesome_icon(
+theme.awesome_icon 	= theme_assets.awesome_icon(
    theme.menu_height, "#fa5b5b", theme.bg_normal
 )
 theme.logout_icon	= theme_path.."launcher/logout.svg"
