@@ -14,7 +14,6 @@ local brightness_widget = require("widgets.brightness-widget.brightness")
 local calendar_widget = require("widgets.calendar-widget.calendar")
 -- Theme handling library
 local beautiful = require("beautiful")
-local wallpaper_changer = require("awesome-wallpaper-changer")
 -- Notification library
 local naughty = require("naughty")
 local hotkeys_popup = require("awful.hotkeys_popup")
@@ -26,9 +25,9 @@ require("awful.hotkeys_popup.keys")
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
-   naughty.notify({ preset = naughty.config.presets.critical,
-		    title = "Oops, there were errors during startup!",
-		    text = awesome.startup_errors })
+   naughty.notify({ preset	= naughty.config.presets.critical,
+		    title	= "Oops, there were errors during startup!",
+		    text	= awesome.startup_errors })
 end
 
 -- Handle runtime errors after startup
@@ -156,24 +155,34 @@ local tasklist_buttons = gears.table.join(
 	 awful.client.focus.byidx(-1)
 end))
 
-local function set_wallpaper(s)
-   -- Wallpaper
-   if beautiful.wallpaper then
-      local wallpaper = beautiful.wallpaper
-      -- If wallpaper is a function, call it with the screen
-      if type(wallpaper) == "function" then
-	 wallpaper = wallpaper(s)
-      end
-      gears.wallpaper.maximized(wallpaper, s, true)
-   end
+local function set_wallpaper(s, pic_dir)
+    -- Wallpaper
+    if pic_dir ~= nil then
+        awful.spawn(string.format([=[bash -c '
+        [[ -f /tmp/bg_pid ]] && kill `cat /tmp/bg_pid`
+        echo $$ > /tmp/bg_pid
+        while true; do
+            for img in `eval find "%s" | shuf`; do
+                feh --no-fehbg --bg-fill $img
+                echo $img > /tmp/cur_bg
+                sleep 60
+            done
+        done']=], pic_dir), false)
+    elseif beautiful.wallpaper then
+        local wallpaper = beautiful.wallpaper
+        -- If wallpaper is a function, call it with the screen
+        if type(wallpaper) == 'function' then
+            wallpaper = wallpaper(s)
+        end
+        gears.wallpaper.maximized(wallpaper, s, true)
+    end
 end
-
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
 awful.screen.connect_for_each_screen(function(s)
       -- Wallpaper
-      set_wallpaper(s)
+      set_wallpaper(s,picture_dir.."Wallpapers/")
       -- Each screen has its own tag table.
       awful.tag({ "W", "E", "S", "O", "M", "E", "W", "M" }, s, awful.layout.layouts[1])
 
@@ -248,20 +257,13 @@ awful.screen.connect_for_each_screen(function(s)
 end)
 -- }}}
 
-wallpaper_changer.start({
-      path = picture_dir.."Wallpapers/",
-      show_notify = false,
-      timeout = 60,
-      change_on_click = true
-})
-
 -- {{{ Mouse bindings
 root.buttons(
    gears.table.join(
       root.buttons(),     
       awful.button({ }, 4, awful.tag.viewnext),
       awful.button({ }, 5, awful.tag.viewprev),
-      awful.button({ }, 8, function () awful.spawn.with_shell(launcher) end)
+      awful.button({ }, 3, function () awful.spawn.with_shell(launcher) end)
 ))
 -- }}}
 
@@ -521,7 +523,7 @@ awful.rules.rules = {
 		    keys = clientkeys,
 		    buttons = clientbuttons,
 		    screen = awful.screen.preferred,
-		    placement = awful.placement.no_offscreen
+		    placement = awful.placement.no_overlap+awful.placement.no_offscreen
      }
    },
 
@@ -533,7 +535,7 @@ awful.rules.rules = {
 	   "copyq",  -- Includes session name in class.
 	   "pinentry",
 	   "pavucontrol",
-	   "gtk-recordMyDesktop"
+	   "gtk-recordMyDesktop",
         },
         class = {
 	   "Arandr",
@@ -558,13 +560,13 @@ awful.rules.rules = {
 	   "ConfigManager",  -- Thunderbird's about:config.
 	   "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         }
-   }, properties = { floating = true, ontop = true, sticky = true }},
+   }, properties = { floating = true, ontop = true }},
 
    -- Add titlebars to normal clients and dialogs
    { rule_any = {type = { "normal", "dialog" }},
      properties = { titlebars_enabled = true }
    },
-
+  
    -- Set programs to always map on specified tag.
    { rule = { class = "discord" },
      properties = { screen = 1, tag = awful.screen.focused().tags[2],

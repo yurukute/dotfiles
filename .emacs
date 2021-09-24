@@ -18,6 +18,7 @@
 (cua-mode t)
 (setq make-backup-files nil
       inhibit-startup-screen t
+      recentf-auto-cleanup 'never
       tab-always-indent nil
       tab-width 4)
 (setq-default c-basic-offset tab-width)
@@ -66,8 +67,7 @@
 (use-package lsp-mode
   :hook ((c-mode . lsp)
 	 (c++-mode . lsp)
-	 (java-mode . lsp)
-	 (text-mode . lsp))
+	 (java-mode . lsp))
   :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
   :commands lsp)
 
@@ -76,18 +76,19 @@
 
 (use-package lsp-java
   :custom
-  (lsp-java-format-enabled nil)
+  ;(lsp-java-format-enabled nil)
   (lsp-java-format-on-type-enabled nil))
 
 (use-package lsp-treemacs
   :custom (treemacs-width 25)
   :bind ([f8] . treemacs))
 
-(use-package lsp-grammarly
-  :ensure t
-  :hook (text-mode . (lambda ()
-                       (require 'lsp-grammarly)
-                       (lsp))))
+;; (use-package lsp-grammarly
+;;   :ensure t
+;;   :hook (text-mode . (lambda ()
+;;                        (require 'lsp-grammarly)
+;;                        (lsp))))
+
 ;; DAP
 (use-package dap-mode
   :custom
@@ -104,8 +105,16 @@
   :config
   (require 'dap-cpptools)
   (dap-cpptools-setup)
-  (require 'dap-java)
-)
+  (require 'dap-java)	
+  (add-to-list 'dap-debug-template-configurations
+	       '("Noob - Build and debug C/C++"
+		  :type "cppdbg"
+		  :request "launch"
+		  :name "cpptools::Run Configuration"
+		  :MIMode "gdb"
+		  :program "${fileDirname}/${fileBasenameNoExtension}"
+		  :cwd "${fileDirname}"
+		  :dap-compilation "g++ -g ${file} -o ${fileDirname}/${fileBaseNameNoExtension}")))
 
 ;; Autocomplete
 (use-package company
@@ -115,6 +124,8 @@
   (add-to-list 'company-backends 'company-c-headers)
   (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
   (add-to-list 'company-c-headers-path-user "/home/dung/C++/"))
+(use-package yasnippet  
+  :config  (yas-global-mode t))
 
 ;; Realtime error checking
 (use-package flycheck
@@ -145,16 +156,29 @@
   (markdown-enable-math t)
   (markdown-fontify-code-blocks-natively t))
 
-;; Run command instantly
-(use-package quickrun
-  :bind ("C-M-n" . quickrun-shell))
+;; Open file in external program
+(use-package openwith
+  :custom
+  (openwith-associations '(("\\.pdf\\'" "microsoft-edge-dev" (file))
+			   ("\\.mp3\\'" "sox" (file))
+			   ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mpv" (file))
+			   ("\\.\\(?:jp?g\\|png\\)\\'" "feh" (file))))
+  :config (openwith-mode t))
+
+;; Control popup window
+(use-package popwin
+  :config
+  (push '("*helm*" :regexp t :height 20) popwin:special-display-config)
+  (push '("*shell*" :regexp t :height 10) popwin:special-display-config)
+  (popwin-mode 1))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(flymake-lua company-lua lua-mode keytar)))
+ '(package-selected-packages
+   '(rainbow-mode yasnippet-snippets flymake-lua company-lua lua-mode keytar)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
