@@ -315,6 +315,8 @@ globalkeys = gears.table.join(
    --User programs
    awful.key({ modkey            }, "q", function () awful.spawn(browser) end,
       {description = "open default browser", group = "launcher"}),
+      awful.key({ modkey, "Control"}, "q", function () awful.spawn(browser.." -inprivate") end,
+      {description = "open default browser", group = "launcher"}),
    awful.key({ modkey            }, "e", function () awful.spawn(file_manager) end,
       {description = "open file manager", group = "launcher"}),	
    -- Standard program
