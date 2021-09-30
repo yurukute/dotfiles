@@ -16,11 +16,11 @@
 
 ;; Startup
 (cua-mode t)
-(setq make-backup-files nil
-      inhibit-startup-screen t
+(setq inhibit-startup-screen t
       recentf-auto-cleanup 'never
       tab-always-indent nil
-      tab-width 4)
+      tab-width 4
+      make-backup-files nil)
 (setq-default c-basic-offset tab-width)
 
 ;; User interface
@@ -94,7 +94,6 @@
   :custom
   ;;(dap-auto-configure-features '(sessions locals expressions controls tooltip))
   (dap-auto-show-output nil)
-  (dap-debug-compilation-keep t)
   :bind (([f5] . dap-debug)
 	 ([S-f5] . dap-disconnect)
 	 ([f9] . dap-breakpoint-toggle)
@@ -104,8 +103,7 @@
   :commands dap-debug
   :config
   (require 'dap-cpptools)
-  (dap-cpptools-setup)
-  (require 'dap-java)	
+  (dap-cpptools-setup)	
   (add-to-list 'dap-debug-template-configurations
 	       '("Noob - Build and debug C/C++"
 		  :type "cppdbg"
@@ -135,20 +133,61 @@
   (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
 ;; Beautifying org-mode
+(setq org-edit-src-content-indentation 4
+      org-ellipsis " ⤵"
+      org-fontify-done-headline t
+      org-hide-emphasis-markers t
+      org-hide-leading-stars t
+      org-pretty-entities t
+      org-startup-indented t
+      org-support-shift-select t
+      org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
+			  (sequence "⚑ WAITING(w)" "|")
+			  (sequence "|" "✘ CANCELED(c)")))
+(require 'org-tempo)
+(setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "†")
+				       ("#+END_SRC" . "†")
+				       ("#+begin_src" . "†")
+				       ("#+end_src" . "†")
+				       (">=" . "≥")
+				       ("=>" . "⇨")))
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+(add-hook 'org-mode-hook (lambda()
+			   (visual-line-mode)
+			   (variable-pitch-mode) 
+			   (prettify-symbols-mode)))
+(font-lock-add-keywords 'org-mode
+                        '(("^ *\\([-]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+(font-lock-add-keywords 'org-mode
+                        '(("^ *\\([+]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "◦"))))))
+
 (use-package org-bullets
-  :hook ((org-mode . org-bullets-mode)
-	 (org-mode . visual-line-mode))
-  :custom
-  (org-ellipsis " ≫")
-  (org-hide-emphasis-markers t)
-  (org-startup-indented t)
-  (org-support-shift-select 'always)
-  (org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
-		      (sequence "⚑ WAITING(w)" "|")
-		      (sequence "|" "✘ CANCELED(c)")))
+  :hook ((org-mode . org-bullets-mode)))
+
+(use-package org-fancy-priorities
+  :diminish
+  :demand t
+  :defines org-fancy-priorities-list
+  :hook (org-mode . org-fancy-priorities-mode)
   :config
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•")))))))
+  (unless (char-displayable-p ?❗)
+    (setq org-fancy-priorities-list '("HIGH" "MID" "LOW" "OPTIONAL"))))
+
+(use-package org-pretty-tags
+  :demand t
+  :custom
+  (org-pretty-tags-surrogate-strings
+   (quote (("TOPIC" . "☆")
+	   ("PROJEKT" . "💡")
+	   ("SERVICE" . "✍")
+	   ("Blog" . "✍")
+	   ("music" . "♬")
+	   ("security" . "🔥"))))
+  :config
+  (org-pretty-tags-global-mode))
+
+(use-package org-super-agenda
+  :hook (org-mode . org-super-agenda-mode))
 
 ;; Markdown
 (use-package markdown-mode
@@ -178,13 +217,20 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(rainbow-mode yasnippet-snippets flymake-lua company-lua lua-mode keytar)))
+   '(org-super-agenda rainbow-mode yasnippet-snippets flymake-lua company-lua lua-mode keytar)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(fixed-pitch ((t (:family "monospace"))))
+ '(org-block ((t (:inherit fixed-pitch))))
+ '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+ '(org-property-value ((t (:inherit fixed-pitch))) t)
+ '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-table ((t (:inherit fixed-pitch))))
+ '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold))))
+ '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
