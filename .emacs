@@ -1,3 +1,4 @@
+
 ;; Load package manager
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
@@ -16,8 +17,9 @@
 
 ;; Startup
 (cua-mode t)
-(setq inhibit-startup-screen t
-      recentf-auto-cleanup 'never
+(setq c-tab-always-indent nil      
+      inhibit-startup-screen t
+      recentf-auto-cleanup 'never      
       tab-always-indent nil
       tab-width 4
       make-backup-files nil)
@@ -60,6 +62,7 @@
 	 ([remap execute-extended-command] . helm-M-x)
 	 ([remap switch-to-buffer] . helm-mini)
 	 ("C-c C-f" . helm-recentf))
+  :custom (helm-ff-file-name-history-use-recentf t)
   :config (helm-mode))
 (use-package helm-xref)
 
@@ -82,12 +85,6 @@
 (use-package lsp-treemacs
   :custom (treemacs-width 25)
   :bind ([f8] . treemacs))
-
-;; (use-package lsp-grammarly
-;;   :ensure t
-;;   :hook (text-mode . (lambda ()
-;;                        (require 'lsp-grammarly)
-;;                        (lsp))))
 
 ;; DAP
 (use-package dap-mode
@@ -112,7 +109,21 @@
 		  :MIMode "gdb"
 		  :program "${fileDirname}/${fileBasenameNoExtension}"
 		  :cwd "${fileDirname}"
-		  :dap-compilation "g++ -g ${file} -o ${fileDirname}/${fileBaseNameNoExtension}")))
+		  :dap-compilation "g++ -g ${file} -o ${fileDirname}/${fileBaseNameNoExtension}"))
+  (add-to-list 'dap-debug-template-configurations
+	       '("Noob - Debug java"
+		 :name "Java Run Configuration"
+		 :type "java"
+		 :request "launch"
+		 :args ""
+		 :cwd "${workspaceFolder}"
+		 :stopOnEntry :json-false
+		 :host "localhost"
+		 :request "launch"
+		 :modulePaths []
+		 :classPaths "${workspaceFolder}/bin"
+		 :projectName nil
+		 :mainClass "${file}")))
 
 ;; Autocomplete
 (use-package company
@@ -132,8 +143,19 @@
   :custom
   (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
-;; Beautifying org-mode
-(setq org-edit-src-content-indentation 4
+;; BEAUTIFYING ORG-MODE
+(prefer-coding-system       'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+
+(global-set-key (kbd "C-c l") #'org-store-link)
+(global-set-key (kbd "C-c a") #'org-agenda-list)
+(global-set-key (kbd "C-c c") #'org-capture)
+
+(setq org-agenda-files '("~/Agenda")
+      org-edit-src-content-indentation 4
       org-ellipsis " ⤵"
       org-fontify-done-headline t
       org-hide-emphasis-markers t
@@ -145,11 +167,10 @@
 			  (sequence "⚑ WAITING(w)" "|")
 			  (sequence "|" "✘ CANCELED(c)")))
 (require 'org-tempo)
-(setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "†")
-				       ("#+END_SRC" . "†")
-				       ("#+begin_src" . "†")
+(setq-default prettify-symbols-alist '(("#+begin_src" . "†")
 				       ("#+end_src" . "†")
 				       (">=" . "≥")
+				       ("<=" . "≤")
 				       ("=>" . "⇨")))
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 (add-hook 'org-mode-hook (lambda()
@@ -165,25 +186,12 @@
   :hook ((org-mode . org-bullets-mode)))
 
 (use-package org-fancy-priorities
-  :diminish
-  :demand t
-  :defines org-fancy-priorities-list
   :hook (org-mode . org-fancy-priorities-mode)
-  :config
-  (unless (char-displayable-p ?❗)
-    (setq org-fancy-priorities-list '("HIGH" "MID" "LOW" "OPTIONAL"))))
+  :custom (org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
 
 (use-package org-pretty-tags
-  :demand t
-  :custom
-  (org-pretty-tags-surrogate-strings
-   (quote (("TOPIC" . "☆")
-	   ("PROJEKT" . "💡")
-	   ("SERVICE" . "✍")
-	   ("Blog" . "✍")
-	   ("music" . "♬")
-	   ("security" . "🔥"))))
   :config
+  (add-to-list 'org-pretty-tags-surrogate-strings '("hw" . "✍"))
   (org-pretty-tags-global-mode))
 
 (use-package org-super-agenda
@@ -217,7 +225,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(org-super-agenda rainbow-mode yasnippet-snippets flymake-lua company-lua lua-mode keytar)))
+   '(rainbow-mode yasnippet-snippets flymake-lua company-lua lua-mode keytar)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -228,8 +236,7 @@
  '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
  '(org-property-value ((t (:inherit fixed-pitch))) t)
  '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
- '(org-table ((t (:inherit fixed-pitch))))
- '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold))))
+ '(org-table ((t (:inherit fixed-pitch :foreground "#82d7ff"))))
  '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
