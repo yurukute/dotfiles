@@ -12,6 +12,7 @@ local cpu_widget	= require("widgets.cpu-widget.cpu-widget")
 local volume_widget	= require('widgets.volume-widget.volume')
 local brightness_widget = require("widgets.brightness-widget.brightness")
 local calendar_widget	= require("widgets.calendar-widget.calendar")
+local network_widget	= require("widgets.network-widget.network")
 -- Theme handling library
 local beautiful		= require("beautiful")
 -- Notification library
@@ -228,7 +229,8 @@ awful.screen.connect_for_each_screen(function(s)
 	 { -- Right widgets
 	    layout = wibox.layout.fixed.horizontal,
 	    spacing = 7,
-	    wibox.widget.systray(),           
+	    wibox.widget.systray(),
+	    --network_widget,
 	    cpu_widget{
 	       enable_kill_button = true,
 	    },
@@ -315,8 +317,8 @@ globalkeys = gears.table.join(
    --User programs
    awful.key({ modkey            }, "q", function () awful.spawn(browser) end,
       {description = "open default browser", group = "launcher"}),
-      awful.key({ modkey, "Control"}, "q", function () awful.spawn(browser.." -inprivate") end,
-      {description = "open default browser", group = "launcher"}),
+      awful.key({ "Control", "Shift"}, "n", function () awful.spawn(browser.." -inprivate") end,
+      {description = "open default browser (incognito)", group = "launcher"}),
    awful.key({ modkey            }, "e", function () awful.spawn(file_manager) end,
       {description = "open file manager", group = "launcher"}),	
    -- Standard program
@@ -538,7 +540,8 @@ awful.rules.rules = {
 	   "pinentry",
 	   "pavucontrol",
 	   "gtk-recordMyDesktop",
-	   "feh"
+	   "feh",
+	   "TeamViewer"
         },
         class = {
 	   "Arandr",
@@ -567,6 +570,7 @@ awful.rules.rules = {
 
    -- Add titlebars to normal clients and dialogs
    { rule_any = {type = { "normal", "dialog" }},
+     except = { instance = "TeamViewer" },
      properties = { titlebars_enabled = true }
    },
   
