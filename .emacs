@@ -114,7 +114,7 @@
 		 :name "Debug current file"
                  :type "java"	
                  :request "launch"
-                 :mainClass nil)))
+                 :mainClass "${file}")))
 ;; Autocomplete
 (use-package company
   :config (global-company-mode t))
@@ -122,7 +122,7 @@
   :config
   (add-to-list 'company-backends 'company-c-headers)
   (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
-  (add-to-list 'company-c-headers-path-user "/home/dung/C++/"))
+  (add-to-list 'company-c-headers-path-user "~/C++/"))
 (use-package yasnippet  
   :config  (yas-global-mode t))
 
@@ -206,7 +206,7 @@
 (use-package popwin
   :config
   (push '("*helm*" :regexp t :height 20) popwin:special-display-config)
-  (push '("*shell*" :regexp t :height 10) popwin:special-display-config)
+  (push '("*shell*" :regexp t :height 10 :stick t) popwin:special-display-config)
   (popwin-mode 1))
 
 (custom-set-variables
