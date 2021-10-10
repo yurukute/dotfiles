@@ -11,7 +11,7 @@ Install `light`
 
 Change permission
 ```
-sudo chmod +s /usr/bin/light`
+sudo chmod +s /usr/bin/light
 ```
 ### Volume
 Install `alsa-utils pulseaudio-alsa pavucontrol`
@@ -34,7 +34,7 @@ Add the following to the bottom of `/etc/bluetooth/main.cf`
 AutoEnable=true
 ```
 ## Getting IBus working with Emacs
-> The default fontset will use `-*-*-*-r-normal--14-*-*-*-*-*-*-*` as basefont (in src/xfns.c), if you do not have one matched (like terminus or 75dpi things, you can look the output of `xlsfonts`), XIM can not be activated. According to FAQ and Fonts, it's likely that `xorg-fonts-misc-otb` AUR is the one that should be installed since `xorg-fonts-misc` no longer provides the required fontset.
+> The default fontset will use `-*-*-*-r-normal--14-*-*-*-*-*-*-*` as basefont (in `src/xfns.c`), if you do not have one matched (like terminus or 75dpi things, you can look the output of `xlsfonts`), XIM can not be activated. According to FAQ and Fonts, it's likely that `xorg-fonts-misc-otb`<sub>AUR</sub> is the one that should be installed since `xorg-fonts-misc` no longer provides the required fontset.
 
 *From [ArchWiki](https://wiki.archlinux.org/title/Fcitx#Emacs)*
 ## Lightdm
