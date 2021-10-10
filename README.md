@@ -39,7 +39,7 @@ AutoEnable=true
 *From [ArchWiki](https://wiki.archlinux.org/title/Fcitx#Emacs)*
 ## Lightdm
 ### Dual monitor
-*To prevent the mouse and the login screen display on seperated screens*
+*To prevent mouse and login screen from displaying on separate screens*
 
 Install `xorg-xrandr`
 
@@ -64,7 +64,7 @@ For ntfs partition:
 - Install `ntfs-3g`
 - Add this line to `/etc/fstab`
 ```
-/dev/NTFS-part		/mnt/windows	ntfs-3g		defaults	0	0
+/dev/NTFS-part		/mnt/windows	ntfs-3g		defaults	0 0
 ```
 ### File thumbnails
 Install `tumbler`
