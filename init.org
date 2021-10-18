@@ -1,0 +1,272 @@
+#+TITLE: Emacs Configuration
+* Load package.el and MELPA repository
+#+begin_src emacs-lisp
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(package-initialize)
+#+end_src
+
+* Load use-package
+#+begin_src emacs-lisp
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(eval-when-compile
+  (require 'use-package))
+
+(setq use-package-always-ensure t)
+#+end_src
+* User's setting
+** Coding system
+#+begin_src emacs-lisp
+(prefer-coding-system       'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+#+end_src
+
+** Custom set variables
+#+begin_src emacs-lisp
+(cua-mode t)
+(setq c-tab-always-indent nil
+      inhibit-startup-screen t   
+      recentf-auto-cleanup 'never      
+      tab-always-indent nil
+      make-backup-files nil)
+(setq-default tab-width 4
+              c-basic-offset tab-width)
+#+end_src
+
+** User interface
+#+begin_src emacs-lisp
+(electric-pair-mode 1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(show-paren-mode 1)
+(tool-bar-mode -1)
+
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(global-visual-line-mode t)
+(set-fontset-font t 'symbol "Noto Color Emoji")
+(set-frame-parameter (selected-frame) 'alpha ' 85)
+#+end_src
+
+** User keybindings
+#+begin_src emacs-lisp
+(global-set-key [mouse-8] 'previous-buffer)
+(global-set-key [mouse-9] 'next-buffer)
+(global-set-key (kbd "C-x k") 'kill-current-buffer)
+(global-set-key (kbd "C-k") 'vterm)
+#+end_src
+
+* Packages
+** Monokai theme
+#+begin_src emacs-lisp
+(use-package monokai-theme
+  :config (load-theme 'monokai t))
+#+end_src
+
+** Nyancat the cutest
+#+begin_src emacs-lisp
+(use-package nyan-mode
+  :custom
+  (nyan-animation-frame-interval 0.07)
+  (nyan-wavy-trail t)
+  (nyan-animate-nyancat t)
+  :config
+  (nyan-mode))
+#+end_src
+
+** Helm
+#+begin_src emacs-lisp
+(use-package helm
+  :bind (([remap find-file] . helm-find-files)
+		 ([remap execute-extended-command] . helm-M-x)
+		 ([remap switch-to-buffer] . helm-mini)
+		 ("C-c C-f" . helm-recentf))
+  :custom (helm-ff-file-name-history-use-recentf t)
+  :config (helm-mode))
+(use-package helm-xref)
+#+end_src
+
+** LSP
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :hook ((c-mode . lsp)
+         (c++-mode . lsp)
+         (java-mode . lsp))
+  :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+  :commands lsp)
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode))
+
+(use-package lsp-java
+  :custom
+  (lsp-java-format-on-type-enabled nil))
+
+(use-package lsp-treemacs
+  :custom (treemacs-width 25)
+  :bind ([f8] . treemacs))
+#+end_src
+
+** DAP
+#+begin_src emacs-lisp
+(use-package dap-mode
+  :custom
+  (dap-auto-show-output nil)
+  (dap-debug-restart-keep-session nil)
+  (dap-inhibit-io nil)
+  (dap-internal-terminal 'dap-internal-terminal-vterm)
+  :bind (([f5] . dap-debug)
+		 ([f7] . dap-ui-expressions-add)
+		 ([S-f5] . dap-disconnect)
+		 ([f9] . dap-breakpoint-toggle)
+		 ([f10] . dap-next)
+		 ([f11] . dap-step-in)
+		 ([S-f11] . dap-step-out))
+  :commands dap-debug
+  :config
+  (require 'dap-cpptools)
+  (dap-cpptools-setup)) 
+#+end_src
+
+** Autocomplete
+#+begin_src emacs-lisp
+(use-package company
+  :config (global-company-mode t))
+(use-package company-c-headers
+  :config
+  (add-to-list 'company-backends 'company-c-headers)
+  (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
+  (add-to-list 'company-c-headers-path-user "~/C++/"))
+(use-package yasnippet  
+  :config  (yas-global-mode t))
+#+end_src
+
+** Realtime error checking
+#+begin_src emacs-lisp
+(use-package flycheck
+  :config
+  (global-flycheck-mode)
+  :custom
+  (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+#+end_src
+
+** Markdown
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :custom
+  (markdown-enable-math t)
+  (markdown-fontify-code-blocks-natively t))
+#+end_src
+
+** Open file in external program
+#+begin_src emacs-lisp
+(use-package openwith
+  :custom
+  (openwith-associations '(("\\.pdf\\'" "microsoft-edge-dev" (file))
+						   ("\\.mp3\\'" "sox" (file))
+						   ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mpv" (file))
+						   ("\\.\\(?:jp?g\\|png\\)\\'" "feh" (file))))
+  :config (openwith-mode t))
+#+end_src
+
+** Control popup window
+#+begin_src emacs-lisp
+(use-package popwin
+  :config
+  (push '("*helm*" :regexp t :height 20) popwin:special-display-config)
+  (push '("*vterm*" :stick t) popwin:special-display-config)
+  (push '(vterm :stick t) popwin:special-display-config)
+  (popwin-mode 1))
+#+end_src
+
+* BEAUTIFYING ORG-MODE
+** Keybindings
+#+begin_src  emacs-lisp
+(global-set-key (kbd "C-c l") #'org-store-link)
+(global-set-key (kbd "C-c a") #'org-agenda-list)
+(global-set-key (kbd "C-c c") #'org-capture)
+#+end_src
+
+** Custom
+#+begin_src emacs-lisp
+(setq org-agenda-files '("~")
+      org-edit-src-content-indentation tab-width
+      org-ellipsis " ⤵"
+      org-fontify-done-headline t
+      org-hide-emphasis-markers t
+      org-hide-leading-stars t
+      org-pretty-entities t
+      org-startup-indented t
+      org-support-shift-select t
+      org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
+						  (sequence "⚑ WAITING(w)" "|")
+						  (sequence "|" "✘ CANCELED(c)")))
+(require 'org-tempo)
+(setq-default prettify-symbols-alist '(("#+begin_src" . "†")
+									   ("#+end_src" . "†")
+									   (">=" . "≥")
+									   ("<=" . "≤")
+									   ("=>" . "⇨")))
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+#+end_src
+
+** Hook
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook (lambda()
+						   (visual-line-mode)
+						   (variable-pitch-mode) 
+						   (prettify-symbols-mode)))
+#+end_src
+
+** Bulleted lists
+#+begin_src emacs-lisp
+(font-lock-add-keywords 'org-mode
+                        '(("^ *\\([-]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+(font-lock-add-keywords 'org-mode
+                        '(("^ *\\([+]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "◦"))))))
+#+end_src
+
+** Org-bullets
+#+begin_src emacs-lisp
+(use-package org-bullets
+  :hook ((org-mode . org-bullets-mode)))
+#+end_src
+
+** Org-fancy-priorities
+#+begin_src emacs-lisp
+(use-package org-fancy-priorities
+  :hook (org-mode . org-fancy-priorities-mode)
+  :custom (org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
+#+end_src
+
+** Pretty-tags
+#+begin_src emacs-lisp
+(use-package org-pretty-tags
+  :config
+  (add-to-list 'org-pretty-tags-surrogate-strings '("hw" . "✍"))
+  (org-pretty-tags-global-mode))
+#+end_src
+
+** Org-super-agenda
+#+begin_src emacs-lisp
+(use-package org-super-agenda
+  :hook (org-mode . org-super-agenda-mode))
+#+end_src
+
+** Set faces
+#+begin_src emacs-lisp
+(custom-set-faces
+ '(fixed-pitch ((t (:family "monospace"))))
+ '(org-block ((t (:inherit fixed-pitch))))
+ '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+ '(org-property-value ((t (:inherit fixed-pitch))) t)
+ '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-table ((t (:inherit fixed-pitch :foreground "#82d7ff"))))
+ '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
+#+end_src
+
+  
