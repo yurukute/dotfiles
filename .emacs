@@ -7,7 +7,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-src-preserve-indentation t)
  '(package-selected-packages
    '(vterm org-super-agenda rainbow-mode yasnippet-snippets flymake-lua company-lua lua-mode keytar)))
 (custom-set-faces
@@ -15,7 +14,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+)
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
