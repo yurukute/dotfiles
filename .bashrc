@@ -30,7 +30,7 @@ build () {
 				classpath=$2
 			fi
 			javac $1 -cp $classpath -d $classpath && java -cp $classpath $1
-			rm "${1%.*}.class"
+			rm -f "${1%.*}.class"
 			echo;;
     esac
 }
