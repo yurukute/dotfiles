@@ -29,7 +29,7 @@ build () {
 			if [ $# -eq 2 ]; then
 				classpath=$2
 			fi
-			javac -d $classpath $1 && java -cp $classpath $1
+			javac $1 -cp $classpath -d $classpath && java -cp $classpath $1
 			rm "${1%.*}.class"
 			echo;;
     esac
