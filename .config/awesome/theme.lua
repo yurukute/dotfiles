@@ -30,7 +30,7 @@ theme.border_marked		= "#91231c"
 theme.notification_icon_size	= 64
 theme.notification_fg		= "#ffffff"
 theme.notification_bg		= "#000000"
-theme.notification_opacity	= 0.9
+theme.notification_opacity	= 0.75
 theme.notification_shape	= function(cr,w,h)
    gears.shape.rounded_rect(cr,w,h,8)
 end
