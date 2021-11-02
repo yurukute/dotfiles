@@ -1,5 +1,5 @@
-local theme_assets		= require("beautiful.theme_assets")
-local xresources		= require("beautiful.xresources")
+local theme_assets	= require("beautiful.theme_assets")
+local xresources	= require("beautiful.xresources")
 local dpi			= xresources.apply_dpi
 
 local gfs			= require("gears.filesystem")
@@ -28,15 +28,15 @@ theme.border_focus		= "#535d6c"
 theme.border_marked		= "#91231c"
 
 theme.notification_icon_size	= 64
-theme.notification_fg		= "#ffffff"
-theme.notification_bg		= "#000000"
-theme.notification_opacity	= 0.75
-theme.notification_shape	= function(cr,w,h)
+theme.notification_fg			= "#ffffff"
+theme.notification_bg			= "#000000"
+theme.notification_opacity		= 0.85
+theme.notification_shape = function(cr,w,h)
    gears.shape.rounded_rect(cr,w,h,8)
 end
 
-theme.wibar_height		= 20
-theme.wibar_opacity		= 0.85
+theme.wibar_height	= 20
+theme.wibar_opacity	= 0.85
 
 theme.systray_icon_spacing	= 3
    
@@ -53,18 +53,18 @@ theme.taglist_fg_empty		= "#828282"
 theme.taglist_fg_focus		= "#3992af"
 theme.taglist_fg_occupied	= "#164b5d"
 theme.taglist_fg_urgent		= "#ED7572"
-theme.taglist_font		= "awesomewm-font 13"
+theme.taglist_font			= "awesomewm-font 13"
 theme.taglist_spacing		= 2
 
 theme.menu_bg_normal		= "#000000"
 theme.menu_border_width		= 5
-theme.menu_font			= "sans 10"
-theme.menu_height		= dpi(24)
+theme.menu_font				= "sans 10"
+theme.menu_height			= dpi(24)
 theme.menu_submenu_icon		= theme_path.."/submenu.png"
-theme.menu_width		= dpi(90)
+theme.menu_width			= dpi(90)
 
 theme.titlebar_bg_normal	= "#222222"
-theme.titlebar_bg		= "#000000"
+theme.titlebar_bg			= "#000000"
 
 theme.titlebar_close_button_normal		= theme_path.."titlebar/close_normal.svg"
 theme.titlebar_close_button_focus		= theme_path.."titlebar/close_focus.svg"
@@ -77,7 +77,7 @@ theme.titlebar_ontop_button_focus_inactive	= theme_path.."titlebar/ontop_focus_i
 theme.titlebar_ontop_button_normal_active	= theme_path.."titlebar/ontop_normal_active.svg"
 theme.titlebar_ontop_button_focus_active	= theme_path.."titlebar/ontop_focus_active.svg"
 
-theme.titlebar_sticky_button_normal_inactive	= theme_path.."titlebar/sticky_normal_inactive.svg"
+theme.titlebar_sticky_button_normal_inactive= theme_path.."titlebar/sticky_normal_inactive.svg"
 theme.titlebar_sticky_button_focus_inactive	= theme_path.."titlebar/sticky_focus_inactive.svg"
 theme.titlebar_sticky_button_normal_active	= theme_path.."titlebar/sticky_normal_active.svg"
 theme.titlebar_sticky_button_focus_active	= theme_path.."titlebar/sticky_focus_active.svg"
@@ -85,7 +85,7 @@ theme.titlebar_sticky_button_focus_active	= theme_path.."titlebar/sticky_focus_a
 theme.titlebar_floating_button_normal_inactive	= theme_path.."titlebar/floating_normal_inactive.svg"
 theme.titlebar_floating_button_focus_inactive	= theme_path.."titlebar/floating_focus_inactive.svg"
 theme.titlebar_floating_button_normal_active	= theme_path.."titlebar/floating_normal_active.svg"
-theme.titlebar_floating_button_focus_active	= theme_path.."titlebar/floating_focus_active.svg"
+theme.titlebar_floating_button_focus_active		= theme_path.."titlebar/floating_focus_active.svg"
 
 theme.titlebar_maximized_button_normal_inactive = theme_path.."titlebar/maximized_normal_inactive.svg"
 theme.titlebar_maximized_button_focus_inactive  = theme_path.."titlebar/maximized_focus_inactive.svg"
@@ -95,17 +95,17 @@ theme.titlebar_maximized_button_focus_active	= theme_path.."titlebar/maximized_f
 theme.wallpaper = theme_path.."wall.jpeg"
 
 -- You can use your own layout titlebar like this:
-theme.layout_fairh	= theme_path.."layouts/fairhw.png"
-theme.layout_fairv	= theme_path.."layouts/fairvw.png"
+theme.layout_fairh		= theme_path.."layouts/fairhw.png"
+theme.layout_fairv		= theme_path.."layouts/fairvw.png"
 theme.layout_floating	= theme_path.."layouts/floatingw.png"
 theme.layout_magnifier	= theme_path.."layouts/magnifierw.png"
-theme.layout_max	= theme_path.."layouts/maxw.png"
+theme.layout_max		= theme_path.."layouts/maxw.png"
 theme.layout_fullscreen = theme_path.."layouts/fullscreenw.png"
 theme.layout_tilebottom = theme_path.."layouts/tilebottomw.png"
 theme.layout_tileleft   = theme_path.."layouts/tileleftw.png"
-theme.layout_tile	= theme_path.."layouts/tilew.png"
+theme.layout_tile		= theme_path.."layouts/tilew.png"
 theme.layout_tiletop	= theme_path.."layouts/tiletopw.png"
-theme.layout_spiral	= theme_path.."layouts/spiralw.png"
+theme.layout_spiral		= theme_path.."layouts/spiralw.png"
 theme.layout_dwindle	= theme_path.."layouts/dwindlew.png"
 theme.layout_cornernw	= theme_path.."layouts/cornernww.png"
 theme.layout_cornerne	= theme_path.."layouts/cornernew.png"

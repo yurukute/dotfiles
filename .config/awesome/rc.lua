@@ -230,7 +230,7 @@ awful.screen.connect_for_each_screen(function(s)
 	    layout = wibox.layout.fixed.horizontal,
 	    spacing = 7,
 	    wibox.widget.systray(),
-	    --network_widget,
+	    --network_widget(),
 	    cpu_widget{
 	       enable_kill_button = true,
 	    },
@@ -541,7 +541,8 @@ awful.rules.rules = {
 	   "pavucontrol",
 	   "gtk-recordMyDesktop",
 	   "feh",
-	   "TeamViewer"
+	   "TeamViewer",
+	   "openrgb"
         },
         class = {
 	   "Arandr",
@@ -554,6 +555,7 @@ awful.rules.rules = {
 	   "Wpa_gui",
 	   "veromix",
 	   "xtightvncviewer",
+	   "nvidia-settings"
 	},
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
