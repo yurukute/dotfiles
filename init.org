@@ -94,24 +94,22 @@
 
 ** LSP
 #+begin_src emacs-lisp
-  (use-package lsp-mode
-    :hook ((c-mode . lsp)
-           (c++-mode . lsp)
-           (java-mode . lsp)
-           (rust-mode . lsp))
-    :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    :commands lsp)
-
-  (use-package lsp-ui
-    :hook (lsp-mode . lsp-ui-mode))
-
-  (use-package lsp-java
-    :custom
-    (lsp-java-format-on-type-enabled nil))
-
-  (use-package lsp-treemacs
-    :custom (treemacs-width 25)
-    :bind ([f8] . treemacs))
+    (use-package lsp-mode
+      :hook ((c-mode . lsp)
+             (c++-mode . lsp)
+             (java-mode . lsp)
+             (rust-mode . lsp))
+      :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+      :commands lsp)
+    (use-package lsp-ui
+      :hook (lsp-mode . lsp-ui-mode))
+    (use-package lsp-java
+      :custom
+      (lsp-java-format-on-type-enabled nil)
+      (lsp-java-workspace-dir "/home/dung/Java/"))
+    (use-package lsp-treemacs
+      :custom (treemacs-width 25)
+      :bind ([f8] . treemacs))
 #+end_src
 
 ** DAP
@@ -144,6 +142,7 @@
     (add-to-list 'company-backends 'company-c-headers)
     (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
     (add-to-list 'company-c-headers-path-user "~/C++/"))
+  (use-package company-lua)
   (use-package yasnippet  
     :config  (yas-global-mode t))
 #+end_src
@@ -155,6 +154,14 @@
     (global-flycheck-mode)
     :custom
     (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+  (use-package flycheck-rust)
+  (use-package flymake-lua)
+#+end_src
+
+** Cargo for Rust
+#+begin_src emacs-lisp
+  (use-package cargo
+    :hook (rust-mode . cargo-minor-mode))
 #+end_src
 
 ** Markdown
