@@ -30,7 +30,9 @@ systemctl enable bluetooth
 systemctl start bluetooth
 ```
 In `/etc/bluetooth/main.conf` file, find `[Policy]` section and add/uncomment 
-```AutoEnable=true```.
+```
+AutoEnable=true
+```
 ## Getting IBus working with Emacs
 > According to FAQ and Fonts, it's likely that `xorg-fonts-misc-otb`<sup>AUR</sup> is the one that should be installed since `xorg-fonts-misc` no longer provides the required fontset.
 
