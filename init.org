@@ -30,7 +30,9 @@
 #+begin_src emacs-lisp
   (cua-mode t)
   (setq c-tab-always-indent nil
-        inhibit-startup-screen t   
+        inhibit-startup-screen t
+        mouse-wheel-progressive-speed nil
+        mouse-wheel-follow-mouse 't
         recentf-auto-cleanup 'never      
         tab-always-indent nil
         make-backup-files nil)
