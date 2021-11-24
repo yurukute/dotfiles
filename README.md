@@ -29,7 +29,7 @@ Make sure bluetooth is running and automatically starts after booting:
 systemctl enable bluetooth
 systemctl start bluetooth
 ```
-In `/etc/bluetooth/main.conf` file, find `[Policy]` section and add/uncomment 
+In `/etc/bluetooth/main.conf` file, find `[Policy]` section and add/uncomment:
 ```
 AutoEnable=true
 ```
