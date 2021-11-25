@@ -28,16 +28,17 @@
 
 ** Custom set variables
 #+begin_src emacs-lisp
-  (cua-mode t)
   (setq c-tab-always-indent nil
+        cua-rectangle-mark-key [C-M-return]
         inhibit-startup-screen t
         mouse-wheel-progressive-speed nil
         mouse-wheel-follow-mouse 't
         recentf-auto-cleanup 'never      
         tab-always-indent nil
         make-backup-files nil)
-  (setq-default tab-width 4
+  (setq-default tab-width 4                
                 c-basic-offset tab-width)
+  (cua-mode t)
 #+end_src
 
 ** User interface
