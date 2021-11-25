@@ -14,7 +14,7 @@ Change permission
 sudo chmod +s /usr/bin/light
 ```
 ### Volume
-Install `alsa-utils pulseaudio-alsa pavucontrol`
+Install `alsa-utils alsa-plugins pulseaudio-alsa pavucontrol`
 
 Start the PulseAudio daemon
 ```
@@ -22,7 +22,7 @@ pulseaudio --start
 ```
 *Optional* Install `sox` to play sound when adjusting volume
 ## Bluetooth headset
-Intstall `pulseaudio-bluetooth bluez bluez-utils`
+Install `pulseaudio-bluetooth bluez bluez-utils`
 
 Make sure bluetooth is running and automatically starts after booting:
 ```
@@ -38,6 +38,8 @@ AutoEnable=true
 
 *From [ArchWiki](https://wiki.archlinux.org/title/Fcitx#Emacs)*
 ## Lightdm
+### Fail to Start Light Display Manager error
+Install `xorg-server`
 ### Dual monitor
 *To prevent mouse and login screen from displaying on separate screens*
 
