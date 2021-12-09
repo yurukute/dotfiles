@@ -45,9 +45,9 @@ Install `xorg-server`
 
 Install `xorg-xrandr`
 
-Add the following line to `/etc/lightdm/lightdm.conf`
+Edit the following line in `/etc/lightdm/lightdm.conf`
 ```
-display-setup-script=/path/to/.screenlayout/Noob.sh
+display-setup-script=xrandr --output eDP-1 --primary --output HDMI-1 --off
 ```
 ### Enable numlock
 Install `numlockx`
