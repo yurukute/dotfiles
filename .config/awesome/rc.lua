@@ -3,11 +3,11 @@
 pcall(require, "luarocks.loader")
 
 -- Standard awesome library
-local gears		= require("gears")
-local awful		= require("awful")
+local gears 		= require("gears")
+local awful 		= require("awful")
 require("awful.autofocus")
 -- Widget and layout library
-local wibox		= require("wibox")
+local wibox 		= require("wibox")
 local cpu_widget	= require("widgets.cpu-widget.cpu-widget")
 local volume_widget	= require('widgets.volume-widget.volume')
 local brightness_widget = require("widgets.brightness-widget.brightness")
@@ -56,8 +56,8 @@ naughty.config.defaults.margin = 10
 terminal	= "kitty"
 editor		= os.getenv("EDITOR") or "emacs"
 editor_cmd	= terminal .. " -e " .. editor
-browser		= "microsoft-edge-dev"
-file_manager	= "thunar"
+browser 	= "microsoft-edge-dev"
+file_mng	= "thunar"
 launcher	= "~/.config/rofi/launcher.sh"
 picture_dir	= "~/Pictures/"
 -- Default modkey.
@@ -319,7 +319,7 @@ globalkeys = gears.table.join(
       {description = "open default browser", group = "launcher"}),
       awful.key({ "Control", "Shift"	}, "n", function () awful.spawn(browser.." -inprivate") end,
       {description = "open default browser (incognito)", group = "launcher"}),
-   awful.key({ modkey					}, "e",	function () awful.spawn(file_manager)			end,
+   awful.key({ modkey					}, "e",	function () awful.spawn(file_mng)			end,
       {description = "open file manager", group = "launcher"}),	
    -- Standard program
    awful.key({ modkey,					}, "Return",	function () awful.spawn(terminal)				end,
@@ -543,8 +543,7 @@ awful.rules.rules = {
 	   "pavucontrol",
 	   "gtk-recordMyDesktop",
 	   "feh",
-	   "TeamViewer",
-	   "openrgb"
+	   "TeamViewer"
         },
         class = {
 	   "Arandr",
@@ -557,7 +556,8 @@ awful.rules.rules = {
 	   "Wpa_gui",
 	   "veromix",
 	   "xtightvncviewer",
-	   "Nvidia-settings"
+	   "Nvidia-settings",
+	   "processing-app-Base"
 	},
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
