@@ -62,7 +62,6 @@
   (global-set-key [mouse-8] 'previous-buffer)
   (global-set-key [mouse-9] 'next-buffer)
   (global-set-key (kbd "C-x k") 'kill-current-buffer)
-  (global-set-key (kbd "C-k") 'vterm)
 #+end_src
 
 * Packages
@@ -95,27 +94,26 @@
   (use-package helm-xref)
 #+end_src
 
-** LSP
+** LSP - Language Server Protocol
 #+begin_src emacs-lisp
-    (use-package lsp-mode
-      :hook ((c-mode . lsp)
-             (c++-mode . lsp)
-             (java-mode . lsp)
-             (rust-mode . lsp))
-      :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-      :commands lsp)
-    (use-package lsp-ui
-      :hook (lsp-mode . lsp-ui-mode))
-    (use-package lsp-java
-      :custom
-      (lsp-java-format-on-type-enabled nil)
-      (lsp-java-workspace-dir "/home/dung/Java/"))
-    (use-package lsp-treemacs
-      :custom (treemacs-width 25)
-      :bind ([f8] . treemacs))
+  (use-package lsp-mode
+    :hook ((c++-mode . lsp)
+           (java-mode . lsp)
+           (rust-mode . lsp))
+    :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+    (add-hook 'c-mode-hook #'lsp-mode))
+  (use-package lsp-ui
+    :hook (lsp-mode . lsp-ui-mode))
+  (use-package lsp-java
+    :custom
+    (lsp-java-format-on-type-enabled nil)
+    (lsp-java-workspace-dir "/home/dung/Java/"))
+  (use-package lsp-treemacs
+    :custom (treemacs-width 25)
+    :bind ([f8] . treemacs))
 #+end_src
 
-** DAP
+** DAP - Debug Adapter Protocol
 #+begin_src emacs-lisp
   (use-package dap-mode
     :custom
@@ -136,7 +134,7 @@
     (dap-cpptools-setup)) 
 #+end_src
 
-** Autocomplete
+** Company - Text completion
 #+begin_src emacs-lisp
   (use-package company
     :config (global-company-mode t))
@@ -146,19 +144,23 @@
     (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
     (add-to-list 'company-c-headers-path-user "~/C++/"))
   (use-package company-lua)
+  (use-package company-arduino)
   (use-package yasnippet  
     :config  (yas-global-mode t))
 #+end_src
 
-** Realtime error checking
+** Flycheck - Realtime error checking
 #+begin_src emacs-lisp
   (use-package flycheck
     :config
     (global-flycheck-mode)
+    (require 'flycheck-arduino)
+    (add-hook 'arduino-mode-hook #'flycheck-arduino-setup)
     :custom
     (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
   (use-package flycheck-rust)
   (use-package flymake-lua)
+
 #+end_src
 
 ** Cargo for Rust
@@ -186,13 +188,19 @@
     :config (openwith-mode t))
 #+end_src
 
+** Vterm
+#+begin_src emacs-lisp
+  (use-package vterm
+    :bind (("C-k" . vterm) 
+           ("C-y" . vterm-yank)))
+#+end_src
+
 ** Control popup window
 #+begin_src emacs-lisp
   (use-package popwin
-    :config
++    :config
     (push '("*helm*" :regexp t :height 20) popwin:special-display-config)
-    (push '("*vterm*" :stick t) popwin:special-display-config)
-    (push '(vterm :stick t) popwin:special-display-config)
+    (push '("*vterm*") popwin:special-display-config)
     (popwin-mode 1))
 #+end_src
 
@@ -215,8 +223,7 @@
         org-format-latex-options
         '(:foreground default :background default :scale 1.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
         org-hide-emphasis-markers t
-        org-hide-leading-stars t
-        org-pretty-entities t        
+        org-hide-leading-stars t       
         org-startup-indented t
         org-startup-with-latex-preview t
         org-src-tab-acts-natively t
@@ -225,8 +232,8 @@
                             (sequence "⚑ WAITING(w)" "|")
                             (sequence "|" "✘ CANCELED(c)")))
   (require 'org-tempo)    
-  (setq-default prettify-symbols-alist '(("#+begin_src" . "†")
-                                         ("#+end_src" . "†")
+  (setq-default prettify-symbols-alist '(("#+begin_src" . "```")
+                                         ("#+end_src" . "```")
                                          (">=" . "≥")
                                          ("<=" . "≤")
                                          ("=>" . "⇨")))
@@ -275,18 +282,3 @@
   (use-package org-super-agenda
     :hook (org-mode . org-super-agenda-mode))
 #+end_src
-
-** Set faces
-#+begin_src emacs-lisp
-  (custom-set-faces
-   '(default ((t (:family "Consolas" :height 110))))
-   '(fixed-pitch ((t (:family "Consolas"))))
-   '(org-block ((t (:inherit fixed-pitch))))
-   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-   '(org-property-value ((t (:inherit fixed-pitch))) t)
-   '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-table ((t (:inherit fixed-pitch :foreground "#82d7ff"))))
-   '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
-#+end_src
-
-  
