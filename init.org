@@ -198,7 +198,7 @@
 ** Control popup window
 #+begin_src emacs-lisp
   (use-package popwin
-+    :config
+    :config
     (push '("*helm*" :regexp t :height 20) popwin:special-display-config)
     (push '("*vterm*") popwin:special-display-config)
     (popwin-mode 1))
