@@ -97,11 +97,11 @@
 ** LSP - Language Server Protocol
 #+begin_src emacs-lisp
   (use-package lsp-mode
-    :hook ((c++-mode . lsp)
+    :hook ((c-mode . (lambda() (unless (string= major-mode "arduino-mode") (lsp))))
+           (c++-mode . lsp)
            (java-mode . lsp)
            (rust-mode . lsp))
-    :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    (add-hook 'c-mode-hook #'lsp-mode))
+    :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
   (use-package lsp-ui
     :hook (lsp-mode . lsp-ui-mode))
   (use-package lsp-java
@@ -155,12 +155,10 @@
     :config
     (global-flycheck-mode)
     (require 'flycheck-arduino)
-    (add-hook 'arduino-mode-hook #'flycheck-arduino-setup)
-    :custom
-    (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+    :hook   (arduino-mode . flycheck-arduino-setup)
+    :custom (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
   (use-package flycheck-rust)
   (use-package flymake-lua)
-
 #+end_src
 
 ** Cargo for Rust
