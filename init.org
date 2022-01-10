@@ -31,7 +31,7 @@
   (setq c-tab-always-indent nil
         cua-rectangle-mark-key [C-M-return]	  
         inhibit-startup-screen t
-        initial-major-mode 'fundamental-mode
+        initial-major-mode 'markdown-mode
         mouse-wheel-progressive-speed nil
         mouse-wheel-follow-mouse 't	      
         recentf-auto-cleanup 'never
@@ -89,8 +89,7 @@
   (use-package helm
     :bind (([remap find-file] . helm-find-files)
            ([remap execute-extended-command] . helm-M-x)
-           ([remap switch-to-buffer] . helm-mini)
-           ("C-c C-f" . helm-recentf))
+           ([remap switch-to-buffer] . helm-mini))
     :custom (helm-ff-file-name-history-use-recentf t)
     :config (helm-mode))
   (use-package helm-xref)
@@ -254,7 +253,7 @@
                              (prettify-symbols-mode)))
 #+end_src
 
-** Bulleted lists
+** Unordered lists
 #+begin_src emacs-lisp
   (font-lock-add-keywords 'org-mode
                           '(("^ *\\([-]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
@@ -273,18 +272,4 @@
   (use-package org-fancy-priorities
     :hook (org-mode . org-fancy-priorities-mode)
     :custom (org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
-#+end_src
-
-** Pretty-tags
-#+begin_src emacs-lisp
-  (use-package org-pretty-tags
-    :config
-    (add-to-list 'org-pretty-tags-surrogate-strings '("hw" . "✍"))
-    (org-pretty-tags-global-mode))
-#+end_src
-
-** Org-super-agenda
-#+begin_src emacs-lisp
-  (use-package org-super-agenda
-    :hook (org-mode . org-super-agenda-mode))
 #+end_src
