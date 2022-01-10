@@ -247,7 +247,7 @@
 ** Hook
 #+begin_src emacs-lisp
   (add-hook 'org-mode-hook (lambda()
-                             (electric-indent-mode -1)
+                             (set (make-local-variable 'electric-indent-mode) nil)
                              (visual-line-mode)
                              (variable-pitch-mode)
                              (prettify-symbols-mode)))
