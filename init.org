@@ -29,11 +29,11 @@
 ** Custom set variables
 #+begin_src emacs-lisp
   (setq c-tab-always-indent nil
-        cua-rectangle-mark-key [C-M-return]	  
+        cua-rectangle-mark-key [C-M-return]   
         inhibit-startup-screen t
         initial-major-mode 'markdown-mode
         mouse-wheel-progressive-speed nil
-        mouse-wheel-follow-mouse 't	      
+        mouse-wheel-follow-mouse 't       
         recentf-auto-cleanup 'never
         tab-always-indent nil
         make-backup-files nil)
@@ -222,7 +222,7 @@
 
 ** Custom
 #+begin_src emacs-lisp
-  (setq org-agenda-files '("~")	    
+  (setq org-agenda-files '("~")     
         org-ellipsis " ⤵"
         org-fontify-done-headline t
         org-format-latex-options
