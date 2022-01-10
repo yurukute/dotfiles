@@ -29,7 +29,7 @@
 ** Custom set variables
 #+begin_src emacs-lisp
   (setq c-tab-always-indent nil
-        cua-rectangle-mark-key [C-M-return]
+        cua-rectangle-mark-key [C-M-return]	  
         inhibit-startup-screen t
         initial-major-mode 'fundamental-mode
         mouse-wheel-progressive-speed nil
@@ -198,8 +198,7 @@
 ** Vterm
 #+begin_src emacs-lisp
   (use-package vterm
-    :bind (("C-k" . vterm) 
-           ("C-y" . vterm-yank)))
+    :bind (("C-k" . vterm)))
 #+end_src
 
 ** Control popup window
