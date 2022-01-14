@@ -16,6 +16,7 @@
 
   (setq use-package-always-ensure t)
 #+end_src
+
 * User's setting
 ** Coding system
 #+begin_src emacs-lisp
@@ -31,7 +32,8 @@
   (setq c-tab-always-indent nil
         cua-rectangle-mark-key [C-M-return]   
         inhibit-startup-screen t
-        initial-major-mode 'markdown-mode
+        initial-major-mode 'org-mode
+        initial-scratch-message (shell-command-to-string "cat ~/Agenda.org")
         mouse-wheel-progressive-speed nil
         mouse-wheel-follow-mouse 't       
         recentf-auto-cleanup 'never
@@ -197,7 +199,8 @@
 ** Vterm
 #+begin_src emacs-lisp
   (use-package vterm
-    :bind (("C-k" . vterm)))
+    :bind (("C-k" . vterm))
+    :init (add-hook 'vterm-exit-functions (lambda() kill-buffer current-buffer)))
 #+end_src
 
 ** Control popup window
@@ -206,6 +209,7 @@
     :config
     (push '("*helm*" :regexp t :height 20) popwin:special-display-config)
     (push '("*vterm*") popwin:special-display-config)
+    (push '(vterm-mode) popwin:special-display-config)
     (popwin-mode 1))
 #+end_src
 

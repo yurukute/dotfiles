@@ -74,11 +74,11 @@ awful.layout.layouts = {
   awful.layout.suit.spiral.dwindle,
   awful.layout.suit.max,
   -- awful.layout.suit.max.fullscreen,
-  awful.layout.suit.magnifier,
+  -- awful.layout.suit.magnifier,
   -- awful.layout.suit.corner.nw,
   awful.layout.suit.corner.ne,
   -- awful.layout.suit.corner.sw,
-  awful.layout.suit.corner.se,
+  -- awful.layout.suit.corner.se,
   -- awful.layout.suit.floating,
 }
 -- }}}
@@ -587,7 +587,10 @@ awful.rules.rules = {
 -- {{{ Signals
 -- Spawn client at center and enable titlebar while floating
 client.connect_signal("property::floating", function(c)
-  if c.floating and not c.request_no_titlebar and c.type == "normal" then
+  if c.floating
+    and not c.request_no_titlebar
+    and not c.maximized
+    and c.type == "normal" then
     awful.titlebar.show(c)
   else
     awful.titlebar.hide(c)
