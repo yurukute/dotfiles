@@ -29,15 +29,13 @@
 
 ** Custom set variables
 #+begin_src emacs-lisp
-  (setq c-tab-always-indent nil
-        cua-rectangle-mark-key [C-M-return]   
+  (setq cua-rectangle-mark-key [C-M-return]   
         inhibit-startup-screen t
         initial-major-mode 'org-mode
         initial-scratch-message (shell-command-to-string "cat ~/Agenda.org")
         mouse-wheel-progressive-speed nil
         mouse-wheel-follow-mouse 't       
         recentf-auto-cleanup 'never
-        tab-always-indent nil
         make-backup-files nil)
   (setq-default tab-width 4
                 c-basic-offset tab-width
@@ -141,12 +139,17 @@
 ** Company - Text completion
 #+begin_src emacs-lisp
   (use-package company
-    :config (global-company-mode t))
+    :config (global-company-mode t)
+    :bind ("C-." . company-files))
   (use-package company-c-headers
     :config
     (add-to-list 'company-backends 'company-c-headers)
     (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
     (add-to-list 'company-c-headers-path-user "~/C++/"))
+  (use-package company-web
+    :hook (web-mode . (lambda()
+                        (set (make-local-variable 'company-backends) 
+                             '(company-css company-web-html company-yasnippet company-files)))))
   (use-package company-lua)
   (use-package company-arduino)
   (use-package yasnippet  
@@ -173,8 +176,24 @@
 
 ** Cargo for Rust
 #+begin_src emacs-lisp
+  (use-package rust-mode)
   (use-package cargo
     :hook (rust-mode . cargo-minor-mode))
+#+end_src
+
+** Web development
+#+begin_src emacs-lisp
+  (use-package web-mode    
+    :config
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+    :custom
+    (web-mode-auto-close-style 2)
+    (web-mode-code-indent-offset 2)
+    (web-mode-css-indent-offset 2)
+    (web-mode-enable-auto-quoting nil)
+    (web-mode-markup-indent-offset 2))
 #+end_src
 
 ** Markdown
@@ -183,17 +202,6 @@
     :custom
     (markdown-enable-math t)
     (markdown-fontify-code-blocks-natively t))
-#+end_src
-
-** Open file in external program
-#+begin_src emacs-lisp
-  (use-package openwith
-    :custom
-    (openwith-associations '(("\\.pdf\\'" "microsoft-edge-dev" (file))
-                             ("\\.mp3\\'" "sox" (file))
-                             ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mpv" (file))
-                             ("\\.\\(?:jp?g\\|png\\)\\'" "feh" (file))))
-    :config (openwith-mode t))
 #+end_src
 
 ** Vterm
@@ -209,7 +217,6 @@
     :config
     (push '("*helm*" :regexp t :height 20) popwin:special-display-config)
     (push '("*vterm*") popwin:special-display-config)
-    (push '(vterm-mode) popwin:special-display-config)
     (popwin-mode 1))
 #+end_src
 
