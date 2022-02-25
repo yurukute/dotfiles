@@ -56,7 +56,7 @@
   (global-visual-line-mode t)
   (push '("Consolas" "Monospace") face-font-family-alternatives)
   (push '("Segoe UI Emoji" "Noto Color Emoji") face-font-family-alternatives)
-  (set-fontset-font t 'symbol "Segoe UI Emoji")
+  (set-fontset-font t 'symbol "Noto Color Emoji")
   (set-frame-parameter (selected-frame) 'alpha ' 85)
 #+end_src
 
@@ -146,10 +146,7 @@
     (add-to-list 'company-backends 'company-c-headers)
     (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
     (add-to-list 'company-c-headers-path-user "~/C++/"))
-  (use-package company-web
-    :hook (web-mode . (lambda()
-                        (set (make-local-variable 'company-backends) 
-                             '(company-css company-web-html company-yasnippet company-files)))))
+  (use-package company-web)    
   (use-package company-lua)
   (use-package company-arduino)
   (use-package yasnippet  
@@ -183,7 +180,12 @@
 
 ** Web development
 #+begin_src emacs-lisp
-  (use-package web-mode    
+  (use-package web-mode
+    :hook (web-mode . (lambda()
+                        (set (make-local-variable 'company-backends) 
+                             '(company-css company-web-html company-yasnippet company-files))
+                        (httpd-start)
+                        (impatient-mode)))
     :config
     (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
@@ -193,7 +195,14 @@
     (web-mode-code-indent-offset 2)
     (web-mode-css-indent-offset 2)
     (web-mode-enable-auto-quoting nil)
+    (web-mode-enable-current-element-highlight t)
+    (web-mode-enable-element-content-fontification t)
+    (web-mode-enable-html-entities-fontification t)
     (web-mode-markup-indent-offset 2))
+  (use-package impatient-mode
+    :hook (web-mode . (lambda()
+                        (httpd-start)
+                        (impatient-mode))))
 #+end_src
 
 ** Markdown
@@ -207,8 +216,8 @@
 ** Vterm
 #+begin_src emacs-lisp
   (use-package vterm
-    :bind (("C-k" . vterm))
-    :init (add-hook 'vterm-exit-functions (lambda() kill-buffer current-buffer)))
+    :bind (("C-k" . vterm)
+           ("C-y" . vterm-yank)))
 #+end_src
 
 ** Control popup window
@@ -216,7 +225,9 @@
   (use-package popwin
     :config
     (push '("*helm*" :regexp t :height 20) popwin:special-display-config)
-    (push '("*vterm*") popwin:special-display-config)
+    (push '("*vterm*" :stick t) popwin:special-display-config)
+    (push '("*arduino-upload*" :regexp t :stick t) popwin:special-display-config)
+    (push '("*arduino-verify*" :regexp t) popwin:special-display-config)
     (popwin-mode 1))
 #+end_src
 
