@@ -592,7 +592,7 @@ client.connect_signal("property::floating", function(c)
   else
     awful.titlebar.hide(c)
   end
-  if not c.type == "dialog" then
+  if c.type == "normal" and not c.type == "dialog" then
     awful.placement.centered(c)
   end  
 end)
