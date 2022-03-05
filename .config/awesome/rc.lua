@@ -566,10 +566,10 @@ awful.rules.rules = {
         "ConfigManager",  -- Thunderbird's about:config.
         "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
       }
-  }, properties = { floating = true, ontop = true }},
+  }, properties = { floating = true, ontop = true, placement = awful.placement.centered }},
 
   -- Add titlebars to normal clients and dialogs
-  { rule_any = {type = { "normal" }},
+  { rule_any = {type = { "normal", "splash" }},
     properties = { titlebars_enabled = false }
   },
   
@@ -582,19 +582,13 @@ awful.rules.rules = {
 -- }}}
 
 -- {{{ Signals
--- Spawn client at center and enable titlebar while floating
-client.connect_signal("property::floating", function(c)
-  if c.floating
-    and not c.request_no_titlebar
-    and not c.maximized
-    and c.type == "normal" then
+-- Only show titlebars while floating
+client.connect_signal("property::floating", function(c)  
+  if c.floating and not c.requests_no_titlebar then
     awful.titlebar.show(c)
   else
     awful.titlebar.hide(c)
   end
-  if c.type == "normal" and not c.type == "dialog" then
-    awful.placement.centered(c)
-  end  
 end)
 
 -- Jump to urgent tag automatically
