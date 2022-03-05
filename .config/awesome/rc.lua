@@ -357,18 +357,18 @@ globalkeys = gears.table.join(
   -- Prompt
   awful.key({ modkey }, "r", function () awful.screen.focused().mypromptbox:run() end,
     {description = "run prompt", group = "launcher"}),
-  --[[
-    awful.key({ modkey }, "x",
+
+  awful.key({ modkey }, "x",
     function ()
-    awful.prompt.run {
-    prompt       = "Run Lua code: ",
-    textbox      = awful.screen.focused().mypromptbox.widget,
-    exe_callback = awful.util.eval,
-    history_path = awful.util.get_cache_dir() .. "/history_eval"
-    }
+      awful.prompt.run {
+        prompt       = "Run Lua code: ",
+        textbox      = awful.screen.focused().mypromptbox.widget,
+        exe_callback = awful.util.eval,
+        history_path = awful.util.get_cache_dir() .. "/history_eval"
+      }
     end,
     {description = "lua execute prompt", group = "awesome"}),
-  --]]
+  
   -- Show/hide wibox
   awful.key({ modkey }, "b", function ()
       for s in screen do
@@ -577,10 +577,7 @@ awful.rules.rules = {
   { rule = { instance = "discord" },
     properties = { screen = 1, tag = awful.screen.focused().tags[2],
                  floating = true }
-  },
-  { rule = { class = "PokeMMO" },
-    properties = { screen = 1, tag = awful.screen.focused().tags[8] }
-  },
+  }
 }
 -- }}}
 
@@ -595,7 +592,9 @@ client.connect_signal("property::floating", function(c)
   else
     awful.titlebar.hide(c)
   end
-  awful.placement.centered(c)
+  if not c.type == "dialog" then
+    awful.placement.centered(c)
+  end  
 end)
 
 -- Jump to urgent tag automatically
