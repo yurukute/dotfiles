@@ -539,7 +539,7 @@ awful.rules.rules = {
         "pavucontrol",
         "gtk-recordMyDesktop",
         "feh",
-        "TeamViewer"
+        "TeamViewer",
       },
       class = {
         "Arandr",
@@ -565,11 +565,12 @@ awful.rules.rules = {
         "AlarmWindow",  -- Thunderbird's calendar.
         "ConfigManager",  -- Thunderbird's about:config.
         "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
+        "GtkFileChooserDialog"
       }
-  }, properties = { floating = true, ontop = true, placement = awful.placement.centered }},
+  }, properties = { floating = true, ontop = true }},
 
   -- Add titlebars to normal clients and dialogs
-  { rule_any = {type = { "normal", "splash" }},
+  { rule_any = { type = { "normal" } },
     properties = { titlebars_enabled = false }
   },
   
@@ -582,9 +583,10 @@ awful.rules.rules = {
 -- }}}
 
 -- {{{ Signals
--- Only show titlebars while floating
-client.connect_signal("property::floating", function(c)  
-  if c.floating and not c.requests_no_titlebar then
+-- Spawn client at center and enable titlebar while floating
+client.connect_signal("property::floating", function(c)
+  if c.floating and not c.request_no_titlebar and (c.type == "normal" or c.modal) then    
+    awful.placement.centered(c)
     awful.titlebar.show(c)
   else
     awful.titlebar.hide(c)
