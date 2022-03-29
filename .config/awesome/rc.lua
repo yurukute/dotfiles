@@ -108,7 +108,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 mytextclock = wibox.widget.textclock('%a %b %d, %I:%M %p')
 local cw = calendar_widget({
     placement = "top_right",
-    theme   = 'nord'
+    theme = 'nord'
 })
 mytextclock:connect_signal("button::press",
                            function(_, _, _, button)
@@ -585,11 +585,20 @@ awful.rules.rules = {
 -- {{{ Signals
 -- Spawn client at center and enable titlebar while floating
 client.connect_signal("property::floating", function(c)
-  if c.floating and not c.request_no_titlebar and (c.type == "normal" or c.modal) then    
+  if c.floating and not c.request_no_titlebar and (c.type == "normal" or c.role == "GtkFileChooserDialog") then    
     awful.placement.centered(c)
     awful.titlebar.show(c)
   else
     awful.titlebar.hide(c)
+  end
+end)
+
+-- suspend notifications while in fullscreen
+client.connect_signal('property::fullscreen', function(c)
+  if c.fullscreen then
+    naughty.suspend()
+  else    
+    naughty.resume()
   end
 end)
 

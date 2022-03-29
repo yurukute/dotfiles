@@ -32,7 +32,7 @@
   (setq cua-rectangle-mark-key [C-M-return]   
         inhibit-startup-screen t
         initial-major-mode 'org-mode
-        initial-scratch-message (shell-command-to-string "cat ~/Agenda.org")
+        initial-scratch-message (shell-command-to-string "cat ~/tkb.org")
         mouse-wheel-progressive-speed nil
         mouse-wheel-follow-mouse 't       
         recentf-auto-cleanup 'never
@@ -140,7 +140,7 @@
 #+begin_src emacs-lisp
   (use-package company
     :config (global-company-mode t)
-    :bind ("C-." . company-files))
+    :bind ("C-'" . company-files))
   (use-package company-c-headers
     :config
     (add-to-list 'company-backends 'company-c-headers)
@@ -159,7 +159,7 @@
     :config
     (global-flycheck-mode)
     (require 'flycheck-arduino)
-    :hook   (arduino-mode . flycheck-arduino-setup)
+    :hook (arduino-mode . flycheck-arduino-setup)
     :custom (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
   (use-package flycheck-rust)
   (use-package flymake-lua)
@@ -168,7 +168,8 @@
 ** Lua
 #+begin_src emacs-lisp
   (use-package lua-mode
-    :custom (lua-indent-level 2))
+    :custom (lua-indent-level 2)
+    :hook (lua-mode . (lambda() (set (make-local-variable 'electric-indent-mode) nil))))
 #+end_src
 
 ** Cargo for Rust
@@ -180,16 +181,16 @@
 
 ** Web development
 #+begin_src emacs-lisp
+  (use-package impatient-mode
+    :hook (impatient-mode . httpd-start))
+
   (use-package web-mode
     :hook (web-mode . (lambda()
                         (set (make-local-variable 'company-backends) 
                              '(company-css company-web-html company-yasnippet company-files))
-                        (httpd-start)
                         (impatient-mode)))
-    :config
-    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+    :bind ("C-;" . company-css)    
+    :mode ("\\.html?\\'" "\\.css?\\'" "\\.js\\'")
     :custom
     (web-mode-auto-close-style 2)
     (web-mode-code-indent-offset 2)
@@ -199,10 +200,6 @@
     (web-mode-enable-element-content-fontification t)
     (web-mode-enable-html-entities-fontification t)
     (web-mode-markup-indent-offset 2))
-  (use-package impatient-mode
-    :hook (web-mode . (lambda()
-                        (httpd-start)
-                        (impatient-mode))))
 #+end_src
 
 ** Markdown
