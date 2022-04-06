@@ -13,6 +13,7 @@ local volume_widget = require('widgets.volume-widget.volume')
 local brightness_widget = require("widgets.brightness-widget.brightness")
 local calendar_widget   = require("widgets.calendar-widget.calendar")
 local network_widget    = require("widgets.network-widget.network")
+local playerctl_widget  = require("widgets.playerctl-widget.playerctl")
 -- Theme handling library
 local beautiful     = require("beautiful")
 -- Notification library
@@ -221,7 +222,8 @@ awful.screen.connect_for_each_screen(function(s)
       layout = wibox.layout.fixed.horizontal,
       mylauncher,
       s.mytaglist,
-      s.mypromptbox,
+      playerctl_widget,
+      s.mypromptbox,      
     },
     nil,
     --s.mytasklist,
@@ -242,7 +244,7 @@ awful.screen.connect_for_each_screen(function(s)
         size = 20,
         tooltip = true,
       },
-      mytextclock,
+      mytextclock,      
       --s.mylayoutbox,
     },
   }   
