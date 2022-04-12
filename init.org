@@ -27,14 +27,15 @@
   (setq default-buffer-file-coding-system 'utf-8)
 #+end_src
 
-** Custom set variables
+** User settings
 #+begin_src emacs-lisp
   (setq cua-rectangle-mark-key [C-M-return]   
         inhibit-startup-screen t
         initial-major-mode 'org-mode
         initial-scratch-message (shell-command-to-string "cat ~/tkb.org")
-        mouse-wheel-progressive-speed nil
-        mouse-wheel-follow-mouse 't       
+        mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control)))
+        mouse-wheel-progressive-speed t
+        mouse-wheel-follow-mouse 't
         recentf-auto-cleanup 'never
         make-backup-files nil)
   (setq-default tab-width 4
@@ -42,6 +43,7 @@
                 indent-tabs-mode nil)
   (cua-mode t)
   (recentf-mode t)
+  (set-face-attribute 'fixed-pitch nil :family "Droid Sans Mono")
 #+end_src
 
 ** User interface
@@ -54,8 +56,8 @@
 
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (global-visual-line-mode t)
-  (push '("Consolas" "Monospace") face-font-family-alternatives)
-  (push '("Segoe UI Emoji" "Noto Color Emoji") face-font-family-alternatives)
+  (push '("Monospace" "Consolas") face-font-family-alternatives)
+  (push '("Noto Color Emoji" "Segoe UI Emoji") face-font-family-alternatives)
   (set-fontset-font t 'symbol "Noto Color Emoji")
   (set-frame-parameter (selected-frame) 'alpha ' 85)
 #+end_src
@@ -293,4 +295,15 @@
   (use-package org-fancy-priorities
     :hook (org-mode . org-fancy-priorities-mode)
     :custom (org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
+#+end_src
+
+** Org faces 
+#+begin_src emacs-lisp  
+  (dolist (face '(org-block
+                  org-document-info-keyword
+                  org-property-value
+                  org-special-keyword
+                  org-verbatim))
+    (set-face-attribute face nil :inherit 'fixed-pitch))
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch :foreground "#82D7FF")
 #+end_src
