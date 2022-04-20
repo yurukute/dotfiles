@@ -326,11 +326,14 @@ globalkeys = gears.table.join(
     {description = "reload awesome", group = "awesome"}),
   awful.key({ modkey, "Shift"           }, "q", awesome.quit,
     {description = "quit awesome", group = "awesome"}),
-
-  awful.key({ modkey,                   }, "l",      function () awful.tag.incmwfact( 0.05)          end,
+  awful.key({ modkey,                   }, "h",      function () awful.tag.incmwfact( 0.05)          end,
     {description = "increase master width factor", group = "layout"}),
-  awful.key({ modkey,                   }, "h",      function () awful.tag.incmwfact(-0.05)          end,
-    {description = "decrease master width factor", group = "layout"}),
+  awful.key({ modkey,                   }, "l",      function () awful.tag.incmwfact(-0.05)          end,
+    {description = "decrease master width factor", group = "layout"}),  
+  awful.key({ modkey, altkey            }, "h",      function () awful.client.incwfact(0.05)         end,
+    {description = "increase client height factor", group = "layout"}),
+  awful.key({ modkey, altkey            }, "l",      function () awful.client.incwfact(-0.05)        end,
+    {description = "decrease client height factor", group = "layout"}),
   awful.key({ modkey, "Shift"           }, "h",      function () awful.tag.incnmaster( 1, nil, true) end,
     {description = "increase the number of master clients", group = "layout"}),
   awful.key({ modkey, "Shift"           }, "l",      function () awful.tag.incnmaster(-1, nil, true) end,
@@ -534,7 +537,7 @@ awful.rules.rules = {
   -- Floating clients.
   { rule_any = {
       instance = {
-        terminal,
+        terminal,       
         "DTA",  -- Firefox addon DownThemAll.
         "copyq",  -- Includes session name in class.
         "pinentry",
@@ -569,7 +572,7 @@ awful.rules.rules = {
         "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         "GtkFileChooserDialog"
       }
-  }, properties = { floating = true, ontop = true }},
+  }, properties = { floating = true, ontop = true }}, 
 
   -- Add titlebars to normal clients and dialogs
   { rule_any = { type = { "normal" } },
