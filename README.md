@@ -58,7 +58,7 @@ greeter-setup-script=/usr/bin/numlockx on
 ```
 ## Picom
 Install `picom-jonaburg-git` from AUR
-## Thunar 
+## File manager
 ### Automount 
 For removable devices: Install `gvfs`
 
@@ -68,9 +68,10 @@ For ntfs partition:
 ```
 /dev/NTFS-part		/mnt/windows	ntfs-3g		defaults	0 0
 ```
-### File thumbnails
+### Thumbnailers
 Install `tumbler`
-### Touchpad
+Install `ffmpegthumbnailer` for video thumbnailing
+## Touchpad
 Install `xorg-xinput`
 
 Add the following line to `.xprofile`
