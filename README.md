@@ -79,3 +79,9 @@ Add the following line to `.xprofile`
 xinput set-prop 'Synaptics TM3096-001' 'libinput Tapping Enabled' 1
 xinput set-prop 'Synaptics TM3096-001' 'libinput Natural Scrolling Enabled' 1
 ```
+## Grub theme
+- Edit the following line in `/etc/default/grub`
+```
+GRUB_THEME="/path/to/theme.txt"
+```
+- Install and run `update-grub`
