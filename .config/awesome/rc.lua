@@ -14,6 +14,7 @@ local brightness_widget = require("widgets.brightness-widget.brightness")
 local calendar_widget   = require("widgets.calendar-widget.calendar")
 local network_widget    = require("widgets.network-widget.network")
 local playerctl_widget  = require("widgets.playerctl-widget.playerctl")
+local battery_widget  = require("widgets.battery-widget.battery")
 -- Theme handling library
 local beautiful     = require("beautiful")
 -- Notification library
@@ -245,7 +246,8 @@ awful.screen.connect_for_each_screen(function(s)
         tooltip = true,
       },
       mytextclock,      
-      --s.mylayoutbox,
+      battery_widget{
+      }
     },
   }   
   s.mybottomwibox = awful.wibar({ position = "bottom", screen = s })
