@@ -34,9 +34,8 @@ In `/etc/bluetooth/main.conf` file, find `[Policy]` section and add/uncomment:
 AutoEnable=true
 ```
 ## Getting IBus working with Emacs
-> According to FAQ and Fonts, it's likely that `xorg-fonts-misc-otb`<sup>AUR</sup> is the one that should be installed since `xorg-fonts-misc` no longer provides the required fontset.
+Install `xorg-font-util`
 
-*From [ArchWiki](https://wiki.archlinux.org/title/Fcitx#Emacs)*
 ## Lightdm
 ### Fail to Start Light Display Manager error
 Install `xorg-server`
