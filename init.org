@@ -46,7 +46,6 @@
                 indent-tabs-mode nil)
   (cua-mode t)
   (recentf-mode t)
-  (set-face-attribute 'fixed-pitch nil :family "Droid Sans Mono")
 #+end_src
 
 ** User interface
@@ -59,8 +58,10 @@
 
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (global-visual-line-mode t)
-  (push '("Monospace" "Consolas") face-font-family-alternatives)
+  (push '("Droid Sans Mono" "Consolas") face-font-family-alternatives)
+  (push '("Monospace" "Consolas") face-font-family-alternatives)  
   (push '("Noto Color Emoji" "Segoe UI Emoji") face-font-family-alternatives)
+  (internal-set-alternative-font-family-alist face-font-family-alternatives)
   (set-fontset-font t 'symbol "Noto Color Emoji")
   (set-frame-parameter (selected-frame) 'alpha ' 85)
 #+end_src
@@ -327,5 +328,5 @@
                   org-special-keyword
                   org-verbatim))
     (set-face-attribute face nil :inherit 'fixed-pitch))
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch :foreground "#82D7FF")
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch :foreground "#82D7FF" :family "Droid Sans Mono")
 #+end_src
