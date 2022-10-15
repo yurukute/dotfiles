@@ -230,6 +230,9 @@
   (use-package emmet-mode
     :bind ("C-j" . emmet-expand-yas)
     :hook (web-mode . emmet-mode))
+
+  (use-package rainbow-mode
+    :hook (web-mode . rainbow-mode))
 #+end_src
 
 ** Markdown
@@ -264,6 +267,12 @@
     (push '("*vterm*" :stick t) popwin:special-display-config)
     (push '("*shell*" :stick t) popwin:special-display-config)
     (popwin-mode 1))
+#+end_src
+
+** Discord rich presence
+#+begin_src emacs-lisp
+  (use-package elcord
+    :config (elcord-mode))
 #+end_src
 
 * BEAUTIFYING ORG-MODE
