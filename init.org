@@ -71,6 +71,16 @@
   (global-set-key [mouse-8] 'previous-buffer)
   (global-set-key [mouse-9] 'next-buffer)
   (global-set-key (kbd "C-x k") 'kill-current-buffer)
+  (global-set-key (kbd "C-k") 'eshell)
+#+end_src
+
+** Disable electric-indent-mode in some modes
+#+begin_src emacs-lisp
+  (defun disable-electric-indent-mode ()
+      "Disable `electric-indent-mode` in current major mode"
+      (set (make-local-variable 'electric-indent-mode) nil))
+
+  (add-hook 'text-mode-hook 'disable-electric-indent-mode)
 #+end_src
 
 * Packages
@@ -141,6 +151,7 @@
     :commands dap-debug
     :config
     (require 'dap-cpptools)
+    (require 'dap-python)
     (dap-cpptools-setup)) 
 #+end_src
 
@@ -180,7 +191,7 @@
 #+begin_src emacs-lisp
   (use-package lua-mode
     :custom (lua-indent-level 2)
-    :hook (lua-mode . (lambda() (set (make-local-variable 'electric-indent-mode) nil))))
+    :hook (lua-mode . disable-electric-indent-mode))
 #+end_src
 
 ** Cargo for Rust
@@ -194,6 +205,7 @@
 #+begin_src emacs-lisp
   (use-package python-mode)
 #+end_src
+
 ** Web development
 #+begin_src emacs-lisp
   (use-package impatient-mode
@@ -250,6 +262,7 @@
   (use-package popwin
     :config
     (push '("*vterm*" :stick t) popwin:special-display-config)
+    (push '("*shell*" :stick t) popwin:special-display-config)
     (popwin-mode 1))
 #+end_src
 
@@ -291,7 +304,7 @@
 ** Hook
 #+begin_src emacs-lisp
   (add-hook 'org-mode-hook (lambda()
-                             (set (make-local-variable 'electric-indent-mode) nil)
+                             (disable-electric-indent-mode)
                              (visual-line-mode)
                              (variable-pitch-mode)
                              (prettify-symbols-mode)))
