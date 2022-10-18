@@ -187,6 +187,16 @@
   (use-package flymake-lua)
 #+end_src
 
+** Format code
+#+begin_src emacs-lisp
+  (use-package format-all
+    :hook 
+    (prog-mode . format-all-mode)
+    (before-save . format-all-buffer)
+    :bind ("M-s f" . format-all-buffer)
+  )
+#+end_src
+
 ** Lua
 #+begin_src emacs-lisp
   (use-package lua-mode
