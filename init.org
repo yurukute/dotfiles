@@ -33,7 +33,7 @@
         cua-rectangle-mark-key [C-M-return]   
         inhibit-startup-screen t
         initial-major-mode 'fundamental-mode
-        ;;initial-scratch-message (shell-command-to-string "cat ~/tkb.org")
+        ;;initial-scratch-message (shell-command-to-string "")
         line-number-mode nil
         make-backup-files nil
         mode-require-final-newline nil
