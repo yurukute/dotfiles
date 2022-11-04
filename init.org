@@ -32,8 +32,8 @@
   (setq column-number-mode t
         cua-rectangle-mark-key [C-M-return]   
         inhibit-startup-screen t
-        initial-major-mode 'org-mode
-        initial-scratch-message (shell-command-to-string "cat ~/tkb.org")
+        initial-major-mode 'fundamental-mode
+        ;;initial-scratch-message (shell-command-to-string "cat ~/tkb.org")
         line-number-mode nil
         make-backup-files nil
         mode-require-final-newline nil
@@ -190,11 +190,10 @@
 ** Format code
 #+begin_src emacs-lisp
   (use-package format-all
+    :bind ("M-s f" . format-all-buffer)
     :hook 
     (prog-mode . format-all-mode)
-    (before-save . format-all-buffer)
-    :bind ("M-s f" . format-all-buffer)
-  )
+    (before-save . format-all-buffer))
 #+end_src
 
 ** Lua
@@ -238,7 +237,7 @@
     (web-mode-markup-indent-offset 2))
 
   (use-package emmet-mode
-    :bind ("C-j" . emmet-expand-yas)
+    :bind ("C-x j" . emmet-expand-yas)
     :hook (web-mode . emmet-mode))
 
   (use-package rainbow-mode
