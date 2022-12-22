@@ -83,6 +83,18 @@
   (add-hook 'text-mode-hook 'disable-electric-indent-mode)
 #+end_src
 
+** Sort words
+#+begin_src emacs-lisp
+  (defun sort-words (reverse beg end)
+    "Sort words in region alphabetically, in REVERSE if negative.
+  Prefixed with negative \\[universal-argument], sorts in reverse.
+  The variable `sort-fold-case' determines whether alphabetic case affects the sort order.
+
+  See `sort-regexp-fields'."
+    (interactive "*P\nr")
+    (sort-regexp-fields reverse "\\w+" "\\&" beg end))
+#+end_src
+
 * Packages
 ** Monokai theme
 #+begin_src emacs-lisp
@@ -119,7 +131,8 @@
            (c++-mode . lsp)
            (java-mode . lsp)
            (rust-mode . lsp)
-           (python-mode . lsp))
+           (python-mode . lsp)
+           (go-mode . lsp))
     :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
     :custom     
     ;; (lsp-pylsp-plugins-flake8-enabled nil)
@@ -128,9 +141,12 @@
     :hook (lsp-mode . lsp-ui-mode))
   (use-package lsp-java
     :custom (lsp-java-format-on-type-enabled nil))
+
   (use-package lsp-treemacs
     :custom (treemacs-width 25)
-    :bind ([f8] . treemacs))
+    :bind 
+    ([f8] . treemacs-select-window)
+    ([S-f8] . treemacs))
 #+end_src
 
 ** DAP - Debug Adapter Protocol
@@ -171,6 +187,7 @@
     :custom (jedi:complete-on-dot t))
   (use-package company-lua)
   (use-package company-web)    
+  (use-package company-go)
   (use-package yasnippet  
     :config  (yas-global-mode t))
 #+end_src
@@ -200,7 +217,9 @@
 #+begin_src emacs-lisp
   (use-package lua-mode
     :custom (lua-indent-level 2)
-    :hook (lua-mode . disable-electric-indent-mode))
+    :hook 
+    (lua-mode . disable-electric-indent-mode)
+    (lua-mode . rainbow-mode))
 #+end_src
 
 ** Cargo for Rust
@@ -242,6 +261,8 @@
 
   (use-package rainbow-mode
     :hook (web-mode . rainbow-mode))
+
+  (use-package go-mode)
 #+end_src
 
 ** Markdown
