@@ -77,8 +77,8 @@
 ** Disable electric-indent-mode in some modes
 #+begin_src emacs-lisp
   (defun disable-electric-indent-mode ()
-      "Disable `electric-indent-mode` in current major mode"
-      (set (make-local-variable 'electric-indent-mode) nil))
+    "Disable `electric-indent-mode` in current major mode"
+    (set (make-local-variable 'electric-indent-mode) nil))
 
   (add-hook 'text-mode-hook 'disable-electric-indent-mode)
 #+end_src
@@ -95,7 +95,7 @@
     (sort-regexp-fields reverse "\\w+" "\\&" beg end))
 #+end_src
 
-* Packages
+* Interface packages
 ** Monokai theme
 #+begin_src emacs-lisp
   (use-package monokai-theme
@@ -124,21 +124,31 @@
   (use-package helm-xref)
 #+end_src
 
+* Development packages
 ** LSP - Language Server Protocol
 #+begin_src emacs-lisp
   (use-package lsp-mode
-    :hook ((c-mode . (lambda() (unless (string= major-mode "arduino-mode") (lsp))))
-           (c++-mode . lsp)
-           (java-mode . lsp)
-           (rust-mode . lsp)
-           (python-mode . lsp)
-           (go-mode . lsp))
+    :hook 
+    (c-mode . (lambda() (unless (string= major-mode "arduino-mode") (lsp))))
+    (c++-mode . lsp)
+    (java-mode . lsp)
+    (rust-mode . lsp)
+    (python-mode . lsp)
+    (go-mode . lsp)
+    (sql-mode . lsp)
+    :bind 
+    ("<C-return>" . lsp-sql-execute-paragraph)
+    ("<C-f7>" . lsp-sql-execute-query)
     :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
     :custom     
     ;; (lsp-pylsp-plugins-flake8-enabled nil)
-    (lsp-pylsp-plugins-pydocstyle-enabled nil))
+    (lsp-pylsp-plugins-pydocstyle-enabled nil)
+    (lsp-sqls-connections
+     '(((driver . "postgresql") (dataSourceName . "host=localhost user=dung dbname=exampleDB")))))
+
   (use-package lsp-ui
     :hook (lsp-mode . lsp-ui-mode))
+
   (use-package lsp-java
     :custom (lsp-java-format-on-type-enabled nil))
 
@@ -265,6 +275,13 @@
   (use-package go-mode)
 #+end_src
 
+* Other packages
+** SQL indent minor mode
+#+begin_src emacs-lisp
+  (use-package sql-indent
+    :hook (sql-mode . sqlind-minor-mode))
+#+end_src
+
 ** Markdown
 #+begin_src emacs-lisp
   (use-package markdown-mode
@@ -296,6 +313,7 @@
     :config
     (push '("*vterm*" :stick t) popwin:special-display-config)
     (push '("*shell*" :stick t) popwin:special-display-config)
+    (push '("*sqls results*" :stick t :noselect non-nil) popwin:special-display-config)
     (popwin-mode 1))
 #+end_src
 
