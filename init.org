@@ -278,12 +278,6 @@
 * Other packages
 ** SQL indent minor mode
 #+begin_src emacs-lisp
-  (use-package sql-indent
-    :hook (sql-mode . sqlind-minor-mode))
-#+end_src
-
-** Markdown
-#+begin_src emacs-lisp
   (use-package markdown-mode
     :custom
     (markdown-enable-math t)
