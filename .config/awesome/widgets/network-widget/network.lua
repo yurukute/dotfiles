@@ -32,6 +32,8 @@ local function worker(user_args)
     network.widget = wibox.widget {
         spacing = 10,
         layout = wibox.layout.fixed.horizontal,
+        bg = bg_color,
+        colors = { main_color },
     }
 
     network.widget.children = { network_icon }
