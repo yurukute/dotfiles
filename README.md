@@ -73,10 +73,14 @@ Install `ffmpegthumbnailer` for video thumbnailing
 ## Touchpad
 Install `xorg-xinput`
 
-Add the following line to `.xprofile`
+Create `/etc/X11/xorg.conf.d/30-touchpad.conf` with following content:
 ```
-xinput set-prop 'Synaptics TM3096-001' 'libinput Tapping Enabled' 1
-xinput set-prop 'Synaptics TM3096-001' 'libinput Natural Scrolling Enabled' 1
+Section "InputClass"
+    Identifier "touchpad"
+    Driver "libinput"
+    Option "Tapping" "on"
+    Option "NaturalScrolling" "true"
+EndSection
 ```
 ## Grub theme
 - Edit the following line in `/etc/default/grub`
