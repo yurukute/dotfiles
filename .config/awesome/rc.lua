@@ -65,22 +65,22 @@ picture_dir  = "~/Pictures/"
 modkey = "Mod4"
 altkey = "Mod1"
 -- Table of layouts to cover with awful.layout.inc, order matters.
-awful.layout.layouts = {    
+awful.layout.layouts = { 
   awful.layout.suit.tile.left,
-  -- awful.layout.suit.tile,   
-  awful.layout.suit.tile.top,   
-  awful.layout.suit.tile.bottom,   
-  awful.layout.suit.fair,   
-  awful.layout.suit.fair.horizontal,   
+  awful.layout.suit.tile,
   awful.layout.suit.spiral,
   awful.layout.suit.spiral.dwindle,
-  awful.layout.suit.max,
+  awful.layout.suit.fair,
+  awful.layout.suit.fair.horizontal,
+  awful.layout.suit.tile.top,
+  awful.layout.suit.tile.bottom,
+  -- awful.layout.suit.max,
   -- awful.layout.suit.max.fullscreen,
   -- awful.layout.suit.magnifier,
-  -- awful.layout.suit.corner.nw,
-  awful.layout.suit.corner.ne,
-  -- awful.layout.suit.corner.sw,
-  -- awful.layout.suit.corner.se,
+  --awful.layout.suit.corner.nw,
+  awful.layout.suit.corner.sw,
+  --awful.layout.suit.corner.ne,
+  awful.layout.suit.corner.se,
   -- awful.layout.suit.floating,
 }
 -- }}}
@@ -403,6 +403,9 @@ globalkeys = gears.table.join(
   awful.key({ modkey, "Shift" }, "s",       function () awful.spawn("flameshot gui") end,
     {description = "take region screenshot", group = "hotkeys"}),
   awful.key({ }, "Print",                   function ()
+      awful.spawn.with_shell("flameshot full -c")    end,
+    {description = "copy full screenshot", group = "hotkeys"}),
+  awful.key({ modkey }, "Print",                   function ()
       awful.spawn.with_shell("flameshot full -c -p "..picture_dir.."Screenshots")    end,
     {description = "take full screenshot", group = "hotkeys"})
 )
@@ -568,6 +571,7 @@ awful.rules.rules = {
       name = {
         "Event Tester",  -- xev.
         "Picture in picture",
+        "Krita - Edit Text — Krita"
       },
       role = {
         "AlarmWindow",  -- Thunderbird's calendar.
@@ -584,8 +588,7 @@ awful.rules.rules = {
   
   -- Set programs to always map on specified tag.
   { rule = { instance = "discord" },
-    properties = { screen = 1, tag = awful.screen.focused().tags[2],
-                 floating = true }
+    properties = { screen = 1, tag = awful.screen.focused().tags[2]}
   }
 }
 -- }}}
