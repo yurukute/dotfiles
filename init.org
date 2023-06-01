@@ -41,9 +41,8 @@
         mouse-wheel-progressive-speed t
         mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control)))
         recentf-auto-cleanup 'never)
-  (setq-default tab-width 4
-                c-basic-offset tab-width
-                indent-tabs-mode nil)
+
+  (set-frame-font "Monospace 11" nil t)
   (cua-mode t)
   (recentf-mode t)
 #+end_src
@@ -72,6 +71,14 @@
   (global-set-key [mouse-9] 'next-buffer)
   (global-set-key (kbd "C-x k") 'kill-current-buffer)
   (global-set-key (kbd "C-k") 'eshell)
+#+end_src
+
+** Indenting C/C++
+#+begin_src emacs-lisp
+  (setq-default tab-width 4
+                c-basic-offset tab-width
+                indent-tabs-mode t)
+  (c-set-offset 'access-label -2)
 #+end_src
 
 ** Disable electric-indent-mode in some modes
@@ -147,7 +154,10 @@
      '(((driver . "postgresql") (dataSourceName . "host=localhost user=dung dbname=exampleDB")))))
 
   (use-package lsp-ui
-    :hook (lsp-mode . lsp-ui-mode))
+    :hook (lsp-mode . lsp-ui-mode)
+    :custom
+    (lsp-ui-doc-position 'at-point)
+    (lsp-ui-doc-show-with-cursor t))
 
   (use-package lsp-java
     :custom (lsp-java-format-on-type-enabled nil))
@@ -176,9 +186,21 @@
            ([S-f11] . dap-step-out))
     :commands dap-debug
     :config
+    (add-to-list 'dap-debug-template-configurations
+                 '("cpptools::QuickDebug"
+                   :type "cppdbg"
+                   :request "launch"
+                   :name "Launch program"
+                   :MIMode "gdb"
+                   :program "${fileDirname}../build/${fileBasenameNoExtension}"
+                   :stopatentry "false"
+                   ;;:dap-compilation "/usr/bin/make -C ';;${fileDirname}'"
+                   :cwd "${workspaceFolder}"))
+    ;; C/C++
     (require 'dap-cpptools)
-    (require 'dap-python)
-    (dap-cpptools-setup)) 
+    (dap-cpptools-setup)
+    ;;Python
+    (require 'dap-python))
 #+end_src
 
 ** Company - Text completion
@@ -306,7 +328,8 @@
   (use-package popwin
     :config
     (push '("*vterm*" :stick t) popwin:special-display-config)
-    (push '("*shell*" :stick t) popwin:special-display-config)
+    (push '("*shell*") popwin:special-display-config)
+    (push '("\\*g\\+\\+[-\\w ]+<\\d+>[-\\w ]+: \\w+\\*" :regexp t) popwin:special-display-config)
     (push '("*sqls results*" :stick t :noselect non-nil) popwin:special-display-config)
     (popwin-mode 1))
 #+end_src
@@ -391,6 +414,6 @@
                   org-property-value
                   org-special-keyword
                   org-verbatim))
-    (set-face-attribute face nil :inherit 'fixed-pitch))
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch :foreground "#82D7FF" :family "Droid Sans Mono")
+    (set-face-attribute face nil :inherit 'fixed-pitch :height 1.1))
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch :height 1.1 :foreground "#82D7FF" :family "Droid Sans Mono")
 #+end_src
