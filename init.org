@@ -30,7 +30,8 @@
 ** User settings
 #+begin_src emacs-lisp
   (setq column-number-mode t
-        cua-rectangle-mark-key [C-M-return]   
+        cua-rectangle-mark-key [C-M-return]
+        fill-column 80
         inhibit-startup-screen t
         initial-major-mode 'fundamental-mode
         ;;initial-scratch-message (shell-command-to-string "")
@@ -42,7 +43,6 @@
         mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control)))
         recentf-auto-cleanup 'never)
 
-  (set-frame-font "Monospace 11" nil t)
   (cua-mode t)
   (recentf-mode t)
 #+end_src
@@ -63,7 +63,9 @@
   (push '("Monospace" "Consolas") face-font-family-alternatives)  
   (push '("Noto Color Emoji" "Segoe UI Emoji") face-font-family-alternatives)
   (internal-set-alternative-font-family-alist face-font-family-alternatives)
+
   (set-fontset-font t 'symbol "Noto Color Emoji")
+  (set-frame-font "Monospace 11" nil t)
   (set-frame-parameter (selected-frame) 'alpha ' 85)
 #+end_src
 
@@ -333,7 +335,7 @@
   (use-package popwin
     :config
     (push '("*vterm*" :stick t) popwin:special-display-config)
-    (push '("*shell*") popwin:special-display-config)
+    (push '("*shell*" :stick t) popwin:special-display-config)
     (push '("\\*g\\+\\+[-\\w ]+<\\d+>[-\\w ]+: \\w+\\*" :regexp t) popwin:special-display-config)
     (push '("*sqls results*" :stick t :noselect non-nil) popwin:special-display-config)
     (popwin-mode 1))
