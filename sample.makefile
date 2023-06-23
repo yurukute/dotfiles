@@ -1,38 +1,34 @@
-DEBUG ?=
-BUILD_DIR = ./build
-SRC_DIR   = ./src
-OBJ_DIR   = ./obj
+BUILD ?=
+BUILD_DIR = ./${BUILD}/build
+OBJ_DIR   = ./${BUILD}/bin
 INCL_DIR  = ./include
-LIB_DR    = ./lib
+SRC_DIR   = ./src
 
-CXXFLAGS.      = -g -Wall # C++ compiler flags
-CXXFLAGS.debug = $(CXXFLAGS) -DDEBUG
+LIB_DIR   = ../lib
+
+EXEC = $(BUILD_DIR)/a.out
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
+
+CXXFLAGS.      = -I$(INCL_DIR) -Wall -g # C++ compiler flags
+CXXFLAGS.debug =  $(CXXFLAGS.) -DDEBUG
 LDLIBS         = -lstdc++ # Load libraries
 
-.PHONY: all clean
+.PHONY: all run clean
 
-all: $(BUILD_DIR)/server $(BUILD_DIR)/client
+all: $(EXEC)
 
-server: $(BUILD_DIR)/server
-	$<
-
-client: $(BUILD_DIR)/client
-	$<
-
-$(BUILD_DIR)/server: $(OBJ_DIR)/server.o | $(BUILD_DIR)
+$(EXEC): $(OBJS) | $(BUILD_DIR)
 	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
-$(BUILD_DIR)/client: $(OBJ_DIR)/client.o | $(BUILD_DIR)
-	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS.$(BUILD)) -c -o $@ $<
 
-$(OBJ_DIR)/server.o: $(SRC_DIR)/server.cpp | $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+$(BUILD_DIR) $(OBJ_DIR) $(LIB_DIR):
+	mkdir -p $@
 
-$(OBJ_DIR)/client.o: $(SRC_DIR)/client.cpp | $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(BUILD_DIR) $(OBJ_DIR):
-	mkdir $@
+run: $(EXEC)
+	$<
 
 clean:
 	rm -rf $(OBJ_DIR) $(BUILD_DIR)
