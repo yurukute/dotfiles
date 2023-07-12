@@ -44,6 +44,7 @@
         recentf-auto-cleanup 'never)
 
   (cua-mode t)
+  ;;(desktop-save-mode 1)
   (recentf-mode t)
 #+end_src
 
@@ -55,8 +56,8 @@
   (show-paren-mode 1)
   (tool-bar-mode -1)
 
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (global-visual-line-mode t)
 
   (push '("Droid Sans Mono" "Consolas") face-font-family-alternatives)
@@ -75,6 +76,12 @@
   (global-set-key [mouse-9] 'next-buffer)
   (global-set-key (kbd "C-x k") 'kill-current-buffer)
   (global-set-key (kbd "C-k") 'eshell)
+
+  ;; Windmove
+  (global-set-key (kbd "C-c <left>")  'windmove-left)
+  (global-set-key (kbd "C-c <right>") 'windmove-right)
+  (global-set-key (kbd "C-c <up>")    'windmove-up)
+  (global-set-key (kbd "C-c <down>")  'windmove-down)
 #+end_src
 
 ** Indenting C/C++
@@ -82,7 +89,18 @@
   (setq-default tab-width 4
                 c-basic-offset tab-width
                 indent-tabs-mode nil)
+
+  (defun struct-indent (langelem)
+    (let ((inclass (assoc 'inclass c-syntactic-context)))
+      (save-excursion
+        (goto-char (c-langelem-pos inclass))
+        (if (or (looking-at "struct")
+                (looking-at "typedef struct"))
+            '2
+          '4))))
+
   (c-set-offset 'access-label -2)
+  (c-set-offset 'inclass 'struct-indent)
 #+end_src
 
 ** Disable electric-indent-mode in some modes
@@ -149,11 +167,13 @@
     (sql-mode . lsp)
     (web-mode . lsp)
     :bind 
+    (:map lsp-mode-map
+          ("C-c l" . lsp-command-map))
     ("<C-return>" . lsp-sql-execute-paragraph)
     ("<C-f7>" . lsp-sql-execute-query)
     :config 
-    (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset)
+    (setf (alist-get 'web-mode lsp--formatting-indent-alist) 
+          'web-mode-code-indent-offset)
     :custom     
     ;; (lsp-pylsp-plugins-flake8-enabled nil)
     (lsp-pylsp-plugins-pydocstyle-enabled nil)
@@ -185,9 +205,10 @@
     (dap-inhibit-io nil)
     (dap-internal-terminal 'dap-internal-terminal-vterm)
     :bind (([f5] . dap-debug)
-           ([f7] . dap-ui-expressions-add)
            ([S-f5] . dap-disconnect)
+           ([f7] . dap-ui-expressions-add)
            ([f9] . dap-breakpoint-toggle)
+           ([S-f9] . dap-ui-breakpoints-delete)
            ([f10] . dap-next)
            ([f11] . dap-step-in)
            ([S-f11] . dap-step-out))
@@ -197,7 +218,7 @@
                  '("cpptools::QuickDebug"
                    :type "cppdbg"
                    :request "launch"
-                   :name "Launch program"
+                   :name "Quick debug"
                    :MIMode "gdb"
                    :program "${fileDirname}../build/${fileBasenameNoExtension}"
                    :stopatentry "false"
@@ -215,20 +236,22 @@
   (use-package company
     :config (global-company-mode t)
     :bind ("C-'" . company-files))
+
+  (use-package company-arduino)
   (use-package company-c-headers
     :config
     (add-to-list 'company-backends 'company-c-headers)
     (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
     (add-to-list 'company-c-headers-path-user "~/C++/"))
-  (use-package company-arduino)
+
+  (use-package company-go)
   (use-package company-jedi
     :config (add-to-list 'company-backends 'company-jedi)
     :custom (jedi:complete-on-dot t))
+
   (use-package company-lua)
-  (use-package company-web)    
-  (use-package company-go)
   (use-package yasnippet  
-    :config  (yas-global-mode t))
+    :config (yas-global-mode t))
 #+end_src
 
 ** Flycheck - Realtime error checking
@@ -239,6 +262,7 @@
     (require 'flycheck-arduino)
     :hook (arduino-mode . flycheck-arduino-setup)
     :custom (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+
   (use-package flycheck-rust)
   (use-package flymake-lua)
 #+end_src
@@ -275,24 +299,27 @@
 
 ** Web development
 #+begin_src emacs-lisp
-  (use-package impatient-mode
-    :hook (impatient-mode . httpd-start))
-
   (use-package web-mode
     :hook (web-mode . (lambda()
-                        (set (make-local-variable 'company-backends) 
-                             '(company-yasnippet company-files))
-                        (impatient-mode)))
+                        (set (make-local-variable 'company-backends)
+                             '(company-yasnippet company-files))))
     :mode ("\\.html?\\'" "\\.css?\\'" "\\.js\\'")
     :custom
     (web-mode-auto-close-style 2)
     (web-mode-code-indent-offset 2)
     (web-mode-css-indent-offset 2)
+    (web-mode-enable-auto-indentation nil)
     (web-mode-enable-auto-quoting nil)
+    (web-mode-enable-current-column-highlight t)
     (web-mode-enable-current-element-highlight t)
     (web-mode-enable-element-content-fontification t)
     (web-mode-enable-html-entities-fontification t)
     (web-mode-markup-indent-offset 2))
+
+  (use-package impatient-mode
+    :hook 
+    (web-mode . impatient-mode)
+    (impatient-mode . httpd-start))
 
   (use-package emmet-mode
     :bind ("C-x j" . emmet-expand-yas)
@@ -305,6 +332,13 @@
 #+end_src
 
 * Other packages
+** Projectile
+#+begin_src emacs-lisp
+  (use-package projectile
+    :bind (:map projectile-mode-map
+                ("C-c p" . projectile-command-map))
+    :hook (lsp-mode . projectile-mode))
+#+end_src
 ** SQL indent minor mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
@@ -335,8 +369,9 @@
   (use-package popwin
     :config
     (push '("*vterm*" :stick t) popwin:special-display-config)
-    (push '("*shell*" :stick t) popwin:special-display-config)
-    (push '("\\*g\\+\\+[-\\w ]+<\\d+>[-\\w ]+: \\w+\\*" :regexp t) popwin:special-display-config)
+    (push '("^\\*\\(.*shell\\|Quick debug.*\\|Warnings\\|Breakpoints\\)\\*$" 
+            :stick t :regexp non-nil)
+          popwin:special-display-config)
     (push '("*sqls results*" :stick t :noselect non-nil) popwin:special-display-config)
     (popwin-mode 1))
 #+end_src
@@ -421,6 +456,6 @@
                   org-property-value
                   org-special-keyword
                   org-verbatim))
-    (set-face-attribute face nil :inherit 'fixed-pitch :height 1.1))
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch :height 1.1 :foreground "#82D7FF" :family "Droid Sans Mono")
+    (set-face-attribute face nil :inherit 'fixed-pitch :height 1.0))
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch :height 1.0 :foreground "#82D7FF" :family "Droid Sans Mono")
 #+end_src
