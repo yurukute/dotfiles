@@ -167,11 +167,10 @@
     (sql-mode . lsp)
     (web-mode . lsp)
     :bind 
-    (:map lsp-mode-map
-          ("C-c l" . lsp-command-map))
     ("<C-return>" . lsp-sql-execute-paragraph)
     ("<C-f7>" . lsp-sql-execute-query)
-    :config 
+    :config
+    (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
     (setf (alist-get 'web-mode lsp--formatting-indent-alist) 
           'web-mode-code-indent-offset)
     :custom     
@@ -339,6 +338,14 @@
                 ("C-c p" . projectile-command-map))
     :hook (lsp-mode . projectile-mode))
 #+end_src
+
+** Which-key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :config
+    (which-key-mode))
+#+end_src
+
 ** SQL indent minor mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
