@@ -159,19 +159,13 @@
   (use-package lsp-mode
     :hook 
     (c-mode . (lambda() (unless (string= major-mode "arduino-mode") (lsp))))
-    (c++-mode . lsp)
-    (java-mode . lsp)
-    (rust-mode . lsp)
-    (python-mode . lsp)
-    (go-mode . lsp)
-    (sql-mode . lsp)
-    (web-mode . lsp)
-    :bind 
+    (c++-mode go-mode java-mode python-mode rust-mode sql-mode web-mode)
+    :bind
     ("<C-return>" . lsp-sql-execute-paragraph)
     ("<C-f7>" . lsp-sql-execute-query)
     :config
     (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    (setf (alist-get 'web-mode lsp--formatting-indent-alist) 
+    (setf (alist-get 'web-mode lsp--formatting-indent-alist)
           'web-mode-code-indent-offset)
     :custom     
     ;; (lsp-pylsp-plugins-flake8-enabled nil)
@@ -190,9 +184,8 @@
 
   (use-package lsp-treemacs
     :custom (treemacs-width 25)
-    :bind 
-    ([f8] . treemacs-select-window)
-    ([S-f8] . treemacs))
+    :bind ((  [f8] . treemacs-select-window)
+           ([S-f8] . treemacs)))
 #+end_src
 
 ** DAP - Debug Adapter Protocol
@@ -203,16 +196,22 @@
     (dap-debug-restart-keep-session nil)
     (dap-inhibit-io nil)
     (dap-internal-terminal 'dap-internal-terminal-vterm)
-    :bind (([f5] . dap-debug)
-           ([S-f5] . dap-disconnect)
-           ([f7] . dap-ui-expressions-add)
-           ([f9] . dap-breakpoint-toggle)
-           ([S-f9] . dap-breakpoint-delete-all)
-           ([f10] . dap-next)
-           ([f11] . dap-step-in)
+    :bind ((   [f5] . dap-debug)
+           ( [S-f5] . dap-disconnect)
+           (   [f7] . dap-ui-expressions-add)
+           (   [f9] . dap-breakpoint-toggle)
+           ( [S-f9] . dap-ui-breakpoints-delete)
+           (  [f10] . dap-next)
+           (  [f11] . dap-step-in)
            ([S-f11] . dap-step-out))
     :commands dap-debug
     :config
+    ;; C/C++
+    (require 'dap-cpptools)
+    (dap-cpptools-setup)
+    ;; Python
+    (require 'dap-python)
+    ;; Templates
     (add-to-list 'dap-debug-template-configurations
                  '("cpptools::QuickDebug"
                    :type "cppdbg"
@@ -222,12 +221,7 @@
                    :program "${fileDirname}../build/${fileBasenameNoExtension}"
                    :stopatentry "false"
                    ;;:dap-compilation "/usr/bin/make -C ';;${fileDirname}'"
-                   :cwd "${workspaceFolder}"))
-    ;; C/C++
-    (require 'dap-cpptools)
-    (dap-cpptools-setup)
-    ;; Python
-    (require 'dap-python))
+                   :cwd "${workspaceFolder}")))
 #+end_src
 
 ** Company - Text completion
@@ -275,13 +269,17 @@
     (before-save . format-all-buffer))
 #+end_src
 
+** Highlight hex color
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :hook (web-mode lua-mode))
+#+end_src
+
 ** Lua
 #+begin_src emacs-lisp
   (use-package lua-mode
     :custom (lua-indent-level 2)
-    :hook 
-    (lua-mode . disable-electric-indent-mode)
-    (lua-mode . rainbow-mode))
+    :hook (disable-electric-indent-mode))
 #+end_src
 
 ** Cargo for Rust
@@ -293,18 +291,16 @@
 
 ** Python
 #+begin_src emacs-lisp
-  (use-package python-mode)
+  (use-package python-mode
+    :hook (python-mode . (lambda ()
+                           (setq-local require-final-newline t))))
 #+end_src
 
 ** Web development
 #+begin_src emacs-lisp
   (use-package web-mode
-    :hook (web-mode . (lambda()
-                        (set (make-local-variable 'company-backends)
-                             '(company-yasnippet company-files))))
-    :mode ("\\.html?\\'" "\\.css?\\'" "\\.js\\'")
+    :mode ("\\.html?\\'" "\\.css\\'" "\\.js\\'")
     :custom
-    (web-mode-auto-close-style 2)
     (web-mode-code-indent-offset 2)
     (web-mode-css-indent-offset 2)
     (web-mode-enable-auto-indentation nil)
@@ -317,15 +313,12 @@
 
   (use-package impatient-mode
     :hook 
-    (web-mode . impatient-mode)
+    (web-mode)
     (impatient-mode . httpd-start))
 
   (use-package emmet-mode
     :bind ("C-x j" . emmet-expand-yas)
-    :hook (web-mode . emmet-mode))
-
-  (use-package rainbow-mode
-    :hook (web-mode . rainbow-mode))
+    :hook (web-mode))
 
   (use-package go-mode)
 #+end_src
@@ -336,14 +329,13 @@
   (use-package projectile
     :bind (:map projectile-mode-map
                 ("C-c p" . projectile-command-map))
-    :hook (lsp-mode . projectile-mode))
+    :config (projectile-mode))
 #+end_src
 
 ** Which-key
 #+begin_src emacs-lisp
   (use-package which-key
-    :config
-    (which-key-mode))
+    :config (which-key-mode))
 #+end_src
 
 ** SQL indent minor mode
@@ -446,7 +438,7 @@
 ** Org-bullets
 #+begin_src emacs-lisp
   (use-package org-bullets
-    :hook ((org-mode . org-bullets-mode)))
+    :hook (org-mode . org-bullets-mode))
 #+end_src
 
 ** Org-fancy-priorities
@@ -466,3 +458,4 @@
     (set-face-attribute face nil :inherit 'fixed-pitch :height 1.0))
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch :height 1.0 :foreground "#82D7FF" :family "Droid Sans Mono")
 #+end_src
+
