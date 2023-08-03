@@ -200,7 +200,7 @@
            ( [S-f5] . dap-disconnect)
            (   [f7] . dap-ui-expressions-add)
            (   [f9] . dap-breakpoint-toggle)
-           ( [S-f9] . dap-ui-breakpoints-delete)
+           ( [S-f9] . dap-breakpoint-delete-all)
            (  [f10] . dap-next)
            (  [f11] . dap-step-in)
            ([S-f11] . dap-step-out))
