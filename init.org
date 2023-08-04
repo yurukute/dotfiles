@@ -220,7 +220,8 @@
                    :MIMode "gdb"
                    :program "${fileDirname}../build/${fileBasenameNoExtension}"
                    :stopatentry "false"
-                   ;;:dap-compilation "/usr/bin/make -C ';;${fileDirname}'"
+                   :dap-compilation "/usr/bin/make"
+                   :dap-compilation-dir "${fileDirname}"
                    :cwd "${workspaceFolder}")))
 #+end_src
 
