@@ -3,20 +3,20 @@
 pcall(require, "luarocks.loader")
 
 -- Standard awesome library
-local gears         = require("gears")
-local awful         = require("awful")
+local gears = require("gears")
+local awful = require("awful")
 require("awful.autofocus")
 -- Widget and layout library
-local wibox         = require("wibox")
-local cpu_widget    = require("widgets.cpu-widget.cpu-widget")
-local volume_widget = require('widgets.volume-widget.volume')
+local wibox             = require("wibox")
+local cpu_widget        = require("widgets.cpu-widget.cpu-widget")
+local volume_widget     = require('widgets.volume-widget.volume')
 local brightness_widget = require("widgets.brightness-widget.brightness")
 local calendar_widget   = require("widgets.calendar-widget.calendar")
 local network_widget    = require("widgets.network-widget.network")
 local playerctl_widget  = require("widgets.playerctl-widget.playerctl")
--- local battery_widget  = require("widgets.battery-widget.battery")
+local battery_widget    = require("widgets.battery-widget.battery")
 -- Theme handling library
-local beautiful     = require("beautiful")
+local beautiful = require("beautiful")
 -- Notification library
 local naughty       = require("naughty")
 local hotkeys_popup = require("awful.hotkeys_popup")
@@ -66,7 +66,6 @@ modkey = "Mod4"
 altkey = "Mod1"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = { 
-  awful.layout.suit.tile.left,
   awful.layout.suit.tile,
   awful.layout.suit.spiral,
   awful.layout.suit.spiral.dwindle,
@@ -82,6 +81,7 @@ awful.layout.layouts = {
   --awful.layout.suit.corner.ne,
   awful.layout.suit.corner.se,
   -- awful.layout.suit.floating,
+  awful.layout.suit.tile.left,
 }
 -- }}}
 
@@ -89,9 +89,9 @@ awful.layout.layouts = {
 -- Create a launcher widget and a main menu
 mylogoutmenu = awful.menu(
   {items = {
-     { "Log out",   function() awesome.quit()                               end, beautiful.logout_icon},
+     { "Log out",   function() awesome.quit()                               end, beautiful.logout_icon },
      { "Reboot",    function() awful.spawn.with_shell("systemctl reboot")   end, beautiful.reboot_icon },
-     { "Sleep",     function() awful.spawn.with_shell("systemctl suspend")  end, beautiful.sleep_icon },
+     { "Sleep",     function() awful.spawn.with_shell("systemctl suspend")  end, beautiful.sleep_icon  },
      { "Power off", function() awful.spawn.with_shell("systemctl poweroff") end, beautiful.poweroff_icon }}})
 
 mylogoutmenu.wibox.shape = function (cr, w, h) gears.shape.rounded_rect(cr, w, h, 8) end
@@ -574,9 +574,9 @@ awful.rules.rules = {
         "Krita - Edit Text — Krita"
       },
       role = {
-        "AlarmWindow",  -- Thunderbird's calendar.
-        "ConfigManager",  -- Thunderbird's about:config.
-        "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
+        "AlarmWindow",   -- Thunderbird's calendar.
+        "ConfigManager", -- Thunderbird's about:config.
+        "pop-up",        -- e.g. Google Chrome's (detached) Developer Tools.
         "GtkFileChooserDialog"
       }
   }, properties = { floating = true, ontop = true }}, 
@@ -585,10 +585,14 @@ awful.rules.rules = {
   { rule_any = { type = { "normal" } },
     properties = { titlebars_enabled = false }
   },
-  
+
+  { rule = { class = "wps" },
+    properties = { requests_no_titlebar = true }
+  },
+
   -- Set programs to always map on specified tag.
   { rule = { instance = "discord" },
-    properties = { screen = 1, tag = awful.screen.focused().tags[2]}
+    properties = { screen = 1, tag = root.tags()[2], switchtotag = false }
   }
 }
 -- }}}
@@ -596,7 +600,7 @@ awful.rules.rules = {
 -- {{{ Signals
 -- Spawn client at center and enable titlebar while floating
 client.connect_signal("property::floating", function(c)
-  if c.floating and not c.request_no_titlebar and (c.type == "normal" or c.role == "GtkFileChooserDialog") then    
+  if c.floating and not c.requests_no_titlebar and (c.type == "normal" or c.role == "GtkFileChooserDialog") then    
     awful.placement.centered(c)
     awful.titlebar.show(c)
   else
