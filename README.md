@@ -1,27 +1,31 @@
 # Necessary settings for better use
-This is the note to my forgetful a$$. Feel free to skip.
+This is a note to my forgetful a$$. Feel free to skip.
 ## Awesomewm
+### Theme
+Using `arc-gtk-theme`.
+
+Install `lxappearance` to customize theme and icon.
 ### Fonts
 - `ttf-dejavu `
 - `ttf-droid`
 - `ttf-liberation `
 
 ### Screen brightness
-Install `light` 
+Install `light`.
 
-Change permission
+Change permission:
 ```
 sudo chmod +s /usr/bin/light
 ```
 ### Volume
-Install `alsa-utils alsa-plugins pulseaudio-alsa pavucontrol`
+Install `alsa-utils alsa-plugins pulseaudio-alsa pavucontrol`.
 
-Start the PulseAudio daemon
+Start the PulseAudio daemon:
 ```
 pulseaudio --start
 ```
-*Optional* Install `sox` to play sound when adjusting volume
-## Bluetooth headset
+*[Optional]:* Install `sox` to play sound when adjusting volume.
+## Bluetooth headsets
 Install `pulseaudio-bluetooth bluez bluez-utils`
 
 Make sure bluetooth is running and automatically starts after booting:
@@ -29,35 +33,33 @@ Make sure bluetooth is running and automatically starts after booting:
 systemctl enable bluetooth
 systemctl start bluetooth
 ```
-In `/etc/bluetooth/main.conf` file, find `[Policy]` section and add/uncomment:
+ `/etc/bluetooth/main.conf` file, find `[Policy]` section and add/uncomment:
 ```
 AutoEnable=true
 ```
 ## Getting IBus working with Emacs
-Install `xorg-font-util`
+Install `xorg-font-util`.
 
 ## Lightdm
 ### Fail to Start Light Display Manager error
-Install `xorg-server`
+Install `xorg-server`.
 ### Dual monitor
-*To prevent mouse and login screen from displaying on separate screens*
+*Avoid displaying mouse pointer and login screen on different screens.*
 
-Install `xorg-xrandr`
+Install `xorg-xrandr`.
 
-Edit the following line in `/etc/lightdm/lightdm.conf`
+Edit the following line in `/etc/lightdm/lightdm.conf`:
 ```
 display-setup-script=xrandr --output eDP-1 --primary --output HDMI-1 --off
 ```
 ### Enable numlock
-Install `numlockx`
+Install `numlockx`.
 
-Add the following line to `/etc/lightdm/lightdm.conf`
+Add the following line to `/etc/lightdm/lightdm.conf`:
 ```
 greeter-setup-script=/usr/bin/numlockx on
 ```
-## Picom
-Install `picom-jonaburg-git` from AUR
-## File manager
+## Thunar
 ### Automount 
 For removable devices: Install `gvfs`
 
@@ -65,11 +67,12 @@ For ntfs partition:
 - Install `ntfs-3g`
 - Add this line to `/etc/fstab`
 ```
-/dev/NTFS-part		/mnt/windows	ntfs-3g		defaults	0 0
+/dev/NTFS-part		/path/to/mount	ntfs-3g		defaults	0 0
 ```
 ### Thumbnailers
-Install `tumbler`
-Install `ffmpegthumbnailer` for video thumbnailing
+Install `tumbler`.
+
+Install `ffmpegthumbnailer` for video thumbnailing.
 ## Touchpad
 Install `xorg-xinput`
 
@@ -83,8 +86,8 @@ Section "InputClass"
 EndSection
 ```
 ## Grub theme
-- Edit the following line in `/etc/default/grub`
+- Edit the following line in `/etc/default/grub`:
 ```
 GRUB_THEME="/path/to/theme.txt"
 ```
-- Install and run `update-grub`
+- Run `grub-mkconfig -o /boot/grub/grub.cfg`.

@@ -223,11 +223,14 @@ awful.screen.connect_for_each_screen(function(s)
       layout = wibox.layout.fixed.horizontal,
       mylauncher,
       s.mytaglist,
-      playerctl_widget,
-      s.mypromptbox,      
+      s.mypromptbox,
     },
-    nil,
-    --s.mytasklist,
+    {
+      playerctl_widget,
+      valign = "center",
+      halign = "center",
+      layout = wibox.container.place
+    },
     { -- Right widgets
       layout = wibox.layout.fixed.horizontal,
       spacing = 7,
@@ -247,8 +250,7 @@ awful.screen.connect_for_each_screen(function(s)
         tooltip = true,
       },
       mytextclock,
-      --s.mylayoutbox,
-      --battery_widget{}
+      battery_widget{}
     },
   }   
   s.mybottomwibox = awful.wibar({ position = "bottom", screen = s })
@@ -290,7 +292,7 @@ globalkeys = gears.table.join(
     end,
     {description = "focus next by index", group = "client"}
   ),
-  awful.key({ "Control", modkey }, "Left",          function () awful.client.focus.byidx(-1)     end,
+  awful.key({ "Control", modkey         }, "Left",  function () awful.client.focus.byidx(-1)     end,
     {description = "focus previous by index", group = "client"}
   ),
   awful.key({ modkey,                   }, "w",     function () awful.spawn.with_shell(launcher) end,
@@ -301,9 +303,9 @@ globalkeys = gears.table.join(
     {description = "swap with next client by index", group = "client"}),
   awful.key({ modkey, "Shift"           }, "Right", function () awful.client.swap.byidx(-1)      end,
     {description = "swap with previous client by index", group = "client"}),
-  awful.key({ modkey, "Control"     }, "Left",      function () awful.screen.focus_relative(1)   end,
+  awful.key({ modkey, "Control"         }, "Left",  function () awful.screen.focus_relative(1)   end,
     {description = "focus the next screen", group = "screen"}),
-  awful.key({ modkey, "Control"     }, "Right",     function () awful.screen.focus_relative(-1)  end,
+  awful.key({ modkey, "Control"         }, "Right", function () awful.screen.focus_relative(-1)  end,
     {description = "focus the previous screen", group = "screen"}),
   awful.key({ modkey,                   }, "u", awful.client.urgent.jumpto,
     {description = "jump to urgent client", group = "client"}),
@@ -325,9 +327,9 @@ globalkeys = gears.table.join(
   -- Standard program
   awful.key({ modkey,                   }, "Return", function () awful.spawn(terminal)               end,
     {description = "open a terminal", group = "launcher"}),
-  awful.key({ modkey, "Control"     }, "r", awesome.restart,
+  awful.key({ modkey, "Control"         }, "r",      awesome.restart,
     {description = "reload awesome", group = "awesome"}),
-  awful.key({ modkey, "Shift"           }, "q", awesome.quit,
+  awful.key({ modkey, "Shift"           }, "q",       awesome.quit,
     {description = "quit awesome", group = "awesome"}),
   awful.key({ modkey,                   }, "h",      function () awful.tag.incmwfact( 0.05)          end,
     {description = "increase master width factor", group = "layout"}),
@@ -341,9 +343,9 @@ globalkeys = gears.table.join(
     {description = "increase the number of master clients", group = "layout"}),
   awful.key({ modkey, "Shift"           }, "l",      function () awful.tag.incnmaster(-1, nil, true) end,
     {description = "decrease the number of master clients", group = "layout"}),
-  awful.key({ modkey, "Control"     }, "h",          function () awful.tag.incncol( 1, nil, true)    end,
+  awful.key({ modkey, "Control"         }, "h",      function () awful.tag.incncol( 1, nil, true)    end,
     {description = "increase the number of columns", group = "layout"}),
-  awful.key({ modkey, "Control"     }, "l",          function () awful.tag.incncol(-1, nil, true)    end,
+  awful.key({ modkey, "Control"          }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
     {description = "decrease the number of columns", group = "layout"}),
   awful.key({ modkey,                   }, "space",  function () awful.layout.inc( 1)                end,
     {description = "select next", group = "layout"}),
@@ -385,20 +387,23 @@ globalkeys = gears.table.join(
           s.mybottomwibox.visible = not s.mybottomwibox.visible
         end
       end
-                                                                                     end,
+  end,
     {description = "toggle wibox", group = "awesome"}),
+
   -- Volume
-  awful.key({ }, "XF86AudioRaiseVolume",    function() volume_widget:inc()           end,
+  awful.key({ }, "XF86AudioRaiseVolume",    function () volume_widget:inc()          end,
     {description = "Volume up", group = "hotkeys"}),
-  awful.key({ }, "XF86AudioLowerVolume",    function() volume_widget:dec()           end,
+  awful.key({ }, "XF86AudioLowerVolume",    function () volume_widget:dec()          end,
     {description = "Volume down", group = "hotkeys"}),
-  awful.key({ }, "XF86AudioMute",           function() volume_widget:toggle()        end,
+  awful.key({ }, "XF86AudioMute",           function () volume_widget:toggle()       end,
     {description = "Mute", group = "hotkeys"}),
+  
   --Screen brightness
   awful.key({ }, "XF86MonBrightnessUp",     function () brightness_widget:inc()      end,
     {description = "Increase brightness", group = "hotkeys"}),
   awful.key({ }, "XF86MonBrightnessDown",   function () brightness_widget:dec()      end,
     {description = "Decrease brightness", group = "hotkeys"}),
+  
   --Screenshot
   awful.key({ modkey, "Shift" }, "s",       function () awful.spawn("flameshot gui") end,
     {description = "take region screenshot", group = "hotkeys"}),
@@ -564,7 +569,7 @@ awful.rules.rules = {
         "veromix",
         "xtightvncviewer",
         "Nvidia-settings",
-        "processing-app-Base"
+        "processing-app-Base",
       },
       -- Note that the name property shown in xprop might be set slightly after creation of the client
       -- and the name shown there might not match defined rules here.
@@ -579,10 +584,10 @@ awful.rules.rules = {
         "pop-up",        -- e.g. Google Chrome's (detached) Developer Tools.
         "GtkFileChooserDialog"
       }
-  }, properties = { floating = true, ontop = true }}, 
+  }, properties = { floating = true, ontop = true, requests_no_titlebar = false }}, 
 
   -- Add titlebars to normal clients and dialogs
-  { rule_any = { type = { "normal" } },
+  { rule_any = { type = { "normal" }},
     properties = { titlebars_enabled = false }
   },
 
@@ -600,7 +605,7 @@ awful.rules.rules = {
 -- {{{ Signals
 -- Spawn client at center and enable titlebar while floating
 client.connect_signal("property::floating", function(c)
-  if c.floating and not c.requests_no_titlebar and (c.type == "normal" or c.role == "GtkFileChooserDialog") then    
+  if c.floating and not c.requests_no_titlebar  then
     awful.placement.centered(c)
     awful.titlebar.show(c)
   else
