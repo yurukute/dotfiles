@@ -85,6 +85,14 @@ Section "InputClass"
     Option "NaturalScrolling" "true"
 EndSection
 ```
+Or simply add:
+```
+xinput set-prop '<DeviceName>' 'libinput Tapping Enabled' 1
+xinput set-prop '<DeviceName>' 'libinput Natural Scrolling Enabled' 1
+```
+to `.xprofile`.
+
+*[Tips]:*`<DeviceName>` can be get by running `xinput` command.
 ## Grub theme
 - Edit the following line in `/etc/default/grub`:
 ```

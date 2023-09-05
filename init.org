@@ -13,7 +13,6 @@
     (package-install 'use-package))
   (eval-when-compile
     (require 'use-package))
-
   (setq use-package-always-ensure t)
 #+end_src
 
@@ -103,6 +102,14 @@
   (c-set-offset 'inclass 'struct-indent)
 #+end_src
 
+** Indent using tabs in conf-mode
+#+begin_src emacs-lisp
+  (add-hook 'conf-mode-hook
+            (lambda ()
+              (setq indent-line-function #'insert-tab
+                    indent-tabs-mode t)))
+#+end_src
+
 ** Disable electric-indent-mode in some modes
 #+begin_src emacs-lisp
   (defun disable-electric-indent-mode ()
@@ -110,6 +117,7 @@
     (set (make-local-variable 'electric-indent-mode) nil))
 
   (add-hook 'text-mode-hook 'disable-electric-indent-mode)
+  (add-hook 'conf-mode-hook 'disable-electric-indent-mode)
 #+end_src
 
 ** Sort words
@@ -157,9 +165,8 @@
 ** LSP - Language Server Protocol
 #+begin_src emacs-lisp
   (use-package lsp-mode
-    :hook 
-    (c-mode . (lambda() (unless (string= major-mode "arduino-mode") (lsp))))
-    (c++-mode go-mode java-mode python-mode rust-mode sql-mode web-mode)
+    :hook
+    (c-mode c++-mode go-mode java-mode python-mode rust-mode sql-mode web-mode)
     :bind
     ("<C-return>" . lsp-sql-execute-paragraph)
     ("<C-f7>" . lsp-sql-execute-query)
@@ -167,7 +174,7 @@
     (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
     (setf (alist-get 'web-mode lsp--formatting-indent-alist)
           'web-mode-code-indent-offset)
-    :custom     
+    :custom
     ;; (lsp-pylsp-plugins-flake8-enabled nil)
     (lsp-pylsp-plugins-pydocstyle-enabled nil)
     (lsp-sqls-connections
@@ -175,9 +182,14 @@
 
   (use-package lsp-ui
     :hook (lsp-mode . lsp-ui-mode)
+    :bind (:map lsp-ui-mode-map
+                ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+                ([remap xref-find-references] . lsp-ui-peek-find-references))
     :custom
     (lsp-ui-doc-position 'at-point)
-    (lsp-ui-doc-show-with-cursor t))
+    ;;(lsp-ui-doc-show-with-cursor t)
+    (lsp-ui-peek-enable t)
+    (lsp-ui-sideline-diagnostic-max-lines 10))
 
   (use-package lsp-java
     :custom (lsp-java-format-on-type-enabled nil))
@@ -225,27 +237,29 @@
                    :cwd "${workspaceFolder}")))
 #+end_src
 
-** Company - Text completion
+** Text completion
 #+begin_src emacs-lisp
   (use-package company
     :config (global-company-mode t)
     :bind ("C-'" . company-files))
 
-  (use-package company-arduino)
   (use-package company-c-headers
     :config
     (add-to-list 'company-backends 'company-c-headers)
-    (add-to-list 'company-c-headers-path-system "/usr/include/c++/11.1.0/")
-    (add-to-list 'company-c-headers-path-user "~/C++/"))
+    (add-to-list 'company-c-headers-path-user "/usr/include/c++/"))
 
   (use-package company-go)
+
   (use-package company-jedi
     :config (add-to-list 'company-backends 'company-jedi)
     :custom (jedi:complete-on-dot t))
 
   (use-package company-lua)
-  (use-package yasnippet  
+
+  (use-package yasnippet
     :config (yas-global-mode t))
+
+  (use-package yasnippet-snippets)
 #+end_src
 
 ** Flycheck - Realtime error checking
@@ -253,8 +267,6 @@
   (use-package flycheck
     :config
     (global-flycheck-mode)
-    (require 'flycheck-arduino)
-    :hook (arduino-mode . flycheck-arduino-setup)
     :custom (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
   (use-package flycheck-rust)
@@ -265,7 +277,7 @@
 #+begin_src emacs-lisp
   (use-package format-all
     :bind ("M-s f" . format-all-buffer)
-    :hook 
+    :hook
     (prog-mode . format-all-mode)
     (before-save . format-all-buffer))
 #+end_src
@@ -297,6 +309,13 @@
                            (setq-local require-final-newline t))))
 #+end_src
 
+** PlatformIO
+#+begin_src emacs-lisp
+  (use-package platformio-mode
+    :hook
+    (c++-mode . platformio-conditionally-enable))
+#+end_src
+
 ** Web development
 #+begin_src emacs-lisp
   (use-package web-mode
@@ -313,7 +332,7 @@
     (web-mode-markup-indent-offset 2))
 
   (use-package impatient-mode
-    :hook 
+    :hook
     (web-mode)
     (impatient-mode . httpd-start))
 
@@ -322,6 +341,7 @@
     :hook (web-mode))
 
   (use-package go-mode)
+  (use-package typescript-mode)
 #+end_src
 
 * Other packages
@@ -351,6 +371,8 @@
 #+begin_src emacs-lisp
   (use-package vterm
     :bind (("C-k" . vterm)
+           :map vterm-mode-map
+           ("C-q" . vterm-send-next-key)
            ("C-y" . vterm-yank)))
 #+end_src
 
@@ -367,12 +389,16 @@
 ** Control popup window
 #+begin_src emacs-lisp
   (use-package popwin
+    :custom (popwin:popup-window-height 15)
     :config
-    (push '("*vterm*" :stick t) popwin:special-display-config)
-    (push '("^\\*\\(.*shell\\|Quick debug.*\\|Warnings\\|Breakpoints\\)\\*$" 
+    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck*\\)\\*$"
             :stick t :regexp non-nil)
           popwin:special-display-config)
-    (push '("*sqls results*" :stick t :noselect non-nil) popwin:special-display-config)
+    (push '("*Warnings*" :stick t :height 5)
+          popwin:special-display-config)
+    (push '("^\\*\\(sqls results\\|.*debug.*\\|platformio-.\\)\\*$"
+            :stick t :regexp non-nil :noselect non-nil) 
+          popwin:special-display-config)
     (popwin-mode 1))
 #+end_src
 
@@ -459,4 +485,3 @@
     (set-face-attribute face nil :inherit 'fixed-pitch :height 1.0))
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch :height 1.0 :foreground "#82D7FF" :family "Droid Sans Mono")
 #+end_src
-

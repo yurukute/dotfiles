@@ -1,6 +1,6 @@
 #!/bin/sudo bash
 fonts=(ttf-dejavu ttf-droid ttf-liberation)
-media=(light alsa-utils pulseaudio-alsa pavucontrol)
+media=(light alsa-utils pulseaudio-alsa pavucontrol flameshot)
 beautify=(feh picom rofi lxappearance arc-gtk-theme)
 input=(xorg-font-util ibus-bamboo)
 filemgr=(thunar tumbler gvfs)
