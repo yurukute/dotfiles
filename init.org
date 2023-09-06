@@ -347,10 +347,20 @@
 * Other packages
 ** Projectile
 #+begin_src emacs-lisp
+  (setq platformio/related-files
+        (list
+         (projectile-related-files-fn-extensions :other '("cpp" "h" "hpp"))))
+
   (use-package projectile
     :bind (:map projectile-mode-map
                 ("C-c p" . projectile-command-map))
-    :config (projectile-mode))
+    :config
+    (projectile-register-project-type 'platformio '("platformio.ini")
+                                      :project-file "platformio.ini"
+                                      :compile "pio run"
+                                      :run "pio run -t upload"
+                                      :related-files-fn platformio/related-files)
+    (projectile-mode))
 #+end_src
 
 ** Which-key
@@ -396,7 +406,7 @@
           popwin:special-display-config)
     (push '("*Warnings*" :stick t :height 5)
           popwin:special-display-config)
-    (push '("^\\*\\(sqls results\\|.*debug.*\\|platformio-.\\)\\*$"
+    (push '("^\\*\\(sqls results\\|.*debug.*\\|platformio-.*\\)\\*$"
             :stick t :regexp non-nil :noselect non-nil) 
           popwin:special-display-config)
     (popwin-mode 1))
