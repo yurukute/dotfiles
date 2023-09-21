@@ -401,7 +401,7 @@
   (use-package popwin
     :custom (popwin:popup-window-height 15)
     :config
-    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck*\\)\\*$"
+    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck.*\\Org.*\\)\\*$"
             :stick t :regexp non-nil)
           popwin:special-display-config)
     (push '("*Warnings*" :stick t :height 5)
