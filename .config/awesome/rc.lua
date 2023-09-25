@@ -576,13 +576,17 @@ awful.rules.rules = {
       name = {
         "Event Tester",  -- xev.
         "Picture in picture",
-        "Krita - Edit Text — Krita"
+        "Krita - Edit Text — Krita",
+        "Options"
       },
       role = {
         "AlarmWindow",   -- Thunderbird's calendar.
         "ConfigManager", -- Thunderbird's about:config.
         "pop-up",        -- e.g. Google Chrome's (detached) Developer Tools.
         "GtkFileChooserDialog"
+      },
+      icon_name = {
+        "Java"
       }
   }, properties = { floating = true, ontop = true, requests_no_titlebar = false }}, 
 
