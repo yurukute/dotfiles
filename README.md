@@ -55,7 +55,7 @@ GLFW_IM_MODULE=ibus
 ```
 *[Note]:* Relogin needed.
 ### Not working with Emacs
-According to [Archwiki](https://wiki.archlinux.org/title/Fcitx#Emacs):  Install `xorg-font-misc-otb`.
+According to [Archwiki](https://wiki.archlinux.org/title/Fcitx#Emacs):  Install `xorg-fonts-misc-otb`.
 
 *[Note]:* Relogin needed.
 ## Lightdm
