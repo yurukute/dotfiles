@@ -4,7 +4,7 @@ display=(feh picom rofi lxappearance arc-gtk-theme arc-icon-theme lightdm-webkit
 filemgr=(thunar tumbler gvfs)
 fonts=(ttf-dejavu ttf-droid ttf-liberation)
 media=(light alsa-utils pulseaudio-alsa pavucontrol)
-tools=(emacs numlockx ibus-bamboo flameshot)
+tools=(emacs numlockx ibus-bamboo flameshot acpi)
 xorg=(xorg-font-util xorg-xmodmap xorg-server xorg-xinput xorg-xprop xorg-xrandr)
 
 yay_dir="$HOME/.cache/yay/yay"

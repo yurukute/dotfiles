@@ -3,7 +3,7 @@
 (org-babel-load-file "~/init.org")
 
 (custom-set-variables
- '(package-selected-packages '(sql-indent keytar))
+ '(package-selected-packages '(sql-indent keytar)))
 (custom-set-faces)
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
