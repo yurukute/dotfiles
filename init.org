@@ -1,4 +1,5 @@
 #+TITLE: Emacs Configuration
+[[./static/tweak_tendency.png]]
 * Load package.el and MELPA repository
 #+begin_src emacs-lisp
   (require 'package)
