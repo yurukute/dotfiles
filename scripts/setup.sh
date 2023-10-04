@@ -2,9 +2,9 @@
 bluetooth=(pulseaudio-bluetooth bluez bluez-utils)
 display=(feh picom rofi lxappearance arc-gtk-theme arc-icon-theme lightdm-webkit-theme-aether)
 filemgr=(thunar tumbler gvfs)
-fonts=(ttf-dejavu ttf-droid ttf-liberation)
-media=(light alsa-utils pulseaudio-alsa pavucontrol)
-tools=(emacs numlockx ibus-bamboo flameshot acpi)
+fonts=(ttf-dejavu ttf-droid ttf-liberation noto-fonts-emoji)
+media=(light alsa-utils pulseaudio-alsa pavucontrol playerctl)
+tools=(unzip emacs numlockx ibus-bamboo flameshot acpi barrier)
 xorg=(xorg-font-util xorg-xmodmap xorg-server xorg-xinput xorg-xprop xorg-xrandr)
 
 yay_dir="$HOME/.cache/yay/yay"

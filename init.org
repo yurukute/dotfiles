@@ -87,6 +87,7 @@
 #+begin_src emacs-lisp
   (setq-default tab-width 4
                 c-basic-offset tab-width
+                sqlind-basic-offset tab-width
                 indent-tabs-mode nil)
 
   (defun struct-indent (langelem)
@@ -178,7 +179,8 @@
     ;; (lsp-pylsp-plugins-flake8-enabled nil)
     (lsp-pylsp-plugins-pydocstyle-enabled nil)
     (lsp-sqls-connections
-     '(((driver . "postgresql") (dataSourceName . "host=localhost user=dung dbname=exampleDB")))))
+     '(((driver . "postgresql") (dataSourceName . "host=localhost user=dung dbname=exampleDB"))
+       ((driver . "mssql") (dataSourceName . "Server=localhost;Database=DVDlibrary;User Id=sa;Password=sa2008;")))))
 
   (use-package lsp-ui
     :hook (lsp-mode . lsp-ui-mode)
@@ -282,10 +284,10 @@
     (before-save . format-all-buffer))
 #+end_src
 
-** Highlight hex color
+** SQL indent
 #+begin_src emacs-lisp
-  (use-package rainbow-mode
-    :hook (web-mode lua-mode))
+  (use-package sql-indent
+    :hook (sql-mode . sqlind-minor-mode))
 #+end_src
 
 ** Lua
@@ -369,7 +371,13 @@
     :config (which-key-mode))
 #+end_src
 
-** SQL indent minor mode
+** Highlight hex color
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :hook (web-mode lua-mode))
+#+end_src
+
+** Markdown mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
     :custom
