@@ -50,14 +50,17 @@
 
 ** User interface
 #+begin_src emacs-lisp
+  (electric-indent-mode -1)
   (electric-pair-mode 1)
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
   (show-paren-mode 1)
   (tool-bar-mode -1)
 
-  (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook (lambda ()
+                              (display-fill-column-indicator-mode)
+                              (display-line-numbers-mode)
+                              (electric-indent-mode)))
   (global-visual-line-mode t)
 
   (push '("Droid Sans Mono" "Consolas") face-font-family-alternatives)
@@ -91,17 +94,8 @@
                 sqlind-basic-offset tab-width
                 indent-tabs-mode nil)
 
-  (defun struct-indent (langelem)
-    (let ((inclass (assoc 'inclass c-syntactic-context)))
-      (save-excursion
-        (goto-char (c-langelem-pos inclass))
-        (if (or (looking-at "struct")
-                (looking-at "typedef struct"))
-            '2
-          '4))))
-
-  (c-set-offset 'access-label -2)
-  (c-set-offset 'inclass 'struct-indent)
+  (c-set-offset 'access-label 2)
+  (c-set-offset 'inclass 4)
 #+end_src
 
 ** Indent using tabs in conf-mode
@@ -110,16 +104,6 @@
             (lambda ()
               (setq indent-line-function #'insert-tab
                     indent-tabs-mode t)))
-#+end_src
-
-** Disable electric-indent-mode in some modes
-#+begin_src emacs-lisp
-  (defun disable-electric-indent-mode ()
-    "Disable `electric-indent-mode` in current major mode"
-    (set (make-local-variable 'electric-indent-mode) nil))
-
-  (add-hook 'text-mode-hook 'disable-electric-indent-mode)
-  (add-hook 'conf-mode-hook 'disable-electric-indent-mode)
 #+end_src
 
 ** Sort words
