@@ -59,8 +59,7 @@
 
   (add-hook 'prog-mode-hook (lambda ()
                               (display-fill-column-indicator-mode)
-                              (display-line-numbers-mode)
-                              (electric-indent-mode)))
+                              (display-line-numbers-mode)))
   (global-visual-line-mode t)
 
   (push '("Droid Sans Mono" "Consolas") face-font-family-alternatives)
@@ -87,7 +86,7 @@
   (global-set-key (kbd "C-c <down>")  'windmove-down)
 #+end_src
 
-** Indenting C/C++
+** Indentation
 #+begin_src emacs-lisp
   (setq-default tab-width 4
                 c-basic-offset tab-width
@@ -96,14 +95,13 @@
 
   (c-set-offset 'access-label 2)
   (c-set-offset 'inclass 4)
-#+end_src
 
-** Indent using tabs in conf-mode
-#+begin_src emacs-lisp
   (add-hook 'conf-mode-hook
             (lambda ()
               (setq indent-line-function #'insert-tab
                     indent-tabs-mode t)))
+
+  (add-hook 'prog-mode-hook 'electric-indent-local-mode)
 #+end_src
 
 ** Sort words
@@ -151,8 +149,8 @@
 ** LSP - Language Server Protocol
 #+begin_src emacs-lisp
   (use-package lsp-mode
-    :hook
-    (c-mode c++-mode go-mode java-mode python-mode rust-mode sql-mode web-mode)
+    :hook (c-mode c++-mode go-mode java-mode python-mode rust-mode sql-mode web-mode)
+    :mode (("\\.ino\\'" . c-mode))
     :bind
     ("<C-return>" . lsp-sql-execute-paragraph)
     ("<C-f7>" . lsp-sql-execute-query)
@@ -294,6 +292,14 @@
   (use-package python-mode
     :hook (python-mode . (lambda ()
                            (setq-local require-final-newline t))))
+#+end_src
+
+** JSON
+#+begin_src emacs-lisp
+  (use-package json-mode
+    :hook (json-mode . (lambda()
+                         (make-local-variable 'js-indent-level)
+                         (setq js-indent-level 2))))
 #+end_src
 
 ** PlatformIO
