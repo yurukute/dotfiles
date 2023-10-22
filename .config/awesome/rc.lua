@@ -585,10 +585,7 @@ awful.rules.rules = {
         "pop-up",        -- e.g. Google Chrome's (detached) Developer Tools.
         "GtkFileChooserDialog"
       },
-      icon_name = {
-        "Java"
-      }
-  }, properties = { floating = true, ontop = true, requests_no_titlebar = false }}, 
+  }, properties = { floating = true, ontop = true }}, 
 
   -- Add titlebars to normal clients and dialogs
   { rule_any = { type = { "normal" }},
