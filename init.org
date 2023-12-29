@@ -93,7 +93,7 @@
                 sqlind-basic-offset tab-width
                 indent-tabs-mode nil)
 
-  (c-set-offset 'access-label 2)
+  (c-set-offset 'access-label -2)
   (c-set-offset 'inclass 4)
 
   (add-hook 'conf-mode-hook
@@ -174,10 +174,13 @@
     (lsp-ui-doc-position 'at-point)
     ;;(lsp-ui-doc-show-with-cursor t)
     (lsp-ui-peek-enable t)
+    (lsp-ui-sideline-diagnostic-max-line-length 50)
     (lsp-ui-sideline-diagnostic-max-lines 10))
 
   (use-package lsp-java
     :custom (lsp-java-format-on-type-enabled nil))
+
+  (use-package lsp-pyright)
 
   (use-package lsp-treemacs
     :custom (treemacs-width 25)
@@ -234,11 +237,6 @@
     (add-to-list 'company-c-headers-path-user "/usr/include/c++/"))
 
   (use-package company-go)
-
-  (use-package company-jedi
-    :config (add-to-list 'company-backends 'company-jedi)
-    :custom (jedi:complete-on-dot t))
-
   (use-package company-lua)
 
   (use-package yasnippet
@@ -400,7 +398,7 @@
   (use-package popwin
     :custom (popwin:popup-window-height 15)
     :config
-    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck.*\\Org.*\\)\\*$"
+    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck.*\\|Org.*\\)\\*$"
             :stick t :regexp non-nil)
           popwin:special-display-config)
     (push '("*Warnings*" :stick t :height 5)
