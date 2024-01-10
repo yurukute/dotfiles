@@ -548,14 +548,12 @@ awful.rules.rules = {
   -- Floating clients.
   { rule_any = {
       instance = {
-        terminal,       
         "DTA",  -- Firefox addon DownThemAll.
         "copyq",  -- Includes session name in class.
         "pinentry",
         "pavucontrol",
         "gtk-recordMyDesktop",
         "feh",
-        "TeamViewer",
       },
       class = {
         "Arandr",
@@ -570,12 +568,12 @@ awful.rules.rules = {
         "xtightvncviewer",
         "Nvidia-settings",
         "processing-app-Base",
+        "openrgb",
       },
       -- Note that the name property shown in xprop might be set slightly after creation of the client
       -- and the name shown there might not match defined rules here.
       name = {
         "Event Tester",  -- xev.
-        "Picture in picture",
         "Krita - Edit Text — Krita",
         "Options"
       },
@@ -585,7 +583,18 @@ awful.rules.rules = {
         "pop-up",        -- e.g. Google Chrome's (detached) Developer Tools.
         "GtkFileChooserDialog"
       },
-  }, properties = { floating = true, ontop = true }}, 
+  }, properties = { floating = true }}, 
+
+    -- Ontop clients
+  { rule_any = {
+      instance = {
+        terminal,
+        "TeamViewer",        
+      },
+      name = {
+        "Picture in picture",
+      }
+  }, properties = { floating = true, ontop = true }},
 
   -- Add titlebars to normal clients and dialogs
   { rule_any = { type = { "normal" }},
