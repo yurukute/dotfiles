@@ -63,8 +63,9 @@ theme.menu_height         = dpi(24)
 theme.menu_submenu_icon   = theme_path.."/submenu.png"
 theme.menu_width          = dpi(90)
 
+theme.titlebar_bg         = "#171717"
 theme.titlebar_bg_normal  = "#222222"
-theme.titlebar_bg         = "#000000"
+
 
 theme.titlebar_close_button_normal              = theme_path.."titlebar/close_normal.svg"
 theme.titlebar_close_button_focus               = theme_path.."titlebar/close_focus.svg"

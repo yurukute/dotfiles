@@ -575,7 +575,8 @@ awful.rules.rules = {
       name = {
         "Event Tester",  -- xev.
         "Krita - Edit Text — Krita",
-        "Options"
+        "Options",
+        "win.*"
       },
       role = {
         "AlarmWindow",   -- Thunderbird's calendar.
@@ -583,9 +584,9 @@ awful.rules.rules = {
         "pop-up",        -- e.g. Google Chrome's (detached) Developer Tools.
         "GtkFileChooserDialog"
       },
-  }, properties = { floating = true }}, 
+  }, properties = { floating = true }},
 
-    -- Ontop clients
+  -- Ontop clients
   { rule_any = {
       instance = {
         terminal,
@@ -601,7 +602,7 @@ awful.rules.rules = {
     properties = { titlebars_enabled = false }
   },
 
-  { rule = { class = "wps" },
+  { rule = { class = "wps", instance = "TeamViewer" },
     properties = { requests_no_titlebar = true }
   },
 
@@ -665,16 +666,16 @@ client.connect_signal("request::titlebars", function(c)
     end)
   )
   
-  awful.titlebar(c, {size = 20}) : setup {
+  awful.titlebar(c, {size = 24}) : setup {
     {-- Left
       {
         awful.titlebar.widget.closebutton     (c),
         awful.titlebar.widget.minimizebutton  (c),
         awful.titlebar.widget.maximizedbutton (c),  
-        spacing = 5,
+        spacing = 10,
         layout  = wibox.layout.flex.horizontal
       },
-      margins = 4,
+      margins = 7,
       widget = wibox.container.margin
     },
     { -- Middle       
@@ -687,12 +688,10 @@ client.connect_signal("request::titlebars", function(c)
     },
     {-- Left
       {
-        awful.titlebar.widget.stickybutton   (c),
-        awful.titlebar.widget.floatingbutton (c),
-        spacing = 5,
+        spacing = 10,
         layout  = wibox.layout.flex.horizontal
       },         
-      margins = 4,
+      margins = 7,
       widget = wibox.container.margin
     },
     layout = wibox.layout.align.horizontal
