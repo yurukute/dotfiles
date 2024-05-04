@@ -159,6 +159,7 @@
     (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset)
     :custom
     ;; (lsp-pylsp-plugins-flake8-enabled nil)
+    (lsp-completion-enable-additional-text-edit nil)
     (lsp-pylsp-plugins-pydocstyle-enabled nil)
     (lsp-sqls-connections
      '(((driver . "postgresql") (dataSourceName . "host=localhost user=dung dbname=exampleDB"))
@@ -173,7 +174,7 @@
     (lsp-ui-doc-position 'at-point)
     ;;(lsp-ui-doc-show-with-cursor t)
     (lsp-ui-peek-enable t)
-    (lsp-ui-sideline-diagnostic-max-line-length 100)
+    (lsp-ui-sideline-diagnostic-max-line-length 75)
     (lsp-ui-sideline-diagnostic-max-lines 10))
 
   (use-package lsp-java
