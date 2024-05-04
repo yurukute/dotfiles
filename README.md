@@ -1,6 +1,6 @@
 # Necessary settings for better use
 This is a note to my forgetful a$$. Feel free to skip.
-## Awesomewm
+## Window manager - Awesomewm
 ### Theme
 Using `arc-gtk-theme`.
 
@@ -17,7 +17,7 @@ Change permission:
 ```
 sudo chmod +s /usr/bin/light
 ```
-### Volume
+### Audio
 Install `alsa-utils alsa-plugins pulseaudio-alsa pavucontrol`.
 
 Start the PulseAudio daemon:
@@ -25,40 +25,7 @@ Start the PulseAudio daemon:
 pulseaudio --start
 ```
 *[Optional]:* Install `sox` to play sound when adjusting volume.
-## Bluetooth headsets
-Install `pulseaudio-bluetooth bluez bluez-utils`
-
-Make sure bluetooth is running and automatically starts after booting:
-```
-systemctl enable bluetooth
-systemctl start bluetooth
-```
- `/etc/bluetooth/main.conf` file, find `[Policy]` section and add/uncomment:
-```
-AutoEnable=true
-```
-## Ibus
-Vietnamese: using `ibus-bamboo`.
-### Not working with some apps
-Add the following to `/etc/environment`:
-```bash
-GTK_IM_MODULE=ibus
-QT_IM_MODULE=ibus
-XMODIFIERS=@im=ibus
-
-# QT4-based applications
-QT4_IM_MODULE=ibus
-
-# Applications using Clutter/OpenGL
-CLUTTER_IM_MODULE=ibus
-GLFW_IM_MODULE=ibus
-```
-*[Note]:* Relogin needed.
-### Not working with Emacs
-According to [Archwiki](https://wiki.archlinux.org/title/Fcitx#Emacs):  Install `xorg-fonts-misc-otb`.
-
-*[Note]:* Relogin needed.
-## Lightdm
+## Display manager - Lightdm
 ### Fail to Start Light Display Manager error
 Install `xorg-server`.
 ### Dual monitor
@@ -77,20 +44,57 @@ Add the following line to `/etc/lightdm/lightdm.conf`:
 ```conf
 greeter-setup-script=/usr/bin/numlockx on
 ```
-## Thunar
-### Automount 
-For removable devices: Install `gvfs`
+## File manager - Thunar
+### Automount removable devices
+Install `gvfs`
+### Thumbnailers
+Install `tumbler`.
 
-For ntfs partition:
+Install `ffmpegthumbnailer` for video thumbnailing.
+## NTFS mounting
 - Install `ntfs-3g`
 - Add this line to `/etc/fstab`
 ```
 /dev/NTFS-part		/path/to/mount	ntfs-3g		defaults	0 0
 ```
-### Thumbnailers
-Install `tumbler`.
+### Cannot change files permission on NTFS partition
+Add `exec` in mounting options
+```
+/dev/NTFS-part		/path/to/mount	ntfs-3g		exec,...	0 0
+```
+## Bluetooth
+Install `pulseaudio-bluetooth bluez bluez-utils`
 
-Install `ffmpegthumbnailer` for video thumbnailing.
+Make sure bluetooth is running and automatically starts after booting:
+```
+systemctl enable bluetooth
+systemctl start bluetooth
+```
+ `/etc/bluetooth/main.conf` file, find `[Policy]` section and add/uncomment:
+```
+AutoEnable=true
+```
+## IBus
+Vietnamese: using `ibus-bamboo`.
+### Not working with some apps
+Add the following to `/etc/environment`:
+```bash
+GTK_IM_MODULE=ibus
+QT_IM_MODULE=ibus
+XMODIFIERS=@im=ibus
+
+# QT4-based applications
+QT4_IM_MODULE=ibus
+
+# Applications using Clutter/OpenGL
+CLUTTER_IM_MODULE=ibus
+GLFW_IM_MODULE=ibus
+```
+*[Note]:* Relogin needed.
+### Not working with Emacs
+Install `xorg-fonts-misc-otb`. (According to [Archwiki](https://wiki.archlinux.org/title/Fcitx#Emacs))
+
+*[Note]:* Relogin needed.
 ## Touchpad
 Install `xorg-xinput`
 
