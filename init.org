@@ -149,15 +149,14 @@
 ** LSP - Language Server Protocol
 #+begin_src emacs-lisp
   (use-package lsp-mode
-    :hook (c-mode c++-mode go-mode java-mode python-mode rust-mode sql-mode web-mode)
+    :hook (c-mode c++-mode css-mode go-mode java-mode javascript-mode python-mode rust-mode sql-mode web-mode)
     :mode (("\\.ino\\'" . c-mode))
     :bind
     ("<C-return>" . lsp-sql-execute-paragraph)
     ("<C-f7>" . lsp-sql-execute-query)
     :config
     (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    (setf (alist-get 'web-mode lsp--formatting-indent-alist)
-          'web-mode-code-indent-offset)
+    (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset)
     :custom
     ;; (lsp-pylsp-plugins-flake8-enabled nil)
     (lsp-pylsp-plugins-pydocstyle-enabled nil)
@@ -174,7 +173,7 @@
     (lsp-ui-doc-position 'at-point)
     ;;(lsp-ui-doc-show-with-cursor t)
     (lsp-ui-peek-enable t)
-    (lsp-ui-sideline-diagnostic-max-line-length 50)
+    (lsp-ui-sideline-diagnostic-max-line-length 100)
     (lsp-ui-sideline-diagnostic-max-lines 10))
 
   (use-package lsp-java
@@ -310,25 +309,20 @@
 ** Web development
 #+begin_src emacs-lisp
   (use-package web-mode
-    :mode ("\\.html?\\'" "\\.css\\'" "\\.js\\'")
+    :mode ("\\.html?\\'")
     :custom
-    (web-mode-code-indent-offset 2)
-    (web-mode-css-indent-offset 2)
     (web-mode-enable-auto-indentation nil)
     (web-mode-enable-auto-quoting nil)
     (web-mode-enable-current-column-highlight t)
     (web-mode-enable-current-element-highlight t)
     (web-mode-enable-element-content-fontification t)
     (web-mode-enable-html-entities-fontification t)
-    (web-mode-markup-indent-offset 2))
+    (web-mode-markup-indent-offset 4))
 
   (use-package impatient-mode
-    :hook
-    (web-mode)
-    (impatient-mode . httpd-start))
+    :hook (web-mode javascript-mode))
 
   (use-package emmet-mode
-    :bind ("C-x j" . emmet-expand-yas)
     :hook (web-mode))
 
   (use-package go-mode)
@@ -336,6 +330,18 @@
 #+end_src
 
 * Other packages
+** Auto update
+#+begin_src emacs-lisp
+  (use-package auto-package-update
+    :custom
+    (auto-package-update-interval 7)
+    (auto-package-update-prompt-before-update t)
+    (auto-package-update-hide-results t)
+    :config
+    (auto-package-update-maybe)
+    (auto-package-update-at-time "09:00"))
+#+end_src
+
 ** Projectile
 #+begin_src emacs-lisp
   (setq platformio/related-files
@@ -415,7 +421,7 @@
     :config (elcord-mode))
 #+end_src
 
-* BEAUTIFYING ORG-MODE
+* ORG-MODE
 ** Keybindings
 #+begin_src  emacs-lisp
   (global-set-key (kbd "C-c l") #'org-store-link)
@@ -441,7 +447,7 @@
         org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
                             (sequence "⚑ WAITING(w)" "|")
                             (sequence "|" "✘ CANCELED(c)")))
-  (require 'org-tempo)    
+  (require 'org-tempo)
   (setq-default prettify-symbols-alist '(("#+begin_src" . "```")
                                          ("#+end_src" . "```")
                                          (">=" . "≥")
@@ -450,10 +456,10 @@
   (setq prettify-symbols-unprettify-at-point 'right-edge)
 #+end_src
 
-** Hook
+** Hooks
 #+begin_src emacs-lisp
   (add-hook 'org-mode-hook (lambda()
-                             (disable-electric-indent-mode)
+                             (electric-indent-mode -1)
                              (visual-line-mode)
                              (variable-pitch-mode)
                              (prettify-symbols-mode)))
