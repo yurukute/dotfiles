@@ -140,7 +140,9 @@
     :bind (([remap find-file] . helm-find-files)
            ([remap execute-extended-command] . helm-M-x)
            ([remap switch-to-buffer] . helm-mini))
-    :custom (helm-ff-file-name-history-use-recentf t)
+    :custom 
+    (helm-ff-file-name-history-use-recentf t)
+    (helm-move-to-line-cycle-in-source nil)
     :config (helm-mode))
   (use-package helm-xref)
 #+end_src
