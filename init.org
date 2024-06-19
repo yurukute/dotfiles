@@ -77,6 +77,7 @@
   (global-set-key [mouse-8] 'previous-buffer)
   (global-set-key [mouse-9] 'next-buffer)
   (global-set-key (kbd "C-x k") 'kill-current-buffer)
+  (global-set-key (kbd "C-c k") 'kill-line)
   (global-set-key (kbd "C-k") 'eshell)
 
   ;; Windmove
@@ -388,6 +389,7 @@
   (use-package vterm
     :bind (("C-k" . vterm)
            :map vterm-mode-map
+           ("C-k" . previous-multiframe-window)
            ("C-q" . vterm-send-next-key)
            ("C-y" . vterm-yank)))
 #+end_src
