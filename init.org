@@ -77,7 +77,7 @@
   (global-set-key [mouse-8] 'previous-buffer)
   (global-set-key [mouse-9] 'next-buffer)
   (global-set-key (kbd "C-x k") 'kill-current-buffer)
-  (global-set-key (kbd "C-c k") 'kill-line)
+  (global-set-key (kbd "C-c k") 'kill-whole-line)
   (global-set-key (kbd "C-k") 'eshell)
 
   ;; Windmove
@@ -152,7 +152,7 @@
 ** LSP - Language Server Protocol
 #+begin_src emacs-lisp
   (use-package lsp-mode
-    :hook (c-mode c++-mode css-mode go-mode java-mode javascript-mode python-mode rust-mode sql-mode web-mode)
+    :hook (asm-mode c-mode c++-mode css-mode go-mode java-mode javascript-mode python-mode rust-mode sql-mode web-mode)
     :mode (("\\.ino\\'" . c-mode))
     :bind
     ("<C-return>" . lsp-sql-execute-paragraph)
@@ -162,7 +162,7 @@
     (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset)
     :custom
     ;; (lsp-pylsp-plugins-flake8-enabled nil)
-    (lsp-completion-enable-additional-text-edit nil)
+    (lsp-completion-enable-additional-text-edit t)
     (lsp-pylsp-plugins-pydocstyle-enabled nil)
     (lsp-sqls-connections
      '(((driver . "postgresql") (dataSourceName . "host=localhost user=dung dbname=exampleDB"))
@@ -259,6 +259,29 @@
   (use-package flymake-lua)
 #+end_src
 
+** Projectile
+#+begin_src emacs-lisp
+  (setq platformio/related-files
+        (list
+         (projectile-related-files-fn-extensions :other '("cpp" "h" "hpp"))))
+
+  (use-package projectile
+    :bind (:map projectile-mode-map
+                ("C-c p" . projectile-command-map))
+    :config
+    (projectile-register-project-type 'platformio '("platformio.ini")
+                                      :project-file "platformio.ini"
+                                      :compile "pio run"
+                                      :run "pio run -t upload"
+                                      :related-files-fn platformio/related-files)
+    (projectile-mode))
+#+end_src
+
+** Multiple occurences edit
+#+begin_src emacs-lisp
+  (use-package iedit)
+#+end_src
+
 ** Format code
 #+begin_src emacs-lisp
   (use-package format-all
@@ -281,7 +304,7 @@
     :hook (disable-electric-indent-mode))
 #+end_src
 
-** Cargo for Rust
+** Rust Cargo
 #+begin_src emacs-lisp
   (use-package rust-mode)
   (use-package cargo
@@ -344,24 +367,6 @@
     :config
     (auto-package-update-maybe)
     (auto-package-update-at-time "09:00"))
-#+end_src
-
-** Projectile
-#+begin_src emacs-lisp
-  (setq platformio/related-files
-        (list
-         (projectile-related-files-fn-extensions :other '("cpp" "h" "hpp"))))
-
-  (use-package projectile
-    :bind (:map projectile-mode-map
-                ("C-c p" . projectile-command-map))
-    :config
-    (projectile-register-project-type 'platformio '("platformio.ini")
-                                      :project-file "platformio.ini"
-                                      :compile "pio run"
-                                      :run "pio run -t upload"
-                                      :related-files-fn platformio/related-files)
-    (projectile-mode))
 #+end_src
 
 ** Which-key
