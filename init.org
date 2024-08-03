@@ -85,6 +85,10 @@
   (global-set-key (kbd "C-c <right>") 'windmove-right)
   (global-set-key (kbd "C-c <up>")    'windmove-up)
   (global-set-key (kbd "C-c <down>")  'windmove-down)
+
+  ;; Mouse open file in dired mode
+  (with-eval-after-load "dired"
+     (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file))
 #+end_src
 
 ** Indentation
@@ -184,11 +188,7 @@
     :custom (lsp-java-format-on-type-enabled nil))
 
   (use-package lsp-pyright)
-
-  (use-package lsp-treemacs
-    :custom (treemacs-width 25)
-    :bind ((  [f8] . treemacs-select-window)
-           ([S-f8] . treemacs)))
+  (use-package lsp-treemacs)
 #+end_src
 
 ** DAP - Debug Adapter Protocol
@@ -275,6 +275,13 @@
                                       :run "pio run -t upload"
                                       :related-files-fn platformio/related-files)
     (projectile-mode))
+
+  (use-package treemacs-projectile
+    :custom (treemacs-width 25)
+    :bind ((  [f8] . treemacs-select-window)
+           ([C-f8] . treemacs)
+           ([S-f8] . treemacs-switch-workspace)
+           ([M-f8] . treemacs-projectile)))
 #+end_src
 
 ** Multiple occurences edit
@@ -396,7 +403,7 @@
            :map vterm-mode-map
            ("C-k" . previous-multiframe-window)
            ("C-q" . vterm-send-next-key)
-           ("C-y" . vterm-yank)))
+           ("C-S-v" . vterm-yank)))
 #+end_src
 
 ** Open file in external program
@@ -423,6 +430,12 @@
             :stick t :regexp non-nil :noselect non-nil) 
           popwin:special-display-config)
     (popwin-mode 1))
+#+end_src
+
+** Transpose frame
+#+begin_src emacs-lisp
+  (use-package transpose-frame
+    :bind ("C-|" . transpose-frame))
 #+end_src
 
 ** Discord rich presence
