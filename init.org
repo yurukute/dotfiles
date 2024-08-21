@@ -31,6 +31,7 @@
 #+begin_src emacs-lisp
   (setq column-number-mode t
         cua-rectangle-mark-key [C-M-return]
+        ediff-split-window-function (quote split-window-horizontally)
         fill-column 80
         inhibit-startup-screen t
         initial-major-mode 'fundamental-mode
@@ -70,6 +71,13 @@
   (set-fontset-font t 'symbol "Noto Color Emoji")
   (set-frame-font "Monospace 11" nil t)
   (set-frame-parameter (selected-frame) 'alpha ' 85)
+
+  (with-eval-after-load 'ediff
+    (dolist (face '((ediff-even-diff-A . "brown")
+                    (ediff-even-diff-B . "forest green")
+                    (ediff-odd-diff-A . "dark red")
+                    (ediff-odd-diff-B . "dark green")))
+      (face-spec-set (car face) `((t (:background ,(cdr face) :foreground "white" :extend t))))))
 #+end_src
 
 ** User keybindings

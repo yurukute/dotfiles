@@ -576,7 +576,8 @@ awful.rules.rules = {
         "Event Tester",  -- xev.
         "Krita - Edit Text — Krita",
         "Options",
-        "win.*"
+        "win.*",
+        "Ediff"
       },
       role = {
         "AlarmWindow",   -- Thunderbird's calendar.
