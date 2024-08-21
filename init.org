@@ -27,7 +27,7 @@
   (setq default-buffer-file-coding-system 'utf-8)
 #+end_src
 
-** User settings
+** Customize
 #+begin_src emacs-lisp
   (setq column-number-mode t
         cua-rectangle-mark-key [C-M-return]
@@ -49,7 +49,7 @@
   (recentf-mode t)
 #+end_src
 
-** User interface
+** Interface
 #+begin_src emacs-lisp
   (electric-indent-mode -1)
   (electric-pair-mode 1)
@@ -73,14 +73,14 @@
   (set-frame-parameter (selected-frame) 'alpha ' 85)
 
   (with-eval-after-load 'ediff
-    (dolist (face '((ediff-even-diff-A . "brown")
-                    (ediff-even-diff-B . "forest green")
-                    (ediff-odd-diff-A . "dark red")
-                    (ediff-odd-diff-B . "dark green")))
-      (face-spec-set (car face) `((t (:background ,(cdr face) :foreground "white" :extend t))))))
+    (dolist (face '((ediff-even-diff-A . "#89706A")
+                    (ediff-even-diff-B . "#637163")
+                    (ediff-odd-diff-A . "#876860")
+                    (ediff-odd-diff-B . "#64776C")))
+      (face-spec-set (car face) `((t (:background ,(cdr face) :foreground "#141414" :extend t))))))
 #+end_src
 
-** User keybindings
+** Keybindings
 #+begin_src emacs-lisp
   (global-set-key [mouse-8] 'previous-buffer)
   (global-set-key [mouse-9] 'next-buffer)
@@ -96,7 +96,8 @@
 
   ;; Mouse open file in dired mode
   (with-eval-after-load "dired"
-     (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file))
+    (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file)
+    (define-key dired-mode-map [mouse-3] 'dired-mouse-find-file-other-window))
 #+end_src
 
 ** Indentation
