@@ -42,7 +42,8 @@
         mouse-wheel-follow-mouse 't
         mouse-wheel-progressive-speed t
         mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control)))
-        recentf-auto-cleanup 'never)
+        recentf-auto-cleanup 'never
+        kill-buffer-delete-auto-save-files t)
 
   (cua-mode t)
   ;;(desktop-save-mode 1)
