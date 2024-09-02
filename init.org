@@ -61,7 +61,8 @@
 
   (add-hook 'prog-mode-hook (lambda ()
                               (display-fill-column-indicator-mode)
-                              (display-line-numbers-mode)))
+                              (display-line-numbers-mode)
+                              (hl-line-mode)))
   (global-visual-line-mode t)
 
   (push '("Droid Sans Mono" "Consolas") face-font-family-alternatives)
