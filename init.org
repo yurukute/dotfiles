@@ -163,6 +163,40 @@
   (use-package helm-xref)
 #+end_src
 
+** Which-key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :config (which-key-mode))
+#+end_src
+
+** Highlight hex color
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :hook (web-mode lua-mode))
+#+end_src
+
+** Transpose frame
+#+begin_src emacs-lisp
+  (use-package transpose-frame
+    :bind ("C-|" . transpose-frame))
+#+end_src
+
+** Control popup window
+#+begin_src emacs-lisp
+  (use-package popwin
+    :custom (popwin:popup-window-height 15)
+    :config
+    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck.*\\|Org.*\\)\\*$"
+            :stick t :regexp non-nil)
+          popwin:special-display-config)
+    (push '("*Warnings*" :stick t :height 5)
+          popwin:special-display-config)
+    (push '("^\\*\\(sqls results\\|.*debug.*\\|platformio-.*\\)\\*$"
+            :stick t :regexp non-nil :noselect non-nil) 
+          popwin:special-display-config)
+    (popwin-mode 1))
+#+end_src
+
 * Development packages
 ** LSP - Language Server Protocol
 #+begin_src emacs-lisp
@@ -272,19 +306,10 @@
 
 ** Projectile
 #+begin_src emacs-lisp
-  (setq platformio/related-files
-        (list
-         (projectile-related-files-fn-extensions :other '("cpp" "h" "hpp"))))
-
   (use-package projectile
     :bind (:map projectile-mode-map
                 ("C-c p" . projectile-command-map))
     :config
-    (projectile-register-project-type 'platformio '("platformio.ini")
-                                      :project-file "platformio.ini"
-                                      :compile "pio run"
-                                      :run "pio run -t upload"
-                                      :related-files-fn platformio/related-files)
     (projectile-mode))
 
   (use-package treemacs-projectile
@@ -347,8 +372,16 @@
 ** PlatformIO
 #+begin_src emacs-lisp
   (use-package platformio-mode
-    :hook
-    (c++-mode . platformio-conditionally-enable))
+    :hook (c++-mode . platformio-conditionally-enable)
+    :config
+    (setq platformio/related-files
+          (list
+           (projectile-related-files-fn-extensions :other '("cpp" "h" "hpp"))))
+    (projectile-register-project-type 'platformio '("platformio.ini")
+                                      :project-file "platformio.ini"
+                                      :compile "pio run"
+                                      :run "pio run -t upload"
+                                      :related-files-fn platformio/related-files))
 #+end_src
 
 ** Web development
@@ -387,18 +420,6 @@
     (auto-package-update-at-time "09:00"))
 #+end_src
 
-** Which-key
-#+begin_src emacs-lisp
-  (use-package which-key
-    :config (which-key-mode))
-#+end_src
-
-** Highlight hex color
-#+begin_src emacs-lisp
-  (use-package rainbow-mode
-    :hook (web-mode lua-mode))
-#+end_src
-
 ** Markdown mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
@@ -427,28 +448,6 @@
     :config (openwith-mode t))
 #+end_src
 
-** Control popup window
-#+begin_src emacs-lisp
-  (use-package popwin
-    :custom (popwin:popup-window-height 15)
-    :config
-    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck.*\\|Org.*\\)\\*$"
-            :stick t :regexp non-nil)
-          popwin:special-display-config)
-    (push '("*Warnings*" :stick t :height 5)
-          popwin:special-display-config)
-    (push '("^\\*\\(sqls results\\|.*debug.*\\|platformio-.*\\)\\*$"
-            :stick t :regexp non-nil :noselect non-nil) 
-          popwin:special-display-config)
-    (popwin-mode 1))
-#+end_src
-
-** Transpose frame
-#+begin_src emacs-lisp
-  (use-package transpose-frame
-    :bind ("C-|" . transpose-frame))
-#+end_src
-
 ** Discord rich presence
 #+begin_src emacs-lisp
   (use-package elcord
@@ -458,55 +457,46 @@
 * ORG-MODE
 ** Keybindings
 #+begin_src  emacs-lisp
-  (global-set-key (kbd "C-c l") #'org-store-link)
-  (global-set-key (kbd "C-c a") #'org-agenda-list)
-  (global-set-key (kbd "C-c c") #'org-capture)
-  (global-set-key (kbd "C-c f") #'org-toggle-latex-fragment)
-  (global-set-key (kbd "C-c e") #'org-edit-latex-fragment)
-  (global-set-key (kbd "C-c p") #'org-preview-latex-fragment)
-#+end_src
-
-** Custom
-#+begin_src emacs-lisp
-  (setq org-agenda-files '("~")     
-        org-ellipsis " ⤵"
-        org-fontify-done-headline t
-        org-format-latex-options
-        '(:foreground default :background default :scale 1.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-        org-hide-emphasis-markers t
-        org-hide-leading-stars t       
-        org-startup-with-latex-preview t
-        org-src-tab-acts-natively t
-        org-support-shift-select t
-        org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
-                            (sequence "⚑ WAITING(w)" "|")
-                            (sequence "|" "✘ CANCELED(c)")))
-  (require 'org-tempo)
-  (setq-default prettify-symbols-alist '(("#+begin_src" . "```")
-                                         ("#+end_src" . "```")
-                                         (">=" . "≥")
-                                         ("<=" . "≤")
-                                         ("=>" . "⇨")))
-  (setq prettify-symbols-unprettify-at-point 'right-edge)
-#+end_src
-
-** Hooks
-#+begin_src emacs-lisp
-  (add-hook 'org-mode-hook (lambda()
-                             (electric-indent-mode -1)
-                             (visual-line-mode)
-                             (variable-pitch-mode)
-                             (prettify-symbols-mode)))
-#+end_src
-
-** Unordered lists
-#+begin_src emacs-lisp
-  (font-lock-add-keywords 
-   'org-mode
-   '(("^ *\\([-]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-  (font-lock-add-keywords 
-   'org-mode
-   '(("^ *\\([+]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "◦"))))))
+  (use-package org
+    :hook (org-mode . (lambda()
+                        ;;(electric-indent-mode -1)
+                        (visual-line-mode)
+                        (variable-pitch-mode)
+                        (prettify-symbols-mode)))
+    :bind (("C-c l" . org-store-link)
+           ("C-c a" . org-agenda-list)
+           ("C-c f" . org-toggle-latex-fragment)
+           ("C-c c" . org-capture)
+           ("C-c e" . org-edit-latex-fragment)
+           ("C-c p" . org-preview-later-fragment))
+    :config
+    (require 'org-tempo)
+    (setq-default prettify-symbols-alist '(("#+begin_src" . "")
+                                           ("#+end_src" . "")
+                                           (">=" . "≥")
+                                           ("<=" . "≤")
+                                           ("=>" . "⇨")))
+    (font-lock-add-keywords 
+     'org-mode
+     '(("^ *\\([-]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+    (font-lock-add-keywords 
+     'org-mode
+     '(("^ *\\([+]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "◦"))))))
+    :custom
+    (org-adapt-indentation t)
+    (org-agenda-files '("~"))
+    (org-ellipsis " ⤵")
+    (org-fontify-done-headline t)
+    (org-format-latex-options
+     '(:foreground default :background default :scale 1.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
+    (org-hide-emphasis-markers t)
+    (org-hide-leading-stars t)
+    (org-startup-with-latex-preview t)
+    (org-src-tab-acts-natively t)
+    (org-support-shift-select t)
+    (org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
+                         (sequence "⚑ WAITING(w)" "|")
+                         (sequence "|" "✘ CANCELED(c)"))))
 #+end_src
 
 ** Org-bullets
