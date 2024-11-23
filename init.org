@@ -71,15 +71,7 @@
   (internal-set-alternative-font-family-alist face-font-family-alternatives)
 
   (set-fontset-font t 'symbol "Noto Color Emoji")
-  (set-frame-font "Monospace 11" nil t)
-  (set-frame-parameter (selected-frame) 'alpha ' 85)
-
-  (with-eval-after-load 'ediff
-    (dolist (face '((ediff-even-diff-A . "#89706A")
-                    (ediff-even-diff-B . "#637163")
-                    (ediff-odd-diff-A . "#876860")
-                    (ediff-odd-diff-B . "#64776C")))
-      (face-spec-set (car face) `((t (:background ,(cdr face) :foreground "#141414" :extend t))))))
+  (add-to-list 'default-frame-alist '(font . "Monospace 11"))
 #+end_src
 
 ** Keybindings
@@ -130,6 +122,21 @@
   See `sort-regexp-fields'."
     (interactive "*P\nr")
     (sort-regexp-fields reverse "\\w+" "\\&" beg end))
+#+end_src
+
+** Toggle transparency
+#+begin_src emacs-lisp
+  (setq opaque 85)
+  (set-frame-parameter (selected-frame) 'alpha opaque)
+
+  (defun toggle-transparency ()
+    "Toggle transparency of the Emacs frame."
+    (interactive)
+    (let ((alpha (frame-parameter (selected-frame) 'alpha)))
+      (if (eq alpha 100)
+          (set-frame-parameter (selected-frame) 'alpha opaque)
+        (set-frame-parameter (selected-frame) 'alpha 100))))
+  (global-set-key (kbd "C-c t") 'toggle-transparency)
 #+end_src
 
 * Interface packages
@@ -244,6 +251,7 @@
     (dap-debug-restart-keep-session nil)
     (dap-inhibit-io nil)
     (dap-internal-terminal 'dap-internal-terminal-vterm)
+    (dap-lldb-debug-program '("/usr/bin/lldb-dap"))
     :bind ((   [f5] . dap-debug)
            ( [S-f5] . dap-disconnect)
            (   [f7] . dap-ui-expressions-add)
@@ -254,21 +262,35 @@
            ([S-f11] . dap-step-out))
     :commands dap-debug
     :config
+    ;; Python
+    (require 'dap-python)
     ;; C/C++
     (require 'dap-cpptools)
     (dap-cpptools-setup)
-    ;; Python
-    (require 'dap-python)
-    ;; Templates
     (add-to-list 'dap-debug-template-configurations
                  '("cpptools::QuickDebug"
                    :type "cppdbg"
                    :request "launch"
                    :name "Quick debug"
                    :MIMode "gdb"
-                   :program "${fileDirname}../build/${fileBasenameNoExtension}"
+                   :program "${fileDirname}/${fileBasenameNoExtension}"
                    :stopatentry "false"
-                   :dap-compilation "/usr/bin/make"
+                   :dap-compilation "make"
+                   :dap-compilation-dir "${fileDirname}"
+                   :cwd "${workspaceFolder}"))
+
+    (require 'dap-lldb)
+    (add-to-list 'dap-debug-template-configurations
+                 '("lldb-dap::C++ debug"
+                   :name "lldb-dap :: C++ debug"
+                   :type "lldb-vscode"
+                   :lldbServerPath "/usr/bin/lldb-server"
+                   :valuesFormatting "prettyPrinters" ;; Show std containers elements
+                   :request "launch"
+                   :MIMode "gdb"
+                   :program "${fileDirname}/${fileBasenameNoExtension}"
+                   :stopAtEntry "false"
+                   :dap-compilation "make"
                    :dap-compilation-dir "${fileDirname}"
                    :cwd "${workspaceFolder}")))
 #+end_src
@@ -307,9 +329,12 @@
 ** Projectile
 #+begin_src emacs-lisp
   (use-package projectile
-    :bind (:map projectile-mode-map
-                ("C-c p" . projectile-command-map))
+    :bind-keymap ("C-c p" . projectile-command-map)
     :config
+    (setq projectile-globally-ignored-file-suffixes
+          '(".o" ".dep"))
+    (dolist (dir '("built" "images" "third-party"))
+      (add-to-list 'projectile-globally-ignored-directories dir))
     (projectile-mode))
 
   (use-package treemacs-projectile
@@ -318,6 +343,20 @@
            ([C-f8] . treemacs)
            ([S-f8] . treemacs-switch-workspace)
            ([M-f8] . treemacs-projectile)))
+#+end_src
+
+** Ediff
+#+begin_src emacs-lisp
+  (use-package ediff
+    :bind (("C-c e b" . ediff-buffers)
+           ("C-c e f" . ediff-files)
+           ("C-c e d" . ediff-directories))
+    :config
+    (dolist (face '((ediff-even-diff-A . "#89706A")
+                    (ediff-even-diff-B . "#637163")
+                    (ediff-odd-diff-A . "#876860")
+                    (ediff-odd-diff-B . "#64776C")))
+      (face-spec-set (car face) `((t (:background ,(cdr face) :foreground "#141414" :extend t))))))
 #+end_src
 
 ** Multiple occurences edit
@@ -430,12 +469,20 @@
 
 ** Vterm
 #+begin_src emacs-lisp
-  (use-package vterm
-    :bind (("C-k" . vterm)
-           :map vterm-mode-map
-           ("C-k" . previous-multiframe-window)
-           ("C-q" . vterm-send-next-key)
-           ("C-S-v" . vterm-yank)))
+  (if (eq system-type 'gnu/linux)
+      (use-package vterm
+        :bind (("C-k" . vterm)
+               :map vterm-mode-map
+               ("C-k" . previous-multiframe-window)
+               ("C-q" . vterm-send-next-key)
+               ("C-S-v" . vterm-yank)))
+    (use-package eshell
+      :bind (("C-k" . eshell))
+      :hook (eshell-mode . (lambda ()
+                             (local-set-key (kbd "C-l") (lambda ()
+                                                          (interactive)
+                                                          (recenter 0)))))
+      :custom (eshell-scroll-show-maximum-output nil)))
 #+end_src
 
 ** Open file in external program
@@ -463,16 +510,16 @@
                         (visual-line-mode)
                         (variable-pitch-mode)
                         (prettify-symbols-mode)))
-    :bind (("C-c l" . org-store-link)
+    :bind (:map org-mode-map
            ("C-c a" . org-agenda-list)
-           ("C-c f" . org-toggle-latex-fragment)
            ("C-c c" . org-capture)
-           ("C-c e" . org-edit-latex-fragment)
-           ("C-c p" . org-preview-later-fragment))
+           ("C-c l f" . org-toggle-latex-fragment)
+           ("C-c l e" . org-edit-latex-fragment)
+           ("C-c l p" . org-preview-later-fragment))
     :config
     (require 'org-tempo)
-    (setq-default prettify-symbols-alist '(("#+begin_src" . "")
-                                           ("#+end_src" . "")
+    (setq-default prettify-symbols-alist '(("#+begin_src" . "```")
+                                           ("#+end_src" . "```")
                                            (">=" . "≥")
                                            ("<=" . "≤")
                                            ("=>" . "⇨")))
@@ -483,8 +530,9 @@
      'org-mode
      '(("^ *\\([+]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "◦"))))))
     :custom
-    (org-adapt-indentation t)
+    (org-adapt-indentation nil)
     (org-agenda-files '("~"))
+    (org-edit-src-content-indentation 2)
     (org-ellipsis " ⤵")
     (org-fontify-done-headline t)
     (org-format-latex-options
