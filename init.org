@@ -18,7 +18,7 @@
 #+end_src
 
 * User's setting
-** Coding system
+** Coding system & fonts
 #+begin_src emacs-lisp
   (prefer-coding-system       'utf-8)
   (set-default-coding-systems 'utf-8)
@@ -27,44 +27,8 @@
   (setq default-buffer-file-coding-system 'utf-8)
 #+end_src
 
-** Customize
+** Fonts
 #+begin_src emacs-lisp
-  (setq column-number-mode t
-        cua-rectangle-mark-key [C-M-return]
-        ediff-split-window-function (quote split-window-horizontally)
-        fill-column 80
-        inhibit-startup-screen t
-        initial-major-mode 'fundamental-mode
-        ;;initial-scratch-message (shell-command-to-string "")
-        line-number-mode nil
-        make-backup-files nil
-        mode-require-final-newline nil
-        mouse-wheel-follow-mouse 't
-        mouse-wheel-progressive-speed t
-        mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control)))
-        recentf-auto-cleanup 'never
-        kill-buffer-delete-auto-save-files t)
-
-  (cua-mode t)
-  ;;(desktop-save-mode 1)
-  (recentf-mode t)
-#+end_src
-
-** Interface
-#+begin_src emacs-lisp
-  (electric-indent-mode -1)
-  (electric-pair-mode 1)
-  (menu-bar-mode -1)
-  (scroll-bar-mode -1)
-  (show-paren-mode 1)
-  (tool-bar-mode -1)
-
-  (add-hook 'prog-mode-hook (lambda ()
-                              (display-fill-column-indicator-mode)
-                              (display-line-numbers-mode)
-                              (hl-line-mode)))
-  (global-visual-line-mode t)
-
   (push '("Droid Sans Mono" "Consolas") face-font-family-alternatives)
   (push '("Monospace" "Consolas") face-font-family-alternatives)  
   (push '("Noto Color Emoji" "Segoe UI Emoji") face-font-family-alternatives)
@@ -74,24 +38,68 @@
   (add-to-list 'default-frame-alist '(font . "Monospace 11"))
 #+end_src
 
-** Keybindings
+** Customize
 #+begin_src emacs-lisp
-  (global-set-key [mouse-8] 'previous-buffer)
-  (global-set-key [mouse-9] 'next-buffer)
-  (global-set-key (kbd "C-x k") 'kill-current-buffer)
-  (global-set-key (kbd "C-c k") 'kill-whole-line)
-  (global-set-key (kbd "C-k") 'eshell)
+  (use-package my-custom
+    :ensure nil
+    :after (dired)
+    :hook (prog-mode . (lambda ()
+                         (display-fill-column-indicator-mode)
+                         (display-line-numbers-mode)
+                         (hl-line-mode)
+                         (electric-indent-local-mode)))
 
-  ;; Windmove
-  (global-set-key (kbd "C-c <left>")  'windmove-left)
-  (global-set-key (kbd "C-c <right>") 'windmove-right)
-  (global-set-key (kbd "C-c <up>")    'windmove-up)
-  (global-set-key (kbd "C-c <down>")  'windmove-down)
+    :bind (([mouse-8] . previous-buffer)
+           ([mouse-9] . next-buffer)
+           ("C-x k" . kill-current-buffer)
+           ("C-c k" . kill-whole-line)
+           ("C-c <up>" . windmove-up)
+           ("C-c <down>" . windmove-down)
+           ("C-c <left>" . windmove-left)
+           ("C-c <right>" . windmove-right)
+           ("S-<wheel-down>" . (lambda () (interactive) (scroll-left 3)))
+           ("S-<wheel-up>" . (lambda () (interactive) (scroll-right 3)))
+           :map dired-mode-map
+           ([mouse-2] . dired-mouse-find-file)
+           ([mouse-3] . dired-mouse-find-file-other-window))
 
-  ;; Mouse open file in dired mode
-  (with-eval-after-load "dired"
-    (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file)
-    (define-key dired-mode-map [mouse-3] 'dired-mouse-find-file-other-window))
+    :custom
+    (column-number-mode t)
+    (cua-mode t)
+    (cua-rectangle-mark-key [C-M-return])
+    ;;(desktop-save-mode 1)
+    (electric-indent-mode nil)
+    (electric-pair-mode t)
+    (fill-column 80)
+    (global-visual-line-mode t)
+    (inhibit-startup-screen t)
+    (initial-major-mode 'fundamental-mode)
+    ;;(initial-scratch-message (shell-command-to-string ""))
+    (kill-buffer-delete-auto-save-files t)
+    (line-number-mode nil)
+    (make-backup-files nil)
+    (menu-bar-mode nil)
+    (mode-require-final-newline nil)
+    (mouse-wheel-follow-mouse 't)
+    (mouse-wheel-progressive-speed t)
+    (mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control))))
+    (recentf-auto-cleanup 'never)
+    (recentf-mode t)
+    (scroll-bar-mode nil)
+    (show-paren-mode t)
+    (tool-bar-mode nil))
+#+end_src
+
+** Window path config
+#+begin_src emacs-lisp
+  (when (eq system-type 'windows-nt)
+    (let ((bash (executable-find "bash")))
+      (when bash
+        (push (file-name-directory bash) exec-path)))
+    (let ((path (mapcar 'file-truename
+                        (append exec-path
+                                (split-string (getenv "PATH") path-separator t)))))
+      (setenv "PATH" (mapconcat 'identity (delete-dups path) path-separator))))
 #+end_src
 
 ** Indentation
@@ -103,13 +111,6 @@
 
   (c-set-offset 'access-label -2)
   (c-set-offset 'inclass 4)
-
-  (add-hook 'conf-mode-hook
-            (lambda ()
-              (setq indent-line-function #'insert-tab
-                    indent-tabs-mode t)))
-
-  (add-hook 'prog-mode-hook 'electric-indent-local-mode)
 #+end_src
 
 ** Sort words
@@ -137,6 +138,15 @@
           (set-frame-parameter (selected-frame) 'alpha opaque)
         (set-frame-parameter (selected-frame) 'alpha 100))))
   (global-set-key (kbd "C-c t") 'toggle-transparency)
+#+end_src
+
+** Clear undo history
+#+begin_src emacs-lisp
+  (defun clear-undo-history ()
+    "Clear buffer undo history"
+    (interactive)
+    (buffer-disable-undo)
+    (buffer-enable-undo))
 #+end_src
 
 * Interface packages
@@ -331,8 +341,7 @@
   (use-package projectile
     :bind-keymap ("C-c p" . projectile-command-map)
     :config
-    (setq projectile-globally-ignored-file-suffixes
-          '(".o" ".dep"))
+    (setq projectile-globally-ignored-file-suffixes '(".o" ".ko" ".dep"))
     (dolist (dir '("built" "images" "third-party"))
       (add-to-list 'projectile-globally-ignored-directories dir))
     (projectile-mode))
@@ -351,12 +360,13 @@
     :bind (("C-c e b" . ediff-buffers)
            ("C-c e f" . ediff-files)
            ("C-c e d" . ediff-directories))
+    :custom ediff-split-window-function (quote split-window-horizontally)
     :config
     (dolist (face '((ediff-even-diff-A . "#89706A")
                     (ediff-even-diff-B . "#637163")
                     (ediff-odd-diff-A . "#876860")
                     (ediff-odd-diff-B . "#64776C")))
-      (face-spec-set (car face) `((t (:background ,(cdr face) :foreground "#141414" :extend t))))))
+      (face-spec-set (car face) `((t (:background ,(cdr face) :extend t))))))
 #+end_src
 
 ** Multiple occurences edit
@@ -459,6 +469,15 @@
     (auto-package-update-at-time "09:00"))
 #+end_src
 
+** Conf-mode
+#+begin_src emacs-lisp
+  (use-package conf-mode
+    :mode ("_defconfig\\'" "_config\\'")
+    :hook (conf-mode . (lambda ()
+                         (setq indent-line-function #'insert-tab
+                               indent-tabs-mode t))))
+#+end_src
+
 ** Markdown mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
@@ -467,7 +486,7 @@
     (markdown-fontify-code-blocks-natively t))
 #+end_src
 
-** Vterm
+** Terminal
 #+begin_src emacs-lisp
   (if (eq system-type 'gnu/linux)
       (use-package vterm
@@ -506,7 +525,6 @@
 #+begin_src  emacs-lisp
   (use-package org
     :hook (org-mode . (lambda()
-                        ;;(electric-indent-mode -1)
                         (visual-line-mode)
                         (variable-pitch-mode)
                         (prettify-symbols-mode)))
@@ -523,6 +541,8 @@
                                            (">=" . "≥")
                                            ("<=" . "≤")
                                            ("=>" . "⇨")))
+    (unbind-key "C-S-<up>" org-mode-map)
+    (unbind-key "C-S-<down>" org-mode-map)
     (font-lock-add-keywords 
      'org-mode
      '(("^ *\\([-]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
