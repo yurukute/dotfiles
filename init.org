@@ -43,12 +43,20 @@
   (use-package my-custom
     :ensure nil
     :after (dired)
-    :hook (prog-mode . (lambda ()
-                         (display-fill-column-indicator-mode)
-                         (display-line-numbers-mode)
-                         (hl-line-mode)
-                         (electric-indent-local-mode)))
-
+    :hook 
+    (prog-mode . (lambda ()
+                   (display-fill-column-indicator-mode)
+                   (display-line-numbers-mode)
+                   (hl-line-mode)
+                   (electric-indent-local-mode)))
+    (visual-line-mode . (lambda ()
+                          (dolist (i '(("S-<wheel-down>" . scroll-left)
+                                       ("S-<wheel-up>" . scroll-right)))
+                            (if visual-line-mode
+                                (local-unset-key (kbd (car i)))
+                              (local-set-key (kbd (car i)) `(lambda ()
+                                                              (interactive)
+                                                              (,(cdr i) 3)))))))
     :bind (([mouse-8] . previous-buffer)
            ([mouse-9] . next-buffer)
            ("C-x k" . kill-current-buffer)
@@ -65,8 +73,6 @@
 
     :custom
     (column-number-mode t)
-    (cua-mode t)
-    (cua-rectangle-mark-key [C-M-return])
     ;;(desktop-save-mode 1)
     (electric-indent-mode nil)
     (electric-pair-mode t)
@@ -88,6 +94,17 @@
     (scroll-bar-mode nil)
     (show-paren-mode t)
     (tool-bar-mode nil))
+#+end_src
+
+** Common user access
+#+begin_src emacs-lisp
+  (use-package cua-base
+    :bind (:map cua--cua-keys-keymap 
+           ("C-z" . undo-only)
+           ("C-S-z" . undo-redo))
+    :custom
+    (cua-rectangle-mark-key [C-M-return])
+    (cua-mode t))
 #+end_src
 
 ** Window path config
@@ -308,8 +325,11 @@
 ** Text completion
 #+begin_src emacs-lisp
   (use-package company
-    :config (global-company-mode t)
-    :bind ("C-'" . company-files))
+    :bind ("C-'" . company-files)
+    :hook (find-file . (lambda ()
+                         (when (file-remote-p default-directory))
+                         (company-mode -1)))
+    :config (global-company-mode t))
 
   (use-package company-c-headers
     :config
