@@ -20,35 +20,28 @@
 * User's setting
 ** Coding system & fonts
 #+begin_src emacs-lisp
-  (prefer-coding-system       'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (setq default-buffer-file-coding-system 'utf-8)
+  (prefer-coding-system       'utf-8-unix)
+  (set-default-coding-systems 'utf-8-unix)
+  (set-terminal-coding-system 'utf-8-unix)
+  (set-keyboard-coding-system 'utf-8-unix)
+  (setq default-buffer-file-coding-system 'utf-8-unix)
 #+end_src
 
 ** Fonts
 #+begin_src emacs-lisp
   (push '("Droid Sans Mono" "Consolas") face-font-family-alternatives)
   (push '("Monospace" "Consolas") face-font-family-alternatives)  
-  (push '("Noto Color Emoji" "Segoe UI Emoji") face-font-family-alternatives)
   (internal-set-alternative-font-family-alist face-font-family-alternatives)
 
-  (set-fontset-font t 'symbol "Noto Color Emoji")
+  (set-fontset-font t 'symbol "Segoe UI Emoji")
   (add-to-list 'default-frame-alist '(font . "Monospace 11"))
 #+end_src
 
-** Customize
+** Key-bindings
 #+begin_src emacs-lisp
-  (use-package my-custom
+  (use-package my-kbd
     :ensure nil
-    :after (dired)
-    :hook 
-    (prog-mode . (lambda ()
-                   (display-fill-column-indicator-mode)
-                   (display-line-numbers-mode)
-                   (hl-line-mode)
-                   (electric-indent-local-mode)))
+    :hook
     (visual-line-mode . (lambda ()
                           (dolist (i '(("S-<wheel-down>" . scroll-left)
                                        ("S-<wheel-up>" . scroll-right)))
@@ -59,19 +52,35 @@
                                                               (,(cdr i) 3)))))))
     :bind (([mouse-8] . previous-buffer)
            ([mouse-9] . next-buffer)
+           ([C-f5] . revert-buffer)
            ("C-x k" . kill-current-buffer)
            ("C-c k" . kill-whole-line)
+           ("C-c c" . conf-mode)
+           ("C-c r" . eval-region)
            ("C-c <up>" . windmove-up)
            ("C-c <down>" . windmove-down)
            ("C-c <left>" . windmove-left)
            ("C-c <right>" . windmove-right)
-           ("S-<wheel-down>" . (lambda () (interactive) (scroll-left 3)))
-           ("S-<wheel-up>" . (lambda () (interactive) (scroll-right 3)))
            :map dired-mode-map
            ([mouse-2] . dired-mouse-find-file)
-           ([mouse-3] . dired-mouse-find-file-other-window))
+           ([mouse-3] . dired-mouse-find-file-other-window)))
+#+end_src
 
+** Other customize
+#+begin_src emacs-lisp
+  (use-package my-custom
+    :ensure nil
+    :after (dired)
+    :mode (("Makefile\\.*?" . makefile-mode))
+    :hook
+    (prog-mode . (lambda ()
+                   (display-fill-column-indicator-mode)
+                   (display-line-numbers-mode)
+                   (hl-line-mode)
+                   (electric-indent-local-mode)))
+    (tty-setup . (lambda () (hl-line-mode -1)))
     :custom
+    (c-tab-always-indent nil)
     (column-number-mode t)
     ;;(desktop-save-mode 1)
     (electric-indent-mode nil)
@@ -79,7 +88,7 @@
     (fill-column 80)
     (global-visual-line-mode t)
     (inhibit-startup-screen t)
-    (initial-major-mode 'fundamental-mode)
+    (initial-major-mode 'prog-mode)
     ;;(initial-scratch-message (shell-command-to-string ""))
     (kill-buffer-delete-auto-save-files t)
     (line-number-mode nil)
@@ -89,22 +98,29 @@
     (mouse-wheel-follow-mouse 't)
     (mouse-wheel-progressive-speed t)
     (mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control))))
-    (recentf-auto-cleanup 'never)
-    (recentf-mode t)
     (scroll-bar-mode nil)
     (show-paren-mode t)
-    (tool-bar-mode nil))
+    (tool-bar-mode nil)
+    (tramp-copy-size-limit -1))
 #+end_src
 
 ** Common user access
 #+begin_src emacs-lisp
   (use-package cua-base
-    :bind (:map cua--cua-keys-keymap 
-           ("C-z" . undo-only)
-           ("C-S-z" . undo-redo))
+    :hook (makefile-mode . cua-mode)
+    :bind (:map cua--cua-keys-keymap
+                ("C-z" . undo-only)
+                ("C-S-z" . undo-redo))
     :custom
     (cua-rectangle-mark-key [C-M-return])
     (cua-mode t))
+#+end_src
+
+** Recentf
+#+begin_src emacs-lisp
+  (use-package recentf
+    :custom (recentf-auto-cleanup 'never)
+    :config (recentf-mode t))
 #+end_src
 
 ** Window path config
@@ -112,7 +128,7 @@
   (when (eq system-type 'windows-nt)
     (let ((bash (executable-find "bash")))
       (when bash
-        (push (file-name-directory bash) exec-path)))
+        (push (expand-file-name "../usr/bin" (file-name-directory bash)) exec-path)))
     (let ((path (mapcar 'file-truename
                         (append exec-path
                                 (split-string (getenv "PATH") path-separator t)))))
@@ -124,10 +140,10 @@
   (setq-default tab-width 4
                 c-basic-offset tab-width
                 sqlind-basic-offset tab-width
-                indent-tabs-mode nil)
+                indent-tabs-mode t)
 
-  (c-set-offset 'access-label -2)
-  (c-set-offset 'inclass 4)
+  (c-set-offset 'access-label '/)
+  (add-to-list 'c-default-style '(c-mode . "bsd"))
 #+end_src
 
 ** Sort words
@@ -144,15 +160,15 @@
 
 ** Toggle transparency
 #+begin_src emacs-lisp
-  (setq opaque 85)
-  (set-frame-parameter (selected-frame) 'alpha opaque)
+  (setq opacity 85)
+  (add-to-list 'default-frame-alist `(alpha . ,opacity))
 
   (defun toggle-transparency ()
     "Toggle transparency of the Emacs frame."
     (interactive)
     (let ((alpha (frame-parameter (selected-frame) 'alpha)))
       (if (eq alpha 100)
-          (set-frame-parameter (selected-frame) 'alpha opaque)
+          (set-frame-parameter (selected-frame) 'alpha opacity)
         (set-frame-parameter (selected-frame) 'alpha 100))))
   (global-set-key (kbd "C-c t") 'toggle-transparency)
 #+end_src
@@ -189,12 +205,17 @@
   (use-package helm
     :bind (([remap find-file] . helm-find-files)
            ([remap execute-extended-command] . helm-M-x)
-           ([remap switch-to-buffer] . helm-mini))
+           ([remap switch-to-buffer] . helm-mini)
+           ([remap occur] . helm-occur)
+           (:map helm-find-files-map
+                 ("C-<tab>" . file-cache-minibuffer-complete)))
     :custom 
     (helm-ff-file-name-history-use-recentf t)
     (helm-move-to-line-cycle-in-source nil)
     :config (helm-mode))
+
   (use-package helm-xref)
+  (use-package helm-projectile)
 #+end_src
 
 ** Which-key
@@ -203,7 +224,7 @@
     :config (which-key-mode))
 #+end_src
 
-** Highlight hex color
+** Highlighting hex color
 #+begin_src emacs-lisp
   (use-package rainbow-mode
     :hook (web-mode lua-mode))
@@ -220,7 +241,7 @@
   (use-package popwin
     :custom (popwin:popup-window-height 15)
     :config
-    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck.*\\|Org.*\\)\\*$"
+    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Buffer List\\|Flycheck.*\\|Org.*\\)\\*$"
             :stick t :regexp non-nil)
           popwin:special-display-config)
     (push '("*Warnings*" :stick t :height 5)
@@ -236,11 +257,12 @@
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :hook (asm-mode c-mode c++-mode css-mode go-mode java-mode javascript-mode python-mode rust-mode sql-mode web-mode)
-    :mode (("\\.ino\\'" . c-mode))
+    :mode (("\\.ino\\'" . c-mode) ("\\.dts?\\'" . c-mode))
     :bind
     ("<C-return>" . lsp-sql-execute-paragraph)
     ("<C-f7>" . lsp-sql-execute-query)
     :config
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
     (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
     (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset)
     :custom
@@ -360,9 +382,11 @@
 #+begin_src emacs-lisp
   (use-package projectile
     :bind-keymap ("C-c p" . projectile-command-map)
+    :custom
+    (projectile-enable-caching t)
+    (projectile-globally-ignored-file-suffixes '(".o" ".ko" ".mod" ".cmd" ".order" ".symvers" ".d" ".a" ".dep"))
     :config
-    (setq projectile-globally-ignored-file-suffixes '(".o" ".ko" ".dep"))
-    (dolist (dir '("built" "images" "third-party"))
+    (dolist (dir '("built" "objs"))
       (add-to-list 'projectile-globally-ignored-directories dir))
     (projectile-mode))
 
@@ -549,11 +573,11 @@
                         (variable-pitch-mode)
                         (prettify-symbols-mode)))
     :bind (:map org-mode-map
-           ("C-c a" . org-agenda-list)
-           ("C-c c" . org-capture)
-           ("C-c l f" . org-toggle-latex-fragment)
-           ("C-c l e" . org-edit-latex-fragment)
-           ("C-c l p" . org-preview-later-fragment))
+                ("C-c a" . org-agenda-list)
+                ("C-c c" . org-capture)
+                ("C-c l f" . org-toggle-latex-fragment)
+                ("C-c l e" . org-edit-latex-fragment)
+                ("C-c l p" . org-preview-later-fragment))
     :config
     (require 'org-tempo)
     (setq-default prettify-symbols-alist '(("#+begin_src" . "```")
@@ -582,9 +606,9 @@
     (org-startup-with-latex-preview t)
     (org-src-tab-acts-natively t)
     (org-support-shift-select t)
-    (org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
-                         (sequence "⚑ WAITING(w)" "|")
-                         (sequence "|" "✘ CANCELED(c)"))))
+    (org-todo-keywords
+     '((sequence "☛ TODO(t)" "⚒ IN-PROGRESS(p)" "|" "✔ DONE(d)")
+       (sequence "⊘ BLOCKED(b)" "⏸ ONHOLD(h)" "|" "✗ CANCELED(c)"))))
 #+end_src
 
 ** Org-bullets
