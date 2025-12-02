@@ -30,17 +30,18 @@
 ** Fonts
 #+begin_src emacs-lisp
   (push '("Droid Sans Mono" "Consolas") face-font-family-alternatives)
-  (push '("Monospace" "Consolas") face-font-family-alternatives)  
+  (push '("Monospace" "Consolas") face-font-family-alternatives)
+  (push '("Noto Color Emoji" "Segoe UI Emoji") face-font-family-alternatives)
   (internal-set-alternative-font-family-alist face-font-family-alternatives)
 
-  (set-fontset-font t 'symbol "Segoe UI Emoji")
+  (set-fontset-font t 'symbol "Noto Color Emoji")
   (add-to-list 'default-frame-alist '(font . "Monospace 11"))
 #+end_src
 
 ** Key-bindings
 #+begin_src emacs-lisp
-  (use-package my-kbd
-    :ensure nil
+  (use-package which-key
+    :config (which-key-mode)
     :hook
     (visual-line-mode . (lambda ()
                           (dolist (i '(("S-<wheel-down>" . scroll-left)
@@ -57,6 +58,7 @@
            ("C-c k" . kill-whole-line)
            ("C-c c" . conf-mode)
            ("C-c r" . eval-region)
+           ("C-y" . yank)
            ("C-c <up>" . windmove-up)
            ("C-c <down>" . windmove-down)
            ("C-c <left>" . windmove-left)
@@ -79,6 +81,9 @@
                    (hl-line-mode)
                    (electric-indent-local-mode)))
     (tty-setup . (lambda () (hl-line-mode -1)))
+    (find-file . (lambda ()
+                   (when (and buffer-file-name (file-remote-p buffer-file-name))
+                     (setq-local vc-handled-backends nil))))
     :custom
     (c-tab-always-indent nil)
     (column-number-mode t)
@@ -100,6 +105,7 @@
     (mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control))))
     (scroll-bar-mode nil)
     (show-paren-mode t)
+    (show-trailing-whitespace t)
     (tool-bar-mode nil)
     (tramp-copy-size-limit -1))
 #+end_src
@@ -143,7 +149,44 @@
                 indent-tabs-mode t)
 
   (c-set-offset 'access-label '/)
-  (add-to-list 'c-default-style '(c-mode . "bsd"))
+
+  (defun c-lineup-arglist-tabs-only (ignored)
+    "Line up argument lists by tabs, not spaces"
+    (let* ((anchor (c-langelem-pos c-syntactic-element))
+           (column (c-langelem-2nd-pos c-syntactic-element))
+           (offset (- (1+ column) anchor))
+           (steps (floor offset c-basic-offset)))
+      (* (max steps 1)
+         c-basic-offset)))
+
+  (c-add-style "linux-kernel"
+               '("bsd"
+                 (c-basic-offset . 8)
+                 (c-label-minimum-indentation . 0)
+                 (c-offsets-alist
+                  ;;(arglist-close         . c-lineup-arglist-tabs-only)
+                  (arglist-cont-nonempty . (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
+                  (arglist-intro         . +)
+                  (brace-list-intro      . +)
+                  (c                     . c-lineup-C-comments)
+                  (case-label            . 0)
+                  (comment-intro         . c-lineup-comment)
+                  (cpp-define-intro      . +)
+                  (cpp-macro             . -1000)
+                  (cpp-macro-cont        . +)
+                  (defun-block-intro     . +)
+                  (else-clause           . 0)
+                  (func-decl-cont        . +)
+                  (inclass               . +)
+                  (inher-cont            . c-lineup-multi-inher)
+                  (knr-argdecl-intro     . 0)
+                  (label                 . -1000)
+                  (statement             . 0)
+                  (statement-block-intro . +)
+                  (statement-case-intro  . +)
+                  (statement-cont        . +)
+                  (substatement          . +))))
+  (add-to-list 'c-default-style '(c-mode . "linux-kernel"))
 #+end_src
 
 ** Sort words
@@ -156,21 +199,6 @@
   See `sort-regexp-fields'."
     (interactive "*P\nr")
     (sort-regexp-fields reverse "\\w+" "\\&" beg end))
-#+end_src
-
-** Toggle transparency
-#+begin_src emacs-lisp
-  (setq opacity 85)
-  (add-to-list 'default-frame-alist `(alpha . ,opacity))
-
-  (defun toggle-transparency ()
-    "Toggle transparency of the Emacs frame."
-    (interactive)
-    (let ((alpha (frame-parameter (selected-frame) 'alpha)))
-      (if (eq alpha 100)
-          (set-frame-parameter (selected-frame) 'alpha opacity)
-        (set-frame-parameter (selected-frame) 'alpha 100))))
-  (global-set-key (kbd "C-c t") 'toggle-transparency)
 #+end_src
 
 ** Clear undo history
@@ -200,6 +228,21 @@
     (nyan-mode))
 #+end_src
 
+** Toggle transparency
+#+begin_src emacs-lisp
+  (setq opacity 85)
+  (add-to-list 'default-frame-alist `(alpha . ,opacity))
+
+  (defun toggle-transparency ()
+    "Toggle transparency of the Emacs frame."
+    (interactive)
+    (let ((alpha (frame-parameter (selected-frame) 'alpha)))
+      (if (eq alpha 100)
+          (set-frame-parameter (selected-frame) 'alpha opacity)
+        (set-frame-parameter (selected-frame) 'alpha 100))))
+  (global-set-key (kbd "C-c t") 'toggle-transparency)
+#+end_src
+
 ** Helm
 #+begin_src emacs-lisp
   (use-package helm
@@ -218,12 +261,6 @@
   (use-package helm-projectile)
 #+end_src
 
-** Which-key
-#+begin_src emacs-lisp
-  (use-package which-key
-    :config (which-key-mode))
-#+end_src
-
 ** Highlighting hex color
 #+begin_src emacs-lisp
   (use-package rainbow-mode
@@ -239,17 +276,17 @@
 ** Control popup window
 #+begin_src emacs-lisp
   (use-package popwin
+    :hook (after-init)
+    :bind-keymap ("C-x p" . popwin:keymap)
     :custom (popwin:popup-window-height 15)
     :config
-    (push '("^*\\(vterm\\|.*shell\\|Breakpoints\\|Buffer List\\|Flycheck.*\\|Org.*\\)\\*$"
-            :stick t :regexp non-nil)
-          popwin:special-display-config)
-    (push '("*Warnings*" :stick t :height 5)
-          popwin:special-display-config)
-    (push '("^\\*\\(sqls results\\|.*debug.*\\|platformio-.*\\)\\*$"
-            :stick t :regexp non-nil :noselect non-nil) 
-          popwin:special-display-config)
-    (popwin-mode 1))
+    (dolist (cfg '(("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck.*\\|Org.*\\)\\*$" 
+                    :stick t :regexp t)
+                   ("*Buffer List*")
+                   ("*Warnings*" :stick t :height 5)
+                   ("^\\*\\(sqls results\\|.*debug.*\\|platformio-.*\\)\\*$" 
+                    :stick t :regexp t :noselect t)))
+      (push cfg popwin:special-display-config)))
 #+end_src
 
 * Development packages
@@ -257,7 +294,7 @@
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :hook (asm-mode c-mode c++-mode css-mode go-mode java-mode javascript-mode python-mode rust-mode sql-mode web-mode)
-    :mode (("\\.ino\\'" . c-mode) ("\\.dts?\\'" . c-mode))
+    :mode (("\\.ino\\'" . c-mode))
     :bind
     ("<C-return>" . lsp-sql-execute-paragraph)
     ("<C-f7>" . lsp-sql-execute-query)
@@ -370,8 +407,7 @@
 ** Flycheck - Realtime error checking
 #+begin_src emacs-lisp
   (use-package flycheck
-    :config
-    (global-flycheck-mode)
+    :config (global-flycheck-mode)
     :custom (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
   (use-package flycheck-rust)
@@ -383,10 +419,11 @@
   (use-package projectile
     :bind-keymap ("C-c p" . projectile-command-map)
     :custom
-    (projectile-enable-caching t)
-    (projectile-globally-ignored-file-suffixes '(".o" ".ko" ".mod" ".cmd" ".order" ".symvers" ".d" ".a" ".dep"))
+    (projectile-enable-caching 'persistent)
+    (projectile-globally-ignored-file-suffixes
+     '(".o" ".ko" ".mod" ".cmd" ".order" ".symvers" ".d" ".a" ".dep" ".dtb"))
     :config
-    (dolist (dir '("built" "objs"))
+    (dolist (dir '("*built" "*objs" "bin"))
       (add-to-list 'projectile-globally-ignored-directories dir))
     (projectile-mode))
 
@@ -539,13 +576,14 @@
                ("C-k" . previous-multiframe-window)
                ("C-q" . vterm-send-next-key)
                ("C-S-v" . vterm-yank)))
-    (use-package eshell
-      :bind (("C-k" . eshell))
-      :hook (eshell-mode . (lambda ()
-                             (local-set-key (kbd "C-l") (lambda ()
-                                                          (interactive)
-                                                          (recenter 0)))))
-      :custom (eshell-scroll-show-maximum-output nil)))
+    (use-package shell
+      :bind (("C-k" . shell))
+      :custom (eshell-scroll-show-maximum-output nil)
+      :hook (shell-mode . (lambda ()
+                            (local-set-key (kbd "C-l") (lambda ()
+                                                         (interactive)
+                                                         (erase-buffer)
+                                                         (process-send-string nil "\n")))))))
 #+end_src
 
 ** Open file in external program
@@ -587,10 +625,10 @@
                                            ("=>" . "⇨")))
     (unbind-key "C-S-<up>" org-mode-map)
     (unbind-key "C-S-<down>" org-mode-map)
-    (font-lock-add-keywords 
+    (font-lock-add-keywords
      'org-mode
      '(("^ *\\([-]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-    (font-lock-add-keywords 
+    (font-lock-add-keywords
      'org-mode
      '(("^ *\\([+]\\) " (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "◦"))))))
     :custom
@@ -608,7 +646,7 @@
     (org-support-shift-select t)
     (org-todo-keywords
      '((sequence "☛ TODO(t)" "⚒ IN-PROGRESS(p)" "|" "✔ DONE(d)")
-       (sequence "⊘ BLOCKED(b)" "⏸ ONHOLD(h)" "|" "✗ CANCELED(c)"))))
+       (sequence "🚫 BLOCKED(b)" "⏸ ONHOLD(h)" "|" "✘ CANCELED(c)"))))
 #+end_src
 
 ** Org-bullets
@@ -624,8 +662,8 @@
     :custom (org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
 #+end_src
 
-** Org faces 
-#+begin_src emacs-lisp  
+** Org faces
+#+begin_src emacs-lisp
   (dolist (face '(org-block
                   org-document-info-keyword
                   org-property-value
