@@ -57,12 +57,12 @@
            ("C-x k" . kill-current-buffer)
            ("C-c k" . kill-whole-line)
            ("C-c c" . conf-mode)
-           ("C-c r" . eval-region)
            ("C-y" . yank)
            ("C-c <up>" . windmove-up)
            ("C-c <down>" . windmove-down)
            ("C-c <left>" . windmove-left)
            ("C-c <right>" . windmove-right)
+           ("C-<return>" . eval-region)
            :map dired-mode-map
            ([mouse-2] . dired-mouse-find-file)
            ([mouse-3] . dired-mouse-find-file-other-window)))
@@ -84,7 +84,9 @@
     (find-file . (lambda ()
                    (when (and buffer-file-name (file-remote-p buffer-file-name))
                      (setq-local vc-handled-backends nil))))
+    :init (setq tab-width 4)
     :custom
+    (c-basic-offset tab-width)
     (c-tab-always-indent nil)
     (column-number-mode t)
     ;;(desktop-save-mode 1)
@@ -92,6 +94,7 @@
     (electric-pair-mode t)
     (fill-column 80)
     (global-visual-line-mode t)
+    (indent-tabs-mode t)
     (inhibit-startup-screen t)
     (initial-major-mode 'prog-mode)
     ;;(initial-scratch-message (shell-command-to-string ""))
@@ -106,8 +109,10 @@
     (scroll-bar-mode nil)
     (show-paren-mode t)
     (show-trailing-whitespace t)
+    (sqlind-basic-offset tab-width)
     (tool-bar-mode nil)
-    (tramp-copy-size-limit -1))
+    (tramp-copy-size-limit -1)
+    (tramp-use-ssh-controlmaster-options nil))
 #+end_src
 
 ** Common user access
@@ -129,27 +134,8 @@
     :config (recentf-mode t))
 #+end_src
 
-** Window path config
+** C-style
 #+begin_src emacs-lisp
-  (when (eq system-type 'windows-nt)
-    (let ((bash (executable-find "bash")))
-      (when bash
-        (push (expand-file-name "../usr/bin" (file-name-directory bash)) exec-path)))
-    (let ((path (mapcar 'file-truename
-                        (append exec-path
-                                (split-string (getenv "PATH") path-separator t)))))
-      (setenv "PATH" (mapconcat 'identity (delete-dups path) path-separator))))
-#+end_src
-
-** Indentation
-#+begin_src emacs-lisp
-  (setq-default tab-width 4
-                c-basic-offset tab-width
-                sqlind-basic-offset tab-width
-                indent-tabs-mode t)
-
-  (c-set-offset 'access-label '/)
-
   (defun c-lineup-arglist-tabs-only (ignored)
     "Line up argument lists by tabs, not spaces"
     (let* ((anchor (c-langelem-pos c-syntactic-element))
@@ -165,7 +151,8 @@
                  (c-label-minimum-indentation . 0)
                  (c-offsets-alist
                   ;;(arglist-close         . c-lineup-arglist-tabs-only)
-                  (arglist-cont-nonempty . (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
+                  (arglist-cont-nonempty .
+                                         (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
                   (arglist-intro         . +)
                   (brace-list-intro      . +)
                   (c                     . c-lineup-C-comments)
@@ -187,6 +174,7 @@
                   (statement-cont        . +)
                   (substatement          . +))))
   (add-to-list 'c-default-style '(c-mode . "linux-kernel"))
+  (c-set-offset 'access-label '/)
 #+end_src
 
 ** Sort words
@@ -210,6 +198,33 @@
     (buffer-enable-undo))
 #+end_src
 
+** Toggle transparency
+#+begin_src emacs-lisp
+  (setq opacity 85)
+  (add-to-list 'default-frame-alist `(alpha . ,opacity))
+
+  (defun toggle-transparency ()
+    "Toggle transparency of the Emacs frame."
+    (interactive)
+    (let ((alpha (frame-parameter (selected-frame) 'alpha)))
+      (if (eq alpha 100)
+          (set-frame-parameter (selected-frame) 'alpha opacity)
+        (set-frame-parameter (selected-frame) 'alpha 100))))
+  (global-set-key (kbd "C-c t") 'toggle-transparency)
+#+end_src
+
+** Window path config
+#+begin_src emacs-lisp
+  (when (eq system-type 'windows-nt)
+    (let ((bash (executable-find "bash")))
+      (when bash
+        (push (expand-file-name "../usr/bin" (file-name-directory bash)) exec-path)))
+    (let ((path (mapcar 'file-truename
+                        (append exec-path
+                                (split-string (getenv "PATH") path-separator t)))))
+      (setenv "PATH" (mapconcat 'identity (delete-dups path) path-separator))))
+#+end_src
+
 * Interface packages
 ** Monokai theme
 #+begin_src emacs-lisp
@@ -228,21 +243,6 @@
     (nyan-mode))
 #+end_src
 
-** Toggle transparency
-#+begin_src emacs-lisp
-  (setq opacity 85)
-  (add-to-list 'default-frame-alist `(alpha . ,opacity))
-
-  (defun toggle-transparency ()
-    "Toggle transparency of the Emacs frame."
-    (interactive)
-    (let ((alpha (frame-parameter (selected-frame) 'alpha)))
-      (if (eq alpha 100)
-          (set-frame-parameter (selected-frame) 'alpha opacity)
-        (set-frame-parameter (selected-frame) 'alpha 100))))
-  (global-set-key (kbd "C-c t") 'toggle-transparency)
-#+end_src
-
 ** Helm
 #+begin_src emacs-lisp
   (use-package helm
@@ -252,7 +252,7 @@
            ([remap occur] . helm-occur)
            (:map helm-find-files-map
                  ("C-<tab>" . file-cache-minibuffer-complete)))
-    :custom 
+    :custom
     (helm-ff-file-name-history-use-recentf t)
     (helm-move-to-line-cycle-in-source nil)
     :config (helm-mode))
@@ -280,53 +280,23 @@
     :bind-keymap ("C-x p" . popwin:keymap)
     :custom (popwin:popup-window-height 15)
     :config
-    (dolist (cfg '(("^*\\(vterm\\|.*shell\\|Breakpoints\\|Flycheck.*\\|Org.*\\)\\*$" 
-                    :stick t :regexp t)
+    (dolist (cfg '(("^*\\(vterm\\|.*shell.*\\|Breakpoints\\|Flycheck.*\\|Org.*\\)\\*$" :stick t :regexp t)
                    ("*Buffer List*")
                    ("*Warnings*" :stick t :height 5)
-                   ("^\\*\\(sqls results\\|.*debug.*\\|platformio-.*\\)\\*$" 
-                    :stick t :regexp t :noselect t)))
+                   ("^\\*\\(sqls results\\|.*debug.*\\|platformio-.*\\)\\*$" :stick t :regexp t :noselect t)))
       (push cfg popwin:special-display-config)))
 #+end_src
 
 * Development packages
-** LSP - Language Server Protocol
+** EGLOT - Language Server Protocol
 #+begin_src emacs-lisp
-  (use-package lsp-mode
-    :hook (asm-mode c-mode c++-mode css-mode go-mode java-mode javascript-mode python-mode rust-mode sql-mode web-mode)
+  (use-package eglot
+    :hook ((asm-mode c-mode c++-mode css-mode go-mode java-mode javascript-mode python-mode rust-mode sql-mode web-mode) . eglot-ensure)
     :mode (("\\.ino\\'" . c-mode))
-    :bind
-    ("<C-return>" . lsp-sql-execute-paragraph)
-    ("<C-f7>" . lsp-sql-execute-query)
     :config
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-    (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    (setf (alist-get 'web-mode lsp--formatting-indent-alist) 'web-mode-code-indent-offset)
-    :custom
-    ;; (lsp-pylsp-plugins-flake8-enabled nil)
-    (lsp-completion-enable-additional-text-edit t)
-    (lsp-pylsp-plugins-pydocstyle-enabled nil)
-    (lsp-sqls-connections
-     '(((driver . "postgresql") (dataSourceName . "host=localhost user=dung dbname=exampleDB"))
-       ((driver . "mssql") (dataSourceName . "Server=localhost;Database=DVDlibrary;User Id=sa;Password=sa2008;")))))
-
-  (use-package lsp-ui
-    :hook (lsp-mode . lsp-ui-mode)
-    :bind (:map lsp-ui-mode-map
-                ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-                ([remap xref-find-references] . lsp-ui-peek-find-references))
-    :custom
-    (lsp-ui-doc-position 'at-point)
-    ;;(lsp-ui-doc-show-with-cursor t)
-    (lsp-ui-peek-enable t)
-    (lsp-ui-sideline-diagnostic-max-line-length 75)
-    (lsp-ui-sideline-diagnostic-max-lines 10))
-
-  (use-package lsp-java
-    :custom (lsp-java-format-on-type-enabled nil))
-
-  (use-package lsp-pyright)
-  (use-package lsp-treemacs)
+    (add-to-list 'eglot-server-programs
+                 '((c-mode c++-mode) . ("clangd" "--stdio"))))
 #+end_src
 
 ** DAP - Debug Adapter Protocol
@@ -402,16 +372,6 @@
     :config (yas-global-mode t))
 
   (use-package yasnippet-snippets)
-#+end_src
-
-** Flycheck - Realtime error checking
-#+begin_src emacs-lisp
-  (use-package flycheck
-    :config (global-flycheck-mode)
-    :custom (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
-
-  (use-package flycheck-rust)
-  (use-package flymake-lua)
 #+end_src
 
 ** Projectile
@@ -577,13 +537,13 @@
                ("C-q" . vterm-send-next-key)
                ("C-S-v" . vterm-yank)))
     (use-package shell
-      :bind (("C-k" . shell))
+      :bind ("C-k" . shell)
       :custom (eshell-scroll-show-maximum-output nil)
       :hook (shell-mode . (lambda ()
-                            (local-set-key (kbd "C-l") (lambda ()
-                                                         (interactive)
-                                                         (erase-buffer)
-                                                         (process-send-string nil "\n")))))))
+                            (local-set-key (kbd "C-l") 'comint-clear-buffer)))))
+
+  (use-package ssh
+    :custom (ssh-explicit-args '("-tt")))
 #+end_src
 
 ** Open file in external program
