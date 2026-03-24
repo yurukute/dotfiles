@@ -84,9 +84,9 @@
     (find-file . (lambda ()
                    (when (and buffer-file-name (file-remote-p buffer-file-name))
                      (setq-local vc-handled-backends nil))))
-    :init (setq tab-width 4)
+    :init (setq-default c-basic-offset 4
+  					  sqlind-basic-offset 4)
     :custom
-    (c-basic-offset tab-width)
     (c-tab-always-indent nil)
     (column-number-mode t)
     ;;(desktop-save-mode 1)
@@ -109,10 +109,8 @@
     (scroll-bar-mode nil)
     (show-paren-mode t)
     (show-trailing-whitespace t)
-    (sqlind-basic-offset tab-width)
     (tool-bar-mode nil)
-    (tramp-copy-size-limit -1)
-    (tramp-use-ssh-controlmaster-options nil))
+    (tramp-copy-size-limit -1))
 #+end_src
 
 ** Common user access

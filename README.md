@@ -96,25 +96,25 @@ Install `xorg-fonts-misc-otb`. (According to [Archwiki](https://wiki.archlinux.o
 
 *[Note]:* Relogin needed.
 ## Touchpad
-Install `xorg-xinput`
+Install `x86-input-synaptics`
 
-Create `/etc/X11/xorg.conf.d/30-touchpad.conf` with following content:
+Create `/etc/X11/xorg.conf.d/70-synaptics.conf` with following content:
 ```conf
 Section "InputClass"
-    Identifier "touchpad"
-    Driver "libinput"
-    Option "Tapping" "on"
-    Option "NaturalScrolling" "true"
+	Identifier "touchpad"
+	Driver "synaptics"
+	MatchIsTouchpad "on"
+		Option "TapButton1" "1"
+		Option "TapButton2" "3"
+		Option "TapButton3" "2"
+		Option "VertTwoFingerScroll" "on"
+		Option "HorizTwoFingerScroll" "on"
+		Option "CircularScrolling" "on"
+		Option "CircScrollTrigger" "2"
+		Option "VertScrollDelta" "-30"
+		Option "HorizScrollDelta" "-30"
 EndSection
 ```
-Or simply add:
-```bash
-xinput set-prop '<DeviceName>' 'libinput Tapping Enabled' 1
-xinput set-prop '<DeviceName>' 'libinput Natural Scrolling Enabled' 1
-```
-to `.xprofile`.
-
-*[Tips]:*`<DeviceName>` can be get by running `xinput` command.
 ## Grub theme
 - Edit the following line in `/etc/default/grub`:
 ```conf
