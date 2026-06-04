@@ -39,7 +39,7 @@ do
   awesome.connect_signal("debug::error", function (err)
   -- Make sure we don't go into an endless error loop
   if in_error then return end
-  in_error = true  
+  in_error = true
   naughty.notify({ preset = naughty.config.presets.critical,
                    title  = "Oops, an error happened!",
                    text   = tostring(err) })
@@ -65,7 +65,7 @@ picture_dir  = "~/Pictures/"
 modkey = "Mod4"
 altkey = "Mod1"
 -- Table of layouts to cover with awful.layout.inc, order matters.
-awful.layout.layouts = { 
+awful.layout.layouts = {
   awful.layout.suit.tile,
   awful.layout.suit.spiral,
   awful.layout.suit.spiral.dwindle,
@@ -187,7 +187,7 @@ awful.screen.connect_for_each_screen(function(s)
   set_wallpaper(s,picture_dir.."Wallpapers/")
   -- Each screen has its own tag table.
   awful.tag({ "W", "E", "S", "O", "M", "E", "W", "M" }, s, awful.layout.layouts[1])
-  
+
   -- Create a promptbox for each screen
   s.mypromptbox = awful.widget.prompt()
   -- Create an imagebox widget which will contain an icon indicating which layout we're using.
@@ -205,17 +205,17 @@ awful.screen.connect_for_each_screen(function(s)
     filter  = awful.widget.taglist.filter.all,
     buttons = taglist_buttons
   }
-  
+
   -- Create a tasklist widget
   s.mytasklist = awful.widget.tasklist {
     screen  = s,
     filter  = awful.widget.tasklist.filter.currenttags,
     buttons = tasklist_buttons
   }
-  
+
   -- Create the wibox
   s.mywibox = awful.wibar({ position = "top", screen = s })
-  
+
   -- Add widgets to the wibox
   s.mywibox:setup {
     layout = wibox.layout.align.horizontal,
@@ -245,14 +245,14 @@ awful.screen.connect_for_each_screen(function(s)
         tooltip = true,
       },
       brightness_widget{
-        step = 10,
+        step = 3,
         size = 20,
         tooltip = true,
       },
       mytextclock,
       battery_widget{}
     },
-  }   
+  }
   s.mybottomwibox = awful.wibar({ position = "bottom", screen = s })
   s.mybottomwibox:setup{
     layout = wibox.layout.align.horizontal,
@@ -268,7 +268,7 @@ end)
 -- {{{ Mouse bindings
 root.buttons(
   gears.table.join(
-    root.buttons(),     
+    root.buttons(),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev),
     awful.button({ }, 3, function () awful.spawn.with_shell(launcher) end)
@@ -323,7 +323,7 @@ globalkeys = gears.table.join(
   awful.key({ "Control", "Shift"    }, "n",          function () awful.spawn(browser.." -inprivate") end,
     {description = "open default browser (incognito)", group = "launcher"}),
   awful.key({ modkey                    }, "e",      function () awful.spawn(file_manager)           end,
-    {description = "open file manager", group = "launcher"}),   
+    {description = "open file manager", group = "launcher"}),
   -- Standard program
   awful.key({ modkey,                   }, "Return", function () awful.spawn(terminal)               end,
     {description = "open a terminal", group = "launcher"}),
@@ -334,7 +334,7 @@ globalkeys = gears.table.join(
   awful.key({ modkey,                   }, "h",      function () awful.tag.incmwfact( 0.05)          end,
     {description = "increase master width factor", group = "layout"}),
   awful.key({ modkey,                   }, "l",      function () awful.tag.incmwfact(-0.05)          end,
-    {description = "decrease master width factor", group = "layout"}),  
+    {description = "decrease master width factor", group = "layout"}),
   awful.key({ modkey, altkey            }, "h",      function () awful.client.incwfact(0.05)         end,
     {description = "increase client height factor", group = "layout"}),
   awful.key({ modkey, altkey            }, "l",      function () awful.client.incwfact(-0.05)        end,
@@ -378,7 +378,7 @@ globalkeys = gears.table.join(
       }
     end,
     {description = "lua execute prompt", group = "awesome"}),
-  
+
   -- Show/hide wibox
   awful.key({ modkey }, "b", function ()
       for s in screen do
@@ -397,13 +397,13 @@ globalkeys = gears.table.join(
     {description = "Volume down", group = "hotkeys"}),
   awful.key({ }, "XF86AudioMute",           function () volume_widget:toggle()       end,
     {description = "Mute", group = "hotkeys"}),
-  
+
   --Screen brightness
   awful.key({ }, "XF86MonBrightnessUp",     function () brightness_widget:inc()      end,
     {description = "Increase brightness", group = "hotkeys"}),
   awful.key({ }, "XF86MonBrightnessDown",   function () brightness_widget:dec()      end,
     {description = "Decrease brightness", group = "hotkeys"}),
-  
+
   --Screenshot
   awful.key({ modkey, "Shift" }, "s",       function () awful.spawn("flameshot gui") end,
     {description = "take region screenshot", group = "hotkeys"}),
@@ -569,6 +569,8 @@ awful.rules.rules = {
         "Nvidia-settings",
         "processing-app-Base",
         "openrgb",
+        "PokeMMO",
+        "openfortiGUI",
       },
       -- Note that the name property shown in xprop might be set slightly after creation of the client
       -- and the name shown there might not match defined rules here.
@@ -577,7 +579,8 @@ awful.rules.rules = {
         "Krita - Edit Text — Krita",
         "Options",
         "win.*",
-        "Ediff"
+        "Ediff",
+        "Remmina Remote Desktop Client"
       },
       role = {
         "AlarmWindow",   -- Thunderbird's calendar.
@@ -591,7 +594,7 @@ awful.rules.rules = {
   { rule_any = {
       instance = {
         terminal,
-        "TeamViewer",        
+        "TeamViewer",
       },
       name = {
         "Picture in picture",
@@ -618,9 +621,14 @@ awful.rules.rules = {
 -- Spawn client at center and enable titlebar while floating
 client.connect_signal("property::floating", function(c)
   if c.floating and not c.requests_no_titlebar  then
-    awful.placement.centered(c)
+    local f_geom = c.floating_geometry
     awful.titlebar.show(c)
+    if f_geom then
+      c:geometry({ width = f_geom.width, height = f_geom.height })
+    end
+    awful.placement.centered(c)
   else
+    c.floating_geometry = c:geometry()
     awful.titlebar.hide(c)
   end
 end)
@@ -629,7 +637,7 @@ end)
 client.connect_signal('property::fullscreen', function(c)
   if c.fullscreen then
     naughty.suspend()
-  else    
+  else
     naughty.resume()
   end
 end)
@@ -666,20 +674,20 @@ client.connect_signal("request::titlebars", function(c)
         awful.mouse.client.resize(c)
     end)
   )
-  
+
   awful.titlebar(c, {size = 24}) : setup {
     {-- Left
       {
         awful.titlebar.widget.closebutton     (c),
         awful.titlebar.widget.minimizebutton  (c),
-        awful.titlebar.widget.maximizedbutton (c),  
+        awful.titlebar.widget.maximizedbutton (c),
         spacing = 10,
         layout  = wibox.layout.flex.horizontal
       },
       margins = 7,
       widget = wibox.container.margin
     },
-    { -- Middle       
+    { -- Middle
       { -- Title
         align  = "center",
         widget = awful.titlebar.widget.titlewidget(c)
@@ -691,7 +699,7 @@ client.connect_signal("request::titlebars", function(c)
       {
         spacing = 10,
         layout  = wibox.layout.flex.horizontal
-      },         
+      },
       margins = 7,
       widget = wibox.container.margin
     },
