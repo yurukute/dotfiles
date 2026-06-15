@@ -620,7 +620,10 @@ awful.rules.rules = {
 -- {{{ Signals
 -- Spawn client at center and enable titlebar while floating
 client.connect_signal("property::floating", function(c)
-  if c.floating and not c.requests_no_titlebar  then
+  if c.floating and not c.requests_no_titlebar then
+    if c.maximized or c.maximized_vertical or c.maximized_horizontal then
+      return
+    end
     local f_geom = c.floating_geometry
     awful.titlebar.show(c)
     if f_geom then
