@@ -41,6 +41,8 @@
 ** Key-bindings
 #+begin_src emacs-lisp
   (use-package which-key
+    :after dired
+    :demand t
     :config (which-key-mode)
     :hook
     (visual-line-mode . (lambda ()
@@ -62,10 +64,10 @@
            ("C-c <down>" . windmove-down)
            ("C-c <left>" . windmove-left)
            ("C-c <right>" . windmove-right)
-           ("C-<return>" . eval-region)
-           :map dired-mode-map
-           ([mouse-2] . dired-mouse-find-file)
-           ([mouse-3] . dired-mouse-find-file-other-window)))
+           ("C-c r" . eval-region)
+           (:map dired-mode-map
+                 ([mouse-2] . dired-mouse-find-file)
+                 ([mouse-3] . dired-mouse-find-file-other-window))))
 #+end_src
 
 ** Other customize
@@ -251,7 +253,9 @@
            (:map helm-find-files-map
                  ("C-<tab>" . file-cache-minibuffer-complete)))
     :custom
+    (helm-buffer-skip-remote-checking t)    
     (helm-ff-file-name-history-use-recentf t)
+    (helm-input-idle-delay 0.6) 
     (helm-move-to-line-cycle-in-source nil)
     :config (helm-mode))
 
