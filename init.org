@@ -298,7 +298,9 @@
     :config
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
     (add-to-list 'eglot-server-programs
-                 '((c-mode c++-mode) . ("clangd" "--stdio"))))
+                 '((c-mode c++-mode) . ("clangd")))
+    (add-to-list 'eglot-server-programs
+	               '((python-mode) . ("pylsp"))))
 #+end_src
 
 ** DAP - Debug Adapter Protocol
@@ -378,8 +380,16 @@
 
 ** Projectile
 #+begin_src emacs-lisp
+  (defun projectile-reload-bookmarks ()
+    "Reload Projectile projects from projectile-bookmarks.eld."
+    (interactive)
+    (setq projectile-known-projects nil)
+    (projectile-load-known-projects))
+ 
   (use-package projectile
     :bind-keymap ("C-c p" . projectile-command-map)
+    :bind (:map projectile-command-map
+         ([f5] . projectile-reload-bookmarks))
     :custom
     (projectile-enable-caching 'persistent)
     (projectile-globally-ignored-file-suffixes
